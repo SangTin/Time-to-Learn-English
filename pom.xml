@@ -35,8 +35,6 @@
     </dependencies>
     <build>
         <directory>out</directory>
-        <sourceDirectory>src/main</sourceDirectory>
-        <testSourceDirectory>src/test</testSourceDirectory>
         <outputDirectory>out/classes</outputDirectory>
         <testOutputDirectory>out/test-classes</testOutputDirectory>
         <plugins>
