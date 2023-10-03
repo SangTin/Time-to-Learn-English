@@ -13,7 +13,6 @@ public class Word {
         this.wordTarget = wordTarget;
         this.wordExplain = wordExplain;
         this.pronunciation = pronunciation;
-
     }
 
     public String getWordTarget() {
