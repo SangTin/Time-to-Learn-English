@@ -3,17 +3,25 @@ package data;
 public class Word {
     private String wordTarget;
     private String wordExplain;
-    private String pronunciation;
+    private String usPron;
+    private String ukPron;
 
     public Word() {
 
     }
 
-    public Word(String wordTarget, String wordExplain, String pronunciation) {
+    public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
         this.wordTarget = wordTarget;
         this.wordExplain = wordExplain;
-        this.pronunciation = pronunciation;
+        this.usPron = usPron;
+        this.ukPron = ukPron;        
+    }
 
+    public void setWord(Word word) {
+        this.wordTarget = word.getWordTarget();
+        this.wordExplain = word.getWordExplain();
+        this.usPron = word.getUsPron();
+        this.ukPron = word.getUkPron();
     }
 
     public String getWordTarget() {
@@ -32,11 +40,19 @@ public class Word {
         this.wordExplain = wordExplain;
     }
 
-    public String getPronunciation() {
-        return pronunciation;
+    public String getUsPron() {
+        return usPron;
     }
 
-    public void setPronunciation(String pronunciation) {
-        this.pronunciation = pronunciation;
+    public void setUsPron(String usPron) {
+        this.usPron = usPron;
+    }
+
+    public String getUkPron() {
+        return ukPron;
+    }
+
+    public void setUkPron(String ukPron) {
+        this.ukPron = ukPron;
     }
 }
