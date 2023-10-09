@@ -55,4 +55,5 @@ public class Word {
     public void setUkPron(String ukPron) {
         this.ukPron = ukPron;
     }
+
 }
