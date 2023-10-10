@@ -1,10 +1,5 @@
 package entry;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Scanner;
 
 import data.Dictionary;
@@ -52,7 +47,7 @@ public class CommandLine {
         if (index < 0) {
             System.out.println("There is no that word in the dictionary!");
         } else {
-            words.remove(words.words.get(index));
+            words.remove(wordString);
             System.out.println("This word is removed!");
         }
     }
@@ -97,7 +92,6 @@ public class CommandLine {
         String[] result = words.search(wordString);
         System.out.print("Search result : ");
         for (int i = 0; i < result.length; ++i) {
-            if (i < result.length - 1)
                 System.out.print(result[i] + ", ");
         }
         System.out.println("...");
@@ -105,38 +99,9 @@ public class CommandLine {
 
     public void game() {}
 
-    public void importFromFile() {
-        // System.out.println("Name of file you want to import from: ");
-        // String fileName = sc.next();
-        // try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-        //     String line;
-        //     while ((line = br.readLine()) != null) {
-        //         // Tách từ tiếng Anh và giải thích tiếng Việt bằng dấu tab
-        //         String[] parts = line.split("\t");
-        //         if (parts.length == 2) {
-        //             String wordTarget = parts[0];
-        //             String wordExplain = parts[1];
-        //             words.insert(new Word(wordTarget, wordExplain, null, null));
-        //         }
-        //     }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
-    }
+    public void importFromFile() {}
 
-    public void exportToFile() {
-        // System.out.println("Name of file you want to export to: ");
-        // String fileName = sc.next();
-        // try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
-        //     for (Word word : words.words) {
-        //         // Ghi từ tiếng Anh, sau đó dấu tab, và cuối cùng là giải thích tiếng Việt
-        //         bw.write(word.getWordTarget() + " " + word.getWordExplain());
-        //         bw.newLine(); // Thêm dòng mới sau mỗi cặp từ và giải thích
-        //     }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
-    }
+    public void exportToFile() {}
     public static void main(String[] args) {
         CommandLine x = new CommandLine();
         boolean OK = true;

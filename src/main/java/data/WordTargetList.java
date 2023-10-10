@@ -15,12 +15,13 @@ public class WordTargetList {
         int index = Collections.binarySearch(List, newString);
         return index;
     }
-    public void addWordTarget(String newString) {
+    public int addWordTarget(String newString) {
         newString = newString.toLowerCase();
         int index = getLowerBound(newString);
         if (index < 0)
             index = -(index + 1);
         List.add(index, newString);
+        return index;
     }
 
     public void removeWordTarget(String oldString) {
@@ -49,15 +50,4 @@ public class WordTargetList {
         return new Pair<>(start, end);
     }
 
-    public static void main(String[] args) {
-        WordTargetList x = new WordTargetList();
-        x.addWordTarget("a");
-        x.addWordTarget("aaa");
-        x.addWordTarget("aa");
-        x.addWordTarget("b");
-        Pair<Integer, Integer> answer = x.searchRange("a");
-        for(int i = answer.getValue0(); i <= answer.getValue1(); ++i) {
-            System.out.print(x.getIndex(i) + " ");
-        }
-    }
 }
