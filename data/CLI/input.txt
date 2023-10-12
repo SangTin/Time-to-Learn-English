@@ -1,0 +1,7 @@
+apple	qua tao
+banana	qua chuoi
+car	xe hoi
+dog	cho
+cat	meo
+banana	qua dau
+car	o to

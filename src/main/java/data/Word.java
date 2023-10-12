@@ -9,7 +9,13 @@ public class Word {
     public Word() {
 
     }
-
+    
+    public Word(Word word) {
+        this.wordTarget = word.getWordTarget();
+        this.wordExplain = word.getWordExplain();
+        this.usPron = word.getUsPron();
+        this.ukPron = word.getUkPron();
+    }
     public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
         this.wordTarget = wordTarget;
         this.wordExplain = wordExplain;
