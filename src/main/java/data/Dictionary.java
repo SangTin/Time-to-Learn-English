@@ -2,7 +2,8 @@ package data;
 
 import java.util.ArrayList;
 
-import org.javatuples.Pair;
+import javafx.util.Pair;
+
 
 public class Dictionary {
       public ArrayList<Word> words = new ArrayList<>();
@@ -25,8 +26,8 @@ public class Dictionary {
       
       public String[] search(String newString) {
             Pair<Integer, Integer> range = wordTarget.searchRange(newString);
-            int start = range.getValue0();
-            int end = range.getValue1();
+            int start = range.getKey();
+            int end = range.getValue();
             int size = 0;
             String[] answer = new String[end-start+1];
             for(int i = start; i <= end; ++i) {

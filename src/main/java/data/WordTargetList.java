@@ -3,7 +3,9 @@ package data;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.javatuples.Pair;
+import javafx.util.Pair;
+
+
 
 public class WordTargetList {
     private ArrayList<String> List = new ArrayList<>();
