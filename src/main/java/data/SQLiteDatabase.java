@@ -39,6 +39,45 @@ public class SQLiteDatabase {
         }
         return conn;
     }
+
+    /**
+     * Create a new table in the database
+     *
+     * @param tableName the name of the table
+     */
+    public void createNewTable(String tableName) {
+        // SQL statement for creating a new table
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + """
+                (
+                    id integer PRIMARY KEY,
+                    word_target text NOT NULL,
+                    word_explain text NOT NULL,
+                    ipa_us text,
+                    ipa_uk text
+                );
+                """;
+        
+        try (Statement stmt = conn.createStatement()) {
+            // create a new table
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Delete all rows in the table
+     * 
+     * @param tableName the name of the table
+     */
+    public void deleteAll(String tableName) {
+        String sql = "DELETE FROM " + tableName;
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     /**
      * Update data in the table specified by the id
@@ -48,9 +87,30 @@ public class SQLiteDatabase {
      * @param word the word
      */
     public void update(String tableName, int id, Word word) {
+        createNewTable(tableName);
         String sql = "UPDATE " + tableName + " SET word_target = ?, word_explain = ?, ipa_us = ?, ipa_uk = ? WHERE id = " + id;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, word.getWordTarget());
+            pstmt.setString(2, word.getWordExplain());
+            pstmt.setString(3, word.getUsPron());
+            pstmt.setString(4, word.getUkPron());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Insert a new row into the table
+     * 
+     * @param tableName
+     * @param word
+     */
+    public void insert(String tableName, Word word) {
+        createNewTable(tableName);
+        String sql = "INSERT INTO " + tableName + "(word_target, word_explain, ipa_us, ipa_uk) VALUES(?,?,?,?)";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, word.getWordTarget());
             pstmt.setString(2, word.getWordExplain());
             pstmt.setString(3, word.getUsPron());
@@ -90,10 +150,13 @@ public class SQLiteDatabase {
 
     /**
      * Export data to the database
+     * 
      * @param words the list of words
      * @param tableName the name of the table
      */
     public void exportToDatabase(ArrayList<Word> words, String tableName) {
+        createNewTable(tableName);
+        deleteAll(tableName);
         String sql = "INSERT INTO " + tableName + "(word_target, word_explain, ipa_us, ipa_uk) VALUES(?,?,?,?)";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (Word word : words) {
