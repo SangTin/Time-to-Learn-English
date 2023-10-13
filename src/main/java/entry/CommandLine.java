@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import data.Dictionary;
-import data.SQLiteDatabase;
 import data.Word;
 
 public class CommandLine {
@@ -44,7 +43,7 @@ public class CommandLine {
             System.out.print("Word explain: ");
             String wordExplain = sc.nextLine();
             wordExplain = sc.nextLine();
-            int index = words.wordTarget.getLowerBound(wordTarget);
+            int index = words.getWordTarget().getLowerBound(wordTarget);
             if (index < 0) {
                 words.insert(new Word(wordTarget, wordExplain, null, null));
             } else {
@@ -53,7 +52,7 @@ public class CommandLine {
                 String answer = sc.next();
                 answer = answer.toLowerCase();
                 if (answer == "yes")
-                    words.words.get(index).setWordExplain(wordExplain);
+                    words.getWords().get(index).setWordExplain(wordExplain);
             }
             System.out.println();
         }
@@ -62,7 +61,7 @@ public class CommandLine {
     public void Remove() {
         System.out.print("Word you want to remove: ");
         String wordString = sc.next();
-        int index = words.wordTarget.getLowerBound(wordString);
+        int index = words.getWordTarget().getLowerBound(wordString);
         if (index < 0) {
             System.out.println("There is no that word in the dictionary!");
         } else {
@@ -83,14 +82,14 @@ public class CommandLine {
     }
 
     public void Display() {
-        int n = words.words.size();
+        int n = words.getWords().size();
         System.out.println("No    |    English    |    Vietnamese");
         for (int i = 0; i < n; ++i) {
             System.out.printf("%-6s", Integer.toString(i + 1));
             System.out.printf("%-5s", "|");
-            System.out.printf("%-11s", words.words.get(i).getWordTarget());
+            System.out.printf("%-11s", words.getWords().get(i).getWordTarget());
             System.out.printf("%-5s", "|");
-            System.out.println(words.words.get(i).getWordExplain());
+            System.out.println(words.getWords().get(i).getWordExplain());
         }
         System.out.println();
     }
@@ -98,11 +97,11 @@ public class CommandLine {
     public void Lookup() {
         System.out.print("Word you want to look up: ");
         String wordString = sc.next();
-        int index = words.wordTarget.getLowerBound(wordString);
+        int index = words.getWordTarget().getLowerBound(wordString);
         if (index < 0) {
             System.out.println("There is no that word in the dictionary!");
         } else {
-            Word word = words.words.get(index);
+            Word word = words.getWords().get(index);
             System.out.println("Word target: " + word.getWordTarget());
             System.out.println("Word explain: " + word.getWordExplain());
         }
@@ -141,7 +140,7 @@ public class CommandLine {
                     String wordExplain = parts[1];
                     Word newWord = new Word(wordTarget, wordExplain, null, null);
 
-                    int index = words.wordTarget.getLowerBound(wordTarget);
+                    int index = words.getWordTarget().getLowerBound(wordTarget);
                     if (index < 0) {
                         words.insert(newWord);
                     } else {
@@ -157,8 +156,8 @@ public class CommandLine {
                             .equals(wordDuplicate.get(i - 1).getWordTarget()))) {
                         System.out.println();
                         System.out.println("* Word target: " + wordDuplicate.get(i).getWordTarget());
-                        int index = words.wordTarget.getLowerBound(wordDuplicate.get(i).getWordTarget());
-                        System.out.print("  Word explain: " + words.words.get(index).getWordExplain());
+                        int index = words.getWordTarget().getLowerBound(wordDuplicate.get(i).getWordTarget());
+                        System.out.print("  Word explain: " + words.getWords().get(index).getWordExplain());
                         System.out.print(", " + wordDuplicate.get(i).getWordExplain());
                     } else {
                         System.out.print(", " + wordDuplicate.get(i).getWordExplain());
@@ -169,8 +168,8 @@ public class CommandLine {
                         System.out.print("Your choice: ");
                         String answer = sc.nextLine();
                         if(i == 0) answer = sc.nextLine();
-                        int index = words.wordTarget.getLowerBound(wordDuplicate.get(i).getWordTarget());
-                        words.words.get(index).setWordExplain(answer);
+                        int index = words.getWordTarget().getLowerBound(wordDuplicate.get(i).getWordTarget());
+                        words.getWords().get(index).setWordExplain(answer);
                     }
                 }
             }
@@ -184,7 +183,7 @@ public class CommandLine {
         System.out.print("Name of file you want to export to: ");
         String fileName = sc.next();
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("data/CLI/" + fileName))) {
-            for (Word word : words.words) {
+            for (Word word : words.getWords()) {
                 // Ghi từ tiếng Anh, sau đó dấu tab, và cuối cùng là giải thích tiếng Việt
                 bw.write(word.getWordTarget() + "\t" + word.getWordExplain());
                 bw.newLine(); // Thêm dòng mới sau mỗi cặp từ và giải thích

@@ -1,14 +1,41 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javafx.util.Pair;
 
 
 public class Dictionary {
-      public ArrayList<Word> words = new ArrayList<>();
-      public WordTargetList wordTarget = new WordTargetList();
+      private ArrayList<Word> words;
+      private WordTargetList wordTarget;
       
+      public Dictionary() {
+            words = new ArrayList<>();
+            wordTarget = new WordTargetList();
+      }
+
+      public Dictionary(ArrayList<Word> words) {
+            this.words = words;
+            Collections.sort(this.words, (Word a, Word b) -> {
+                  return a.getWordTarget().compareToIgnoreCase(b.getWordTarget());
+            });
+            wordTarget = new WordTargetList(words);
+      }
+
+      public ArrayList<Word> getWords() {
+            return words;
+      }
+
+      public void setWords(ArrayList<Word> words) {
+            this.words = words;
+            wordTarget = new WordTargetList(words);
+      }
+
+      public WordTargetList getWordTarget() {
+            return wordTarget;
+      }
+
       public void insert(Word newWord) {
             int index = wordTarget.addWordTarget(newWord.getWordTarget());
             if (index < 0)
@@ -19,8 +46,8 @@ public class Dictionary {
       public void remove(String newWord) {
             int index = wordTarget.getLowerBound(newWord);
             if(index >= 0) {
-            words.remove(index);
-            wordTarget.removeWordTarget(newWord);
+                  words.remove(index);
+                  wordTarget.removeWordTarget(newWord);
             }
       }
       

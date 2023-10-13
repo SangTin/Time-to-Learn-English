@@ -1,33 +1,46 @@
 package data;
 
 public class Word {
+    private static int numWord = 0;
+
+    private int id = ++numWord;
     private String wordTarget;
     private String wordExplain;
     private String usPron;
     private String ukPron;
 
-    public Word() {
-
-    }
+    public Word() {}
     
+    public Word(String wordTarget, String wordExplain) {
+        this.wordTarget = wordTarget;
+        this.wordExplain = wordExplain;
+    }
+
     public Word(Word word) {
+        this.id = word.getId();
         this.wordTarget = word.getWordTarget();
         this.wordExplain = word.getWordExplain();
         this.usPron = word.getUsPron();
         this.ukPron = word.getUkPron();
     }
+
     public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
         this.wordTarget = wordTarget;
         this.wordExplain = wordExplain;
         this.usPron = usPron;
-        this.ukPron = ukPron;        
+        this.ukPron = ukPron;
     }
 
     public void setWord(Word word) {
+        this.id = word.getId();
         this.wordTarget = word.getWordTarget();
         this.wordExplain = word.getWordExplain();
         this.usPron = word.getUsPron();
         this.ukPron = word.getUkPron();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getWordTarget() {
