@@ -102,6 +102,21 @@ public class SQLiteDatabase {
     }
 
     /**
+     * Delete a row specified by the id
+     * 
+     * @param tableName the name of the table
+     * @param id the id of the word
+     */
+    public void delete(String tableName, int id) {
+        String sql = "DELETE FROM " + tableName + " WHERE id = " + id;
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
      * Insert a new row into the table
      * 
      * @param tableName
@@ -168,6 +183,87 @@ public class SQLiteDatabase {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * (For development only)
+     * Export data to the database (x10 faster than exportToDatabase)
+     * Using thread 
+     * 
+     * @param words the list of words
+     * @param tableName the name of the table
+     */
+    public void superFastExport(ArrayList<Word> words, String tableName) {
+        try {
+            final String DB_URL = "jdbc:mysql://localhost:3306/edict";
+            // connnect to database
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(DB_URL, "root", "sangpro1100");
+            System.out.println("Connected to database.");
+
+            // create table
+            String sqlTable = "CREATE TABLE IF NOT EXISTS " + tableName + """
+                (
+                    id integer PRIMARY KEY,
+                    word_target text NOT NULL,
+                    word_explain text NOT NULL,
+                    ipa_us text,
+                    ipa_uk text
+                );
+                """;
+            Statement stmt = conn.createStatement();
+            stmt.execute(sqlTable);
+
+            // delete all rows
+            String sqlDelete = "DELETE FROM " + tableName;
+            stmt.execute(sqlDelete);
+
+            String sql = "INSERT INTO " + tableName + "(id, word_target, word_explain, ipa_us, ipa_uk) VALUES(?,?,?,?,?)";
+            int limit = 5000;
+            for (int i = 0; i < words.size(); i += limit) {
+                ArrayList<FastExportThread> threads = new ArrayList<FastExportThread>();
+                for (int j = i; j < i + limit && j < words.size(); j++) {
+                    threads.add(new FastExportThread(conn, sql, words.get(j)));
+                }
+                for (FastExportThread thread : threads) {
+                    thread.start();
+                }
+                for (FastExportThread thread : threads) {
+                    thread.join();
+                }
+            }
+            // close connection
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static class FastExportThread extends Thread {
+        private Connection conn;
+        private String sql;
+        private Word word;
+
+        public FastExportThread(Connection conn, String sql, Word word) {
+            this.conn = conn;
+            this.sql = sql;
+            this.word = word;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("Thread " + this.getId() + " is running");
+            try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, (int) this.getId());
+                pstmt.setString(2, word.getWordTarget());
+                pstmt.setString(3, word.getWordExplain());
+                pstmt.setString(4, word.getUsPron());
+                pstmt.setString(5, word.getUkPron());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }
