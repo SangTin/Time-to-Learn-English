@@ -83,6 +83,13 @@ public class Dictionary {
             } else {
                   words.set(index, newWord);
             }
+      }
 
+      public Word searchExactly(String newString) {
+            int index = getLowerBound(newString);
+            if(index >= 0) {
+                  return words.get(index);
+            }
+            return null;
       }
 }
