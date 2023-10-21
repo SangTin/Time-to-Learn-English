@@ -69,8 +69,8 @@ public class Dictionary {
             if (end < 0)
                 end = -(end + 1);
             int size = 0;
-            Word[] answer = new Word[end-start+1];
-            for(int i = start; i <= end; ++i) {
+            Word[] answer = new Word[end-start];
+            for(int i = start; i < end; ++i) {
                   answer[size++] = words.get(i);
             }
             return answer;
