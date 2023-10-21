@@ -1,6 +1,6 @@
 package data;
 
-public class Word {
+public class Word implements Comparable<Word> {
     private static int numWord = 0;
 
     private int id = ++numWord;
@@ -73,5 +73,25 @@ public class Word {
 
     public void setUkPron(String ukPron) {
         this.ukPron = ukPron;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(wordTarget + "\n");
+        if (usPron != null) sb.append("US: " + usPron + "\n");
+        if (ukPron != null) sb.append("UK: " + ukPron + "\n");
+        sb.append(wordExplain);
+        
+        return sb.toString();
+    }
+
+    @Override
+    public int compareTo(Word word) {
+        return wordTarget.compareToIgnoreCase(word.getWordTarget());
+    }
+
+    public int compareTo(String word) {
+        return wordTarget.compareToIgnoreCase(word);
     }
 }

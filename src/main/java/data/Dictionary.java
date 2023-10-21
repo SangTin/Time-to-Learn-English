@@ -2,17 +2,15 @@ package data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import javafx.util.Pair;
+import java.util.Comparator;
 
 
 public class Dictionary {
       private ArrayList<Word> words;
-      private WordTargetList wordTarget;
-      
+      private static final WordStringComparator wordTargetCompartor = new WordStringComparator();
+
       public Dictionary() {
             words = new ArrayList<>();
-            wordTarget = new WordTargetList();
       }
 
       public Dictionary(ArrayList<Word> words) {
@@ -20,7 +18,6 @@ public class Dictionary {
             Collections.sort(this.words, (Word a, Word b) -> {
                   return a.getWordTarget().compareToIgnoreCase(b.getWordTarget());
             });
-            wordTarget = new WordTargetList(words);
       }
 
       public ArrayList<Word> getWords() {
@@ -29,47 +26,75 @@ public class Dictionary {
 
       public void setWords(ArrayList<Word> words) {
             this.words = words;
-            wordTarget = new WordTargetList(words);
       }
 
-      public WordTargetList getWordTarget() {
-            return wordTarget;
+      private static class WordStringComparator implements Comparator<Object> {
+            @Override
+            public int compare(Object o1, Object o2) {
+                  if (o1 instanceof Word) {
+                        if (o2 instanceof Word) {
+                              return ((Word) o1).compareTo((Word) o2);
+                        } else if (o2 instanceof String) {
+                              return ((Word) o1).compareTo((String) o2);
+                        }
+                  }
+                  throw new IllegalArgumentException("Cannot compare " + 
+                        o1.getClass().getName() + " with " + o2.getClass().getName());
+            }
+      }
+
+      public int getLowerBound(Object o) {
+            return Collections.binarySearch(words, o, wordTargetCompartor);
       }
 
       public void insert(Word newWord) {
-            int index = wordTarget.addWordTarget(newWord.getWordTarget());
+            int index = getLowerBound(newWord);
             if (index < 0)
-                index = -(index + 1);
+                  index = -(index + 1);
             words.add(index, newWord);
       }
 
       public void remove(String newWord) {
-            int index = wordTarget.getLowerBound(newWord);
+            int index = getLowerBound(newWord);
             if(index >= 0) {
                   words.remove(index);
-                  wordTarget.removeWordTarget(newWord);
             }
       }
-      
-      public String[] search(String newString) {
-            Pair<Integer, Integer> range = wordTarget.searchRange(newString);
-            int start = range.getKey();
-            int end = range.getValue();
+
+      public Word[] search(String newString) {
+            int start = getLowerBound(newString);
+            if (start < 0)
+                start = -(start + 1);
+            int end = getLowerBound(newString + Character.MAX_VALUE);
+            if (end < 0)
+                end = -(end + 1);
             int size = 0;
-            String[] answer = new String[end-start+1];
-            for(int i = start; i <= end; ++i) {
-                answer[size++] = wordTarget.getIndex(i);
+            Word[] answer = new Word[end-start];
+            for(int i = start; i < end; ++i) {
+                  answer[size++] = words.get(i);
             }
             return answer;
       }
-      
+
       public void fix(Word newWord) {
-            int index = wordTarget.searchExactly(newWord.getWordTarget());
-            if(index == -1) {
+            int index = getLowerBound(newWord.getWordTarget());
+            if(index < 0) {
                   insert(newWord);
             } else {
                   words.set(index, newWord);
             }
+      }
 
+      public Word searchExactly(String newString) {
+            int index = getLowerBound(newString);
+            if(index >= 0) {
+                  return words.get(index);
+            }
+            return null;
+      }
+
+      public boolean have(String newString) {
+            int index = getLowerBound(newString);
+            return index >= 0;
       }
 }
