@@ -63,10 +63,11 @@ public class Dictionary {
 
       public Word[] search(String newString) {
             int start = getLowerBound(newString);
-            if (start < 0) start = -(start + 1);
+            if (start < 0)
+                start = -(start + 1);
             int end = getLowerBound(newString + Character.MAX_VALUE);
-            if (end < 0) end = -(end + 1);
-            
+            if (end < 0)
+                end = -(end + 1);
             int size = 0;
             Word[] answer = new Word[end-start+1];
             for(int i = start; i <= end; ++i) {
