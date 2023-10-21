@@ -92,4 +92,9 @@ public class Dictionary {
             }
             return null;
       }
+
+      public boolean have(String newString) {
+            int index = getLowerBound(newString);
+            return index >= 0;
+      }
 }
