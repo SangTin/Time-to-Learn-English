@@ -193,24 +193,6 @@ public class SQLiteDatabase {
             this.words = words;
         }
 
-        private void update(String tableName, int id, Word word) {
-            String sql = "INSERT INTO " + tableName + "(id, word_target, word_explain, ipa_us, ipa_uk) "
-                    + "VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
-                    + "word_target = excluded.word_target, word_explain = excluded.word_explain, " 
-                    + "ipa_us = excluded.ipa_us, ipa_uk = excluded.ipa_uk";
-            
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                pstmt.setString(2, word.getWordTarget());
-                pstmt.setString(3, word.getWordExplain());
-                pstmt.setString(4, word.getUsPron());
-                pstmt.setString(5, word.getUkPron());
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
         @Override
         public void run() {
             String sqlSelect = "SELECT * FROM " + tableName;
