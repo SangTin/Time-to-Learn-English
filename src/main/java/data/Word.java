@@ -31,6 +31,14 @@ public class Word implements Comparable<Word> {
         this.ukPron = ukPron;
     }
 
+    public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
+        this.id = id;
+        this.wordTarget = wordTarget;
+        this.wordExplain = wordExplain;
+        this.usPron = usPron;
+        this.ukPron = ukPron;
+    }
+
     public void setWord(Word word) {
         this.id = word.getId();
         this.wordTarget = word.getWordTarget();
@@ -41,6 +49,11 @@ public class Word implements Comparable<Word> {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        if (id > numWord) numWord = id;
+        this.id = id;
     }
 
     public String getWordTarget() {
