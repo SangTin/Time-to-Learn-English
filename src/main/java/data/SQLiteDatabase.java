@@ -1,5 +1,10 @@
 package data;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,9 +12,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+
+import gui.GraphicalDictionary;
+import javafx.scene.control.ProgressBar;
 
 public class SQLiteDatabase {
+    private static final String PATH = "data/database/";
     private Connection conn;
+
+    /**
+     * Normalize the database name
+     * 
+     * @param dbName the name of the database file
+     */
+    private static void normalizeDbName(String dbName) {
+        if (!dbName.endsWith(".db")) {
+            dbName += ".db";
+        }
+    }
 
     /**
      * Constructor
@@ -17,6 +38,7 @@ public class SQLiteDatabase {
      * @param dbName the name of the database file
      */
     public SQLiteDatabase(String dbName) {
+        normalizeDbName(dbName);
         conn = connect(dbName);
     }
 
@@ -28,7 +50,7 @@ public class SQLiteDatabase {
      */
     private Connection connect(String dbName) {
         // SQLite connection string
-        String url = "jdbc:sqlite:data/database/" + dbName;
+        String url = "jdbc:sqlite:" + PATH + dbName;
         if (conn != null) {
             return conn;
         }
@@ -80,7 +102,7 @@ public class SQLiteDatabase {
     }
     
     /**
-     * Update data in the table specified by the id
+     * 1 data in the table specified by the id
      * 
      * @param tableName the name of the table
      * @param id the id of the word
@@ -88,13 +110,17 @@ public class SQLiteDatabase {
      */
     public void update(String tableName, int id, Word word) {
         createNewTable(tableName);
-        String sql = "UPDATE " + tableName + " SET word_target = ?, word_explain = ?, ipa_us = ?, ipa_uk = ? WHERE id = " + id;
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, word.getWordTarget());
-            pstmt.setString(2, word.getWordExplain());
-            pstmt.setString(3, word.getUsPron());
-            pstmt.setString(4, word.getUkPron());
+        String sql = "INSERT INTO " + tableName + "(id, word_target, word_explain, ipa_us, ipa_uk) "
+                + "VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
+                + "word_target = excluded.word_target, word_explain = excluded.word_explain, " 
+                + "ipa_us = excluded.ipa_us, ipa_uk = excluded.ipa_uk";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, word.getWordTarget());
+            pstmt.setString(3, word.getWordExplain());
+            pstmt.setString(4, word.getUsPron());
+            pstmt.setString(5, word.getUkPron());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -141,26 +167,65 @@ public class SQLiteDatabase {
      * 
      * @param tableName the name of the table
      */
-    public ArrayList<Word> importFromDatabase(String tableName){
-        String sql = "SELECT id, word_target, word_explain, ipa_us, ipa_uk FROM " + tableName;
+    public ArrayList<Word> importFromDatabase(String tableName) {
+        if (conn == null) {
+            return new ArrayList<Word>();
+        }
         
         ArrayList<Word> words = new ArrayList<Word>();
-        try (Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
-            
-            // loop through the result set
-            while (rs.next()) {
-                Word word = new Word();
-                word.setWordTarget(rs.getString("word_target"));
-                word.setWordExplain(rs.getString("word_explain"));
-                word.setUsPron(rs.getString("ipa_us"));
-                word.setUkPron(rs.getString("ipa_uk"));
-                words.add(word);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        Thread thread = new ImportDataThread(conn, tableName, words);
+        try {
+            thread.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return words;
+    }
+
+    private static class ImportDataThread extends Thread {
+        private Connection conn;
+        private String tableName;
+        private ArrayList<Word> words;
+
+        public ImportDataThread(Connection conn, String tableName, ArrayList<Word> words) {
+            this.conn = conn;
+            this.tableName = tableName;
+            this.words = words;
+        }
+
+        @Override
+        public void run() {
+            String sqlSelect = "SELECT * FROM " + tableName;
+            String sqlCount = "SELECT COUNT(*) FROM " + tableName;
+            try (Statement stmt = conn.createStatement()){
+                ResultSet rs = stmt.executeQuery(sqlCount);
+                int count = rs.getInt(1);
+                ProgressBar loadingProgressBar = (ProgressBar) GraphicalDictionary.getLoadingProgressBar();
+                loadingProgressBar.setProgress(0);
+                loadingProgressBar.setVisible(true);
+
+                rs = stmt.executeQuery(sqlSelect);
+                // loop through the result set
+                while (rs.next()) {
+                    Word word = new Word();
+                    word.setWordTarget(rs.getString("word_target"));
+                    word.setWordExplain(rs.getString("word_explain"));
+                    word.setUsPron(rs.getString("ipa_us"));
+                    word.setUkPron(rs.getString("ipa_uk"));
+                    words.add(word);
+
+                    loadingProgressBar.setProgress((double) rs.getRow() / count);
+                }
+
+                loadingProgressBar.setVisible(false);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            
+            Collections.sort(this.words, (Word a, Word b) -> {
+                  return a.getWordTarget().compareToIgnoreCase(b.getWordTarget());
+            });
+        }
     }
 
     /**
@@ -187,83 +252,23 @@ public class SQLiteDatabase {
     }
 
     /**
-     * (For development only)
-     * Export data to the database (x10 faster than exportToDatabase)
-     * Using thread 
+     * Backup the database. The new database will be named "backup_" + oldDbName.
+     * This method will return the new database object connected to the new database.
      * 
-     * @param words the list of words
-     * @param tableName the name of the table
+     * @param oldDbName the name of the old database
+     * @return the new database object
      */
-    public void superFastExport(ArrayList<Word> words, String tableName) {
+    public static SQLiteDatabase backupDatabase(String oldDbName) {
+        normalizeDbName(oldDbName);
+        final String newDbName = "backup_" + oldDbName;
         try {
-            final String DB_URL = "jdbc:mysql://localhost:3306/edict";
-            // connnect to database
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(DB_URL, "root", "sangpro1100");
-            System.out.println("Connected to database.");
-
-            // create table
-            String sqlTable = "CREATE TABLE IF NOT EXISTS " + tableName + """
-                (
-                    id integer PRIMARY KEY,
-                    word_target text NOT NULL,
-                    word_explain text NOT NULL,
-                    ipa_us text,
-                    ipa_uk text
-                );
-                """;
-            Statement stmt = conn.createStatement();
-            stmt.execute(sqlTable);
-
-            // delete all rows
-            String sqlDelete = "DELETE FROM " + tableName;
-            stmt.execute(sqlDelete);
-
-            String sql = "INSERT INTO " + tableName + "(id, word_target, word_explain, ipa_us, ipa_uk) VALUES(?,?,?,?,?)";
-            int limit = 5000;
-            for (int i = 0; i < words.size(); i += limit) {
-                ArrayList<FastExportThread> threads = new ArrayList<FastExportThread>();
-                for (int j = i; j < i + limit && j < words.size(); j++) {
-                    threads.add(new FastExportThread(conn, sql, words.get(j)));
-                }
-                for (FastExportThread thread : threads) {
-                    thread.start();
-                }
-                for (FastExportThread thread : threads) {
-                    thread.join();
-                }
-            }
-            // close connection
-            conn.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            Path oldDbPath = Paths.get(PATH + oldDbName);
+            Path newDbPath = Paths.get(PATH + newDbName);
+            Files.copy(oldDbPath, newDbPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
-
-    private static class FastExportThread extends Thread {
-        private Connection conn;
-        private String sql;
-        private Word word;
-
-        public FastExportThread(Connection conn, String sql, Word word) {
-            this.conn = conn;
-            this.sql = sql;
-            this.word = word;
-        }
-
-        @Override
-        public void run() {
-            System.out.println("Thread " + this.getId() + " is running");
-            try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, (int) this.getId());
-                pstmt.setString(2, word.getWordTarget());
-                pstmt.setString(3, word.getWordExplain());
-                pstmt.setString(4, word.getUsPron());
-                pstmt.setString(5, word.getUkPron());
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        SQLiteDatabase newDatabase = new SQLiteDatabase(newDbName);
+        return newDatabase;
     }
 }
