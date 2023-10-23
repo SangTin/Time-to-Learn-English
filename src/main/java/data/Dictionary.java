@@ -93,6 +93,15 @@ public class Dictionary {
             return null;
       }
 
+      public Word searchById(int id) {
+            for (Word word : words) {
+                  if (word.getId() == id) {
+                        return word;
+                  }
+            }
+            return null;
+      }
+
       public boolean have(String newString) {
             int index = getLowerBound(newString);
             return index >= 0;
