@@ -47,18 +47,23 @@ public class Dictionary {
             return Collections.binarySearch(words, o, wordTargetCompartor);
       }
 
-      public void insert(Word newWord) {
+      public boolean insert(Word newWord) {
             int index = getLowerBound(newWord);
-            if (index < 0)
+            if (index < 0) {
                   index = -(index + 1);
-            words.add(index, newWord);
+                  words.add(index, newWord);
+                  return true;
+            }
+            return false;
       }
 
-      public void remove(String newWord) {
+      public boolean remove(String newWord) {
             int index = getLowerBound(newWord);
             if(index >= 0) {
                   words.remove(index);
+                  return true;
             }
+            return false;
       }
 
       public Word[] search(String newString) {
@@ -76,13 +81,13 @@ public class Dictionary {
             return answer;
       }
 
-      public void fix(Word newWord) {
+      public boolean fix(Word newWord) {
             int index = getLowerBound(newWord.getWordTarget());
-            if(index < 0) {
-                  insert(newWord);
-            } else {
+            if(index >= 0) {
                   words.set(index, newWord);
+                  return true;
             }
+            return false;
       }
 
       public Word searchExactly(String newString) {
