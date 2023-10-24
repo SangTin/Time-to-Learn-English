@@ -33,6 +33,7 @@ public class Word implements Comparable<Word> {
 
     public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
         this.id = id;
+        if (id > numWord) numWord = id;
         this.wordTarget = wordTarget;
         this.wordExplain = wordExplain;
         this.usPron = usPron;
