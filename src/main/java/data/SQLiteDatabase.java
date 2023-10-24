@@ -296,9 +296,4 @@ public class SQLiteDatabase {
         return newDatabase;
     }
 
-    public static void main(String[] args) {
-        SQLiteDatabase database = new SQLiteDatabase("test.db");
-        Word word = new Word("Hello", "Hi");
-        database.insertWord(word);
-    }
 }

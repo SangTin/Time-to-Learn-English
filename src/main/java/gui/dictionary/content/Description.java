@@ -1,0 +1,251 @@
+package gui.dictionary.content;
+
+import data.Dictionary;
+import data.Word;
+import gui.dictionary.Content;
+import javafx.collections.ListChangeListener;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
+
+public class Description extends AnchorPane {
+    private static final String DESCRIPTION_FXML = "/fxml/dictionary/content/Description.fxml";
+    private static final String DES_ICON = "M4 9h8v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z";
+    private static final double DESPANE_TOP_PADDING = 10;
+    private static final double TOOLBAR_HEIGHT = 40;
+    private static enum PartOfSpeech {
+        NOUN("danh từ"), VERB("động từ"), 
+        ADJECTIVE("tính từ"), ADVERB("phó từ"), 
+        PREPOSITION("giới từ"), CONJUNCTION("liên từ"), 
+        INTERJECTION("thán từ"), ARTICLE("mạo từ");
+
+        private final String text;
+
+        PartOfSpeech(String text) {
+            this.text = text;
+        }
+
+        static String fromString(String text) {
+            text = text.toLowerCase();
+            for (PartOfSpeech pos : PartOfSpeech.values()) {
+                if (text.contains(pos.text)) return pos.text;
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
+
+    @FXML private ButtonBar posBar;
+    @FXML private ScrollPane desView;
+    @FXML private VBox desPane;
+    @FXML private Label headWord;
+    @FXML private HBox ukPron;
+    @FXML private HBox usPron;
+
+    private Dictionary dictionary;
+    private Content owner;
+
+    public Description() {
+        super();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(DESCRIPTION_FXML));
+            loader.setController(this);
+            loader.setRoot(this);
+            loader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setOwner(Content owner) {
+        this.owner = owner;
+    }
+
+    public void initialize() {
+        // Set up description view
+        posBar.heightProperty().addListener((observable, oldVal, newVal) -> {
+            AnchorPane.setTopAnchor(desView, newVal.doubleValue());
+        });
+        posBar.getButtons().addListener((ListChangeListener.Change<? extends Node> c) -> {
+            if (posBar.getButtons().isEmpty()) {
+                posBar.setPrefHeight(0);
+            } else {
+                posBar.setPrefHeight(TOOLBAR_HEIGHT);
+            }
+        }); 
+        clear();
+    }
+
+    public void clear() {
+        // Clear description
+        desPane.getChildren().clear();
+        posBar.getButtons().clear();
+    }
+
+    public void setWord(Word word) {
+        // Clear
+        desPane.getChildren().clear();
+        posBar.getButtons().clear();
+
+        // Set description
+        display(word);
+    }
+
+    public void setDictionary(Dictionary dictionary) {
+        this.dictionary = dictionary;
+    }
+
+    public void display(Word word) {
+        // Set head word
+        headWord.setText(word.getWordTarget());
+        desPane.getChildren().add(headWord);
+
+        // Set pronunciation
+        Text ukIpa = (Text) ukPron.getChildren().get(2);
+        ukIpa.setText(word.getUkPron());
+        Text usIpa = (Text) usPron.getChildren().get(2);
+        usIpa.setText(word.getUsPron());
+        if (!ukIpa.getText().isEmpty() || !usIpa.getText().isEmpty()) {
+            desPane.getChildren().addAll(ukPron, usPron);
+        }
+
+        // Generate new description
+        for (String line : word.getWordExplain().split("\\r?\\n|\\r")) {
+            char op = line.charAt(0);
+            String content = line.substring(1).trim();
+            switch (op) {
+                case '*': { // Part of speech
+                    String pos = content;
+                    if (pos.contains(",")) pos = pos.substring(0, pos.indexOf(","));
+                    Text posText = new Text(pos);
+                    posText.getStyleClass().add("pos-text");
+                    desPane.getChildren().add(posText);
+
+                    // Set min height of desPane
+                    desPane.setMinHeight(posText.getBoundsInLocal().getMinY() + desView.getHeight());
+
+                    String partOfSpeech = PartOfSpeech.fromString(pos);
+                    if (partOfSpeech == null) break;
+
+                    // Check if pos button already exists
+                    boolean create = true;
+                    for (Node node : posBar.getButtons()) {
+                        if (!(node instanceof Button)) continue;
+                        if (((Button) node).getText().equalsIgnoreCase(partOfSpeech)) {
+                            create = false;
+                            break;
+                        } 
+                    }
+                    if (!create) break;
+
+                    // Create new pos button
+                    Button posButton = new Button(partOfSpeech.toString());
+                    posButton.setOnAction(e -> ensureVisible(desView, posText));
+                    ButtonBar.setButtonData(posButton, ButtonBar.ButtonData.LEFT);
+                    posBar.getButtons().add(posButton);
+
+                    break;
+                }
+                case '-': { // Description
+                    HBox desLine = new HBox();
+                    desLine.getStyleClass().add("des-line");
+                    desPane.getChildren().add(desLine);
+
+                    SVGPath desIcon = new SVGPath();
+                    desIcon.setContent(DES_ICON);
+                    desIcon.getStyleClass().add("des-icon");
+                    desLine.getChildren().add(desIcon);
+
+                    content = content.replaceAll("_", " ");
+                    Text desText = new Text(content);
+                    desText.getStyleClass().add("des-text");
+                    desLine.getChildren().add(desText);
+
+                    break;
+                }
+                case '>': { // English example
+                    HBox engLine = engExample(content);
+                    desPane.getChildren().addAll(engLine);
+                    break;
+                }
+                case '=': { // Vietnamese example
+                    Text vie = vieExample(content);
+                    desPane.getChildren().addAll(vie);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void ensureVisible(ScrollPane scrollPane, Node node) {
+        double h = scrollPane.getContent().getBoundsInLocal().getHeight();
+        double y = node.getBoundsInParent().getMinY();
+        double v = scrollPane.getViewportBounds().getHeight();
+        scrollPane.setVvalue(scrollPane.getVmax() * ((y - DESPANE_TOP_PADDING) / (h - v)));
+    }
+
+    private static Text vieExample(String text) {
+        Text vie = new Text(text);
+        vie.getStyleClass().add("vie-text");
+        VBox.setMargin(vie, new javafx.geometry.Insets(0, 0, 0, 15));
+        return vie;
+    }
+
+    private HBox engExample(String engText) {
+        HBox engLine = new HBox();
+        engLine.getStyleClass().add("eng-line");
+        VBox.setMargin(engLine, new javafx.geometry.Insets(0, 0, 0, 15));
+
+        for (String text : engText.split(" ")) {
+            Node engWord = textToLink(text, dictionary, owner);
+            engWord.getStyleClass().add("eng-text");
+            engLine.getChildren().add(engWord);
+        }
+
+        return engLine;
+    }
+
+    private static final String[] splitWordRegex = {"\\W&&[^'-]", "\\W&&[^'-]|'\\w", "\\W&&[^-]"};
+    public static Node textToLink(String text, Dictionary dictionary, Content owner) {
+        text = text.replaceAll("_", " ");
+        if (text.isEmpty()) return null;
+
+        String real = null;
+        for (String regex : splitWordRegex) {
+            String tmp = text.replaceAll(regex, "");
+            if (dictionary.have(tmp)) {
+                real = tmp;
+                break;
+            }
+        }
+
+        Node engWord = null;
+        String wordTarget = real;
+        if (wordTarget != null) {
+            Hyperlink wordLink = new Hyperlink(text);
+            wordLink.setOnAction(e -> {
+                Word newWord = dictionary.searchExactly(wordTarget);
+                owner.display(newWord);
+            });
+            engWord = wordLink;
+        } else {
+            Text wordText = new Text(text);
+            engWord = wordText;
+        }
+        return engWord;
+    }
+}
