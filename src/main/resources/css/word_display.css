@@ -1,0 +1,6 @@
+.word_target {
+    -fx-font-size: 25px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1A3561;
+    -fx-text-alignment: center;
+}

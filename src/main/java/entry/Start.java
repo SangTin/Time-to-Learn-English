@@ -2,7 +2,6 @@ package entry;
 
 import java.io.IOException;
 
-import gui.Menu;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -60,8 +59,7 @@ public class Start extends Application {
     }
 
     public void graphicalUserInterface() {
-        Menu menu = new Menu();
+        new GraphicalUserInterface();
         primaryStage.close();
-        menu.show();
     }
 }

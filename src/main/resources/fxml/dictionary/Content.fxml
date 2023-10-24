@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import gui.dictionary.content.Description?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.SVGPath?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="530.0" stylesheets="@../../css/dictionary/Content.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane fx:id="toolBar" prefHeight="53.6" prefWidth="530.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Button fx:id="previousWord" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="18.0" styleClass="history-button" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="12.0">
+               <graphic>
+                  <SVGPath content="M6.5 15.6l18.2 0M6.5 15.6l7.8 7.8M6.5 15.6l7.8-7.8" fill="TRANSPARENT" stroke="WHITE" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="3.0" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Back to previous word" />
+               </tooltip></Button>
+            <Button fx:id="nextWord" layoutX="43.0" layoutY="12.0" maxWidth="-Infinity" mnemonicParsing="false" styleClass="history-button" AnchorPane.bottomAnchor="12.0" AnchorPane.topAnchor="12.0">
+               <graphic>
+                  <SVGPath content="M6.5 15.6l18.2 0M16.9 23.4l7.8-7.8M16.9 7.8l7.8 7.8" fill="TRANSPARENT" stroke="WHITE" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="3.0" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Go to next word" />
+               </tooltip></Button>
+            <Button fx:id="closeButton" layoutX="472.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0">
+               <graphic>
+                  <SVGPath content="M17.5 10v-2.5a2.5 2.5 0 0 0-2.5-2.5h-8.75a2.5 2.5 0 0 0-2.5 2.5v15a2.5 2.5 0 0 0 2.5 2.5h8.75a2.5 2.5 0 0 0 2.5-2.5v-2.5M11.25 15h15l-3.75-3.75M22.5 18.75l3.75-3.75" fill="TRANSPARENT" stroke="WHITE" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="3.0" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Back to main menu" />
+               </tooltip></Button>
+         </children></AnchorPane>
+      <TabPane layoutY="61.0" prefHeight="546.0" prefWidth="530.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="25.0" tabMinHeight="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <tabs>
+          <Tab text="ENG - VIET">
+               <content>
+                  <Description fx:id="engViet" />
+               </content></Tab>
+          <Tab text="SYNONYM" />
+        </tabs>
+      </TabPane>
+   </children>
+</fx:root>

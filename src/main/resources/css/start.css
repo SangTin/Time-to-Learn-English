@@ -1,0 +1,22 @@
+.button {
+    -fx-alignment: center;
+    -fx-background-color: #6ccff7;
+    -fx-border-radius: 4px;
+    -fx-border-width: 0;
+    -fx-text-fill: #36395A;
+    -fx-cursor: pointer;
+    -fx-font-family: "JetBrains Mono", monospace;
+    -fx-content-display: center;
+    -fx-line-spacing: 1;
+    -fx-padding: 0 16px 0 16px;
+    -fx-font-size: 18px;
+}
+
+.button:hover {
+    -fx-translate-y: -3px;
+}
+  
+.button:pressed {
+    -fx-effect: innershadow(gaussian, #0076a3, 7px, 0, 0, -3px);
+    -fx-translate-y: 3px;
+}
