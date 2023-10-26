@@ -14,6 +14,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import gui.LoadingProgressBar;
+import javafx.concurrent.Task;
+
 public class SQLiteDatabase {
     private static final String PATH = "data/database/";
     private Connection conn;
@@ -68,7 +71,7 @@ public class SQLiteDatabase {
     private void createTables() {
         String wordsTable = """
             CREATE TABLE IF NOT EXISTS words(
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 word_target TEXT
             );
         """;
@@ -82,18 +85,31 @@ public class SQLiteDatabase {
                 FOREIGN KEY (id) REFERENCES words(id) ON DELETE CASCADE
             );     
         """;
+        String synMeaningTable = """
+            CREATE TABLE IF NOT EXISTS syn_meanings(
+                meaning_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                word_id INTEGER NOT NULL,
+                meaning TEXT,
+
+                FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
+            );    
+        """;
         String synonymTable = """                
             CREATE TABLE IF NOT EXISTS synonyms(
+                priority INTEGER NOT NULL DEFAULT 1,
+                relation_id INTEGER NOT NULL,
                 word_id INTEGER NOT NULL,
                 synonym_id INTEGER NOT NULL,
                 
                 FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,
-                FOREIGN KEY (synonym_id) REFERENCES words(id) ON DELETE CASCADE
+                FOREIGN KEY (synonym_id) REFERENCES words(id) ON DELETE CASCADE,
+                FOREIGN KEY (relation_id) REFERENCES syn_meanings(meaning_id) ON DELETE CASCADE
             );
         """;
         try (Statement stmt = conn.createStatement();) {
             stmt.addBatch(wordsTable);
             stmt.addBatch(meaningsTable);
+            stmt.addBatch(synMeaningTable);
             stmt.addBatch(synonymTable);
             stmt.executeBatch();
         } catch (SQLException e) {
@@ -195,6 +211,9 @@ public class SQLiteDatabase {
         }
     }
 
+    public void insertSynonym() {
+        
+    }
 
     /**
      * Import data from the database
@@ -207,62 +226,46 @@ public class SQLiteDatabase {
         }
         
         ArrayList<Word> words = new ArrayList<Word>();
-        Thread thread = new ImportDataThread(conn, words);
-        try {
-            thread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return words;
-    }
 
-    private static class ImportDataThread extends Thread {
-        private Connection conn;
-        private ArrayList<Word> words;
+        Task<Void> loadData = new Task<>() {
+            @Override public Void call() {
+                String sqlSelect = """
+                    SELECT wt.id, wt.word_target, we.word_explain, we.ipa_uk, we.ipa_us
+                    FROM words wt
+                    JOIN meanings we ON wt.id = we.id;
+                """;
+                String sqlCount = "SELECT COUNT(*) FROM words";
+                try (Statement stmt = conn.createStatement()){
+                    ResultSet rs = stmt.executeQuery(sqlCount);
+                    int count = rs.getInt(1);
+                    LoadingProgressBar.addTotalProgress(count);
 
-        public ImportDataThread(Connection conn, ArrayList<Word> words) {
-            this.conn = conn;
-            this.words = words;
-        }
+                    rs = stmt.executeQuery(sqlSelect);
+                    // loop through the result set
+                    while (rs.next()) {
+                        Word word = new Word();
+                        word.setId(rs.getInt("id"));
+                        word.setWordTarget(rs.getString("word_target"));
+                        word.setWordExplain(rs.getString("word_explain"));
+                        word.setUkPron(rs.getString("ipa_uk"));
+                        word.setUsPron(rs.getString("ipa_us"));
+                        words.add(word);
 
-        @Override
-        public void run() {
-            String sqlSelect = """
-                SELECT wt.id, wt.word_target, we.word_explain, we.ipa_uk, we.ipa_us
-                FROM words wt
-                JOIN meanings we ON wt.id = we.id;
-            """;
-            String sqlCount = "SELECT COUNT(*) FROM words";
-            try (Statement stmt = conn.createStatement()){
-                ResultSet rs = stmt.executeQuery(sqlCount);
-                int count = rs.getInt(1);
-                // ProgressBar loadingProgressBar = (ProgressBar) GraphicalDictionary.getLoadingProgressBar();
-                // loadingProgressBar.setProgress(0);
-                // loadingProgressBar.setVisible(true);
-
-                rs = stmt.executeQuery(sqlSelect);
-                // loop through the result set
-                while (rs.next()) {
-                    Word word = new Word();
-                    word.setId(rs.getInt("id"));
-                    word.setWordTarget(rs.getString("word_target"));
-                    word.setWordExplain(rs.getString("word_explain"));
-                    word.setUkPron(rs.getString("ipa_uk"));
-                    word.setUsPron(rs.getString("ipa_us"));
-                    words.add(word);
-
-                    // loadingProgressBar.setProgress((double) rs.getRow() / count);
+                        LoadingProgressBar.addCurrentProgress(1);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
-
-                // loadingProgressBar.setVisible(false);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+                
+                Collections.sort(words, (Word a, Word b) -> {
+                    return a.getWordTarget().compareToIgnoreCase(b.getWordTarget());
+                });
+                return null;
             }
-            
-            Collections.sort(this.words, (Word a, Word b) -> {
-                  return a.getWordTarget().compareToIgnoreCase(b.getWordTarget());
-            });
-        }
+        };
+        new Thread(loadData).start();
+
+        return words;
     }
 
     /**
