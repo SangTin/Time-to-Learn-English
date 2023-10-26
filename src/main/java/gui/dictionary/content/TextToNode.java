@@ -10,24 +10,24 @@ import javafx.scene.text.Text;
 public class TextToNode {
     private static final String[] splitWordRegex = {"", "(?=\\W)[^'-]", "(?=\\W)[^'-]|'(.*)", "(?=\\W)[^-]", "(?=\\W)[^-](.*)"};
     
-    public static Node textToLink(String text, Dictionary dictionary, Content owner) {
-        if (text == null) return null;
-
+    public static String extractWord(String text, Dictionary dictionary) {
         text = text.replaceAll("_|\\s", " ");
         if (text.isEmpty()) return null;
 
-        String real = null;
         for (String regex : splitWordRegex) {
             String tmp = text.replaceAll(regex, "");
             if (dictionary.have(tmp)) {
-                real = tmp;
-                break;
+                return tmp;
             }
         }
+        return null;
+    }
 
+    public static Node textToLink(String text, Dictionary dictionary, Content owner) {
+        if (text == null) return null;
 
         Node engWord = null;
-        String wordTarget = real;
+        String wordTarget = extractWord(text, dictionary);
         if (wordTarget != null) {
             Hyperlink wordLink = new Hyperlink(text);
             wordLink.setOnAction(e -> {
