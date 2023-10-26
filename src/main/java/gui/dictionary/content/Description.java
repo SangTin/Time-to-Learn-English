@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -39,6 +38,10 @@ public class Description extends AnchorPane {
             text = text.toLowerCase();
             for (PartOfSpeech pos : PartOfSpeech.values()) {
                 if (text.contains(pos.text)) return pos.text;
+            }
+            for (PartOfSpeech pos : PartOfSpeech.values()) {
+                String posName = pos.name().toLowerCase();
+                if (text.contains(posName)) return posName;
             }
             return null;
         }
@@ -98,6 +101,7 @@ public class Description extends AnchorPane {
 
     public void setWord(Word word) {
         // Clear
+        desView.setVvalue(0);
         desPane.getChildren().clear();
         posBar.getButtons().clear();
 
@@ -134,9 +138,6 @@ public class Description extends AnchorPane {
                     Text posText = new Text(pos);
                     posText.getStyleClass().add("pos-text");
                     desPane.getChildren().add(posText);
-
-                    // Set min height of desPane
-                    desPane.setMinHeight(posText.getBoundsInLocal().getMinY() + desView.getHeight());
 
                     String partOfSpeech = PartOfSpeech.fromString(pos);
                     if (partOfSpeech == null) break;
@@ -211,41 +212,11 @@ public class Description extends AnchorPane {
         VBox.setMargin(engLine, new javafx.geometry.Insets(0, 0, 0, 15));
 
         for (String text : engText.split(" ")) {
-            Node engWord = textToLink(text, dictionary, owner);
+            Node engWord = TextToNode.textToLink(text, dictionary, owner);
             engWord.getStyleClass().add("eng-text");
             engLine.getChildren().add(engWord);
         }
 
         return engLine;
-    }
-
-    private static final String[] splitWordRegex = {"\\W&&[^'-]", "\\W&&[^'-]|'\\w", "\\W&&[^-]"};
-    public static Node textToLink(String text, Dictionary dictionary, Content owner) {
-        text = text.replaceAll("_", " ");
-        if (text.isEmpty()) return null;
-
-        String real = null;
-        for (String regex : splitWordRegex) {
-            String tmp = text.replaceAll(regex, "");
-            if (dictionary.have(tmp)) {
-                real = tmp;
-                break;
-            }
-        }
-
-        Node engWord = null;
-        String wordTarget = real;
-        if (wordTarget != null) {
-            Hyperlink wordLink = new Hyperlink(text);
-            wordLink.setOnAction(e -> {
-                Word newWord = dictionary.searchExactly(wordTarget);
-                owner.display(newWord);
-            });
-            engWord = wordLink;
-        } else {
-            Text wordText = new Text(text);
-            engWord = wordText;
-        }
-        return engWord;
     }
 }
