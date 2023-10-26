@@ -2,6 +2,7 @@ package gui.dictionary.content;
 
 import data.Dictionary;
 import data.Word;
+import data.enums.PartOfSpeech;
 import gui.dictionary.Content;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -9,7 +10,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -23,31 +23,6 @@ public class Description extends AnchorPane {
     private static final String DES_ICON = "M4 9h8v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z";
     private static final double DESPANE_TOP_PADDING = 10;
     private static final double TOOLBAR_HEIGHT = 40;
-    private static enum PartOfSpeech {
-        NOUN("danh từ"), VERB("động từ"), 
-        ADJECTIVE("tính từ"), ADVERB("phó từ"), 
-        PREPOSITION("giới từ"), CONJUNCTION("liên từ"), 
-        INTERJECTION("thán từ"), ARTICLE("mạo từ");
-
-        private final String text;
-
-        PartOfSpeech(String text) {
-            this.text = text;
-        }
-
-        static String fromString(String text) {
-            text = text.toLowerCase();
-            for (PartOfSpeech pos : PartOfSpeech.values()) {
-                if (text.contains(pos.text)) return pos.text;
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return text;
-        }
-    }
 
     @FXML private ButtonBar posBar;
     @FXML private ScrollPane desView;
@@ -98,6 +73,7 @@ public class Description extends AnchorPane {
 
     public void setWord(Word word) {
         // Clear
+        desView.setVvalue(0);
         desPane.getChildren().clear();
         posBar.getButtons().clear();
 
@@ -134,9 +110,6 @@ public class Description extends AnchorPane {
                     Text posText = new Text(pos);
                     posText.getStyleClass().add("pos-text");
                     desPane.getChildren().add(posText);
-
-                    // Set min height of desPane
-                    desPane.setMinHeight(posText.getBoundsInLocal().getMinY() + desView.getHeight());
 
                     String partOfSpeech = PartOfSpeech.fromString(pos);
                     if (partOfSpeech == null) break;
@@ -211,41 +184,11 @@ public class Description extends AnchorPane {
         VBox.setMargin(engLine, new javafx.geometry.Insets(0, 0, 0, 15));
 
         for (String text : engText.split(" ")) {
-            Node engWord = textToLink(text, dictionary, owner);
+            Node engWord = TextToNode.textToLink(text, dictionary, owner);
             engWord.getStyleClass().add("eng-text");
             engLine.getChildren().add(engWord);
         }
 
         return engLine;
-    }
-
-    private static final String[] splitWordRegex = {"\\W&&[^'-]", "\\W&&[^'-]|'\\w", "\\W&&[^-]"};
-    public static Node textToLink(String text, Dictionary dictionary, Content owner) {
-        text = text.replaceAll("_", " ");
-        if (text.isEmpty()) return null;
-
-        String real = null;
-        for (String regex : splitWordRegex) {
-            String tmp = text.replaceAll(regex, "");
-            if (dictionary.have(tmp)) {
-                real = tmp;
-                break;
-            }
-        }
-
-        Node engWord = null;
-        String wordTarget = real;
-        if (wordTarget != null) {
-            Hyperlink wordLink = new Hyperlink(text);
-            wordLink.setOnAction(e -> {
-                Word newWord = dictionary.searchExactly(wordTarget);
-                owner.display(newWord);
-            });
-            engWord = wordLink;
-        } else {
-            Text wordText = new Text(text);
-            engWord = wordText;
-        }
-        return engWord;
     }
 }

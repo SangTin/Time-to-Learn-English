@@ -6,12 +6,9 @@ import gui.dictionary.Content;
 import gui.dictionary.SearchMenu;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 
 public class GraphicalDictionary {
-    private static ProgressBar loadingProgressBar = new ProgressBar();
-
     private LinkedStage owner;
     private Scene scene;
 
@@ -21,10 +18,6 @@ public class GraphicalDictionary {
     private SearchMenu searchMenu;
     private Content content;
     private AnchorPane mainPane;
-    
-    public static ProgressBar getLoadingProgressBar() {
-        return loadingProgressBar;
-    }
 
     public GraphicalDictionary(LinkedStage owner) {
         this.owner = owner;
@@ -40,19 +33,13 @@ public class GraphicalDictionary {
             
             //Add CSS and effects
             scene.getStylesheets().add(getClass().getResource("/css/dictionary.css").toExternalForm());
-            show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void initialize() {
-        loadingProgressBar.setPrefWidth(100);
-        loadingProgressBar.setPrefHeight(10);
-        AnchorPane.setBottomAnchor(loadingProgressBar, 5.0);
-        AnchorPane.setRightAnchor(loadingProgressBar, 5.0);
-
-        mainPane.getChildren().add(loadingProgressBar);
+        mainPane.getChildren().add(LoadingProgressBar.getLoadingProgressBar());
 
         database = new SQLiteDatabase("dictionary.db");
         dictionary = new Dictionary(database.importFromDatabase());

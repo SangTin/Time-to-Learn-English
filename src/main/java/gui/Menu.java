@@ -2,6 +2,7 @@ package gui;
 
 import java.util.Optional;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -47,10 +48,14 @@ public class Menu extends LinkedStage {
 
         Button dictionaryButton = (Button) mainScene.lookup("#dictionaryButton");
         dictionaryButton.setOnAction(e -> {
-            if (graphicalDictionary == null) {
-                graphicalDictionary = new GraphicalDictionary(this);
-            } else {
-                graphicalDictionary.show();
+            graphicalDictionary.show();
+        });
+
+        // Load all the data in the background
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                graphicalDictionary = new GraphicalDictionary(Menu.this);
             }
         });
     }
