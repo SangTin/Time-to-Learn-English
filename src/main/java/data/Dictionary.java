@@ -36,6 +36,8 @@ public class Dictionary {
                               return ((Word) o1).compareTo((Word) o2);
                         } else if (o2 instanceof String) {
                               return ((Word) o1).compareTo((String) o2);
+                        } else if (o2 instanceof Integer) {
+                              return ((Word) o1).compareTo((Integer) o2);
                         }
                   }
                   throw new IllegalArgumentException("Cannot compare " + 
@@ -72,6 +74,19 @@ public class Dictionary {
 
             normalizeWord(newWord);
             int index = getLowerBound(newWord);
+            if(index >= 0) {
+                  words.remove(index);
+                  return true;
+            }
+            return false;
+      }
+
+      public boolean remove(Integer id) {
+            if (id == null) {
+                  return false;
+            }
+
+            int index = getLowerBound(id);
             if(index >= 0) {
                   words.remove(index);
                   return true;
@@ -119,6 +134,18 @@ public class Dictionary {
 
             normalizeWord(newString);
             int index = getLowerBound(newString);
+            if(index >= 0) {
+                  return words.get(index);
+            }
+            return null;
+      }
+
+      public Word searchExactly(Integer id) {
+            if (id == null) {
+                  return null;
+            }
+
+            int index = getLowerBound(id);
             if(index >= 0) {
                   return words.get(index);
             }
