@@ -14,9 +14,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import gui.GraphicalDictionary;
-import javafx.scene.control.ProgressBar;
-
 public class SQLiteDatabase {
     private static final String PATH = "data/database/";
     private Connection conn;
@@ -50,13 +47,18 @@ public class SQLiteDatabase {
      * @return the Connection object
      */
     private Connection connect(String dbName) {
-        // SQLite connection string
-        String url = "jdbc:sqlite:" + PATH + dbName;
         if (conn != null) {
             return conn;
         }
+
+        // SQLite connection string
+        String url = "jdbc:sqlite:" + PATH + dbName;
+        // Enable foreign key constraint
+        String sql = "PRAGMA foreign_keys = ON";
         try {
             conn = DriverManager.getConnection(url);
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -134,7 +136,7 @@ public class SQLiteDatabase {
         }
 
         sql = """
-            INSERT INTO words(id, word_explain, ipa_uk, ipa_us) VALUES(?,?,?,?) 
+            INSERT INTO meanings(id, word_explain, ipa_uk, ipa_us) VALUES(?,?,?,?) 
             ON CONFLICT(id) 
             DO UPDATE SET word_explain = excluded.word_explain, ipa_uk = excluded.ipa_uk, ipa_us = excluded.ipa_us;
         """;
@@ -166,6 +168,7 @@ public class SQLiteDatabase {
 
     /**
      * Insert a new row into the table
+     * New row will replace the old row if the id is duplicated
      * 
      * @param tableName
      * @param word
@@ -175,6 +178,7 @@ public class SQLiteDatabase {
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, word.getId());
             pstmt.setString(2, word.getWordTarget());
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -185,6 +189,7 @@ public class SQLiteDatabase {
             pstmt.setString(2, word.getWordExplain());
             pstmt.setString(3, word.getUkPron());
             pstmt.setString(4, word.getUsPron());
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -231,9 +236,9 @@ public class SQLiteDatabase {
             try (Statement stmt = conn.createStatement()){
                 ResultSet rs = stmt.executeQuery(sqlCount);
                 int count = rs.getInt(1);
-                ProgressBar loadingProgressBar = (ProgressBar) GraphicalDictionary.getLoadingProgressBar();
-                loadingProgressBar.setProgress(0);
-                loadingProgressBar.setVisible(true);
+                // ProgressBar loadingProgressBar = (ProgressBar) GraphicalDictionary.getLoadingProgressBar();
+                // loadingProgressBar.setProgress(0);
+                // loadingProgressBar.setVisible(true);
 
                 rs = stmt.executeQuery(sqlSelect);
                 // loop through the result set
@@ -246,10 +251,10 @@ public class SQLiteDatabase {
                     word.setUsPron(rs.getString("ipa_us"));
                     words.add(word);
 
-                    loadingProgressBar.setProgress((double) rs.getRow() / count);
+                    // loadingProgressBar.setProgress((double) rs.getRow() / count);
                 }
 
-                loadingProgressBar.setVisible(false);
+                // loadingProgressBar.setVisible(false);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -296,4 +301,17 @@ public class SQLiteDatabase {
         return newDatabase;
     }
 
+    public static void main(String[] args) throws InterruptedException {
+        SQLiteDatabase database1 = new SQLiteDatabase("test.db");
+        database1.deleteAll("words");
+        // SQLiteDatabase database2 = new SQLiteDatabase("test.db");
+        // Word word1 = new Word("Hello", "Xin chao", "IPA", "IPA");
+        // Word word2 = new Word("Goodbye", "Tam biet", "IPA", "IPA");
+        // database1.insertWord(word1);
+        // database2.insertWord(word2);
+        // List<Word> words = database1.importFromDatabase();
+        // Thread.sleep(1000);
+        // System.out.println(words);
+        // System.out.println(database2.importFromDatabase());
+    }
 }
