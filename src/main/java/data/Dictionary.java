@@ -43,11 +43,19 @@ public class Dictionary {
             }
       }
 
+      private String normalizeWord(String word) {
+            return word.trim().replaceAll("_", " ");
+      }
+
       public int getLowerBound(Object o) {
             return Collections.binarySearch(words, o, wordTargetCompartor);
       }
 
       public boolean insert(Word newWord) {
+            if (newWord == null) {
+                  return false;
+            }
+            
             int index = getLowerBound(newWord);
             if (index < 0) {
                   index = -(index + 1);
@@ -58,6 +66,11 @@ public class Dictionary {
       }
 
       public boolean remove(String newWord) {
+            if (newWord == null || newWord.isEmpty()) {
+                  return false;
+            }
+
+            normalizeWord(newWord);
             int index = getLowerBound(newWord);
             if(index >= 0) {
                   words.remove(index);
@@ -67,6 +80,11 @@ public class Dictionary {
       }
 
       public Word[] search(String newString) {
+            if (newString == null || newString.isEmpty()) {
+                  return null;
+            }
+
+            normalizeWord(newString);
             int start = getLowerBound(newString);
             if (start < 0)
                 start = -(start + 1);
@@ -82,6 +100,10 @@ public class Dictionary {
       }
 
       public boolean fix(Word newWord) {
+            if (newWord == null) {
+                  return false;
+            }
+            
             int index = getLowerBound(newWord.getWordTarget());
             if(index >= 0) {
                   words.set(index, newWord);
@@ -91,6 +113,11 @@ public class Dictionary {
       }
 
       public Word searchExactly(String newString) {
+            if (newString == null || newString.isEmpty()) {
+                  return null;
+            }
+
+            normalizeWord(newString);
             int index = getLowerBound(newString);
             if(index >= 0) {
                   return words.get(index);
@@ -99,6 +126,11 @@ public class Dictionary {
       }
 
       public boolean have(String newString) {
+            if (newString == null || newString.isEmpty()) { 
+                  return false;
+            }
+
+            normalizeWord(newString);
             int index = getLowerBound(newString);
             return index >= 0;
       }
