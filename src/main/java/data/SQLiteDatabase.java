@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import data.enums.ThesaurusType;
+import exception.sqliteDatabase.InvalidQueryException;
 import gui.LoadingProgressBar;
 import javafx.concurrent.Task;
 
@@ -68,6 +70,10 @@ public class SQLiteDatabase {
         return conn;
     }
 
+    /**
+     * Create tables if they do not exist
+     * Tables: words, meanings, synonym_meanings, synonyms, anto_meanings, antonyms
+     */
     private void createTables() {
         String wordsTable = """
             CREATE TABLE IF NOT EXISTS words(
@@ -85,32 +91,35 @@ public class SQLiteDatabase {
                 FOREIGN KEY (id) REFERENCES words(id) ON DELETE CASCADE
             );     
         """;
-        String synMeaningTable = """
-            CREATE TABLE IF NOT EXISTS syn_meanings(
+        String thesaurusMeaningTable = """
+            CREATE TABLE IF NOT EXISTS %1$s_meanings(
                 meaning_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 word_id INTEGER NOT NULL,
+                part_of_speech TEXT(20),
                 meaning TEXT,
 
                 FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
             );    
         """;
-        String synonymTable = """                
-            CREATE TABLE IF NOT EXISTS synonyms(
+        String thesaurusTable = """                
+            CREATE TABLE IF NOT EXISTS %1$ss(
                 priority INTEGER NOT NULL DEFAULT 1,
                 relation_id INTEGER NOT NULL,
                 word_id INTEGER NOT NULL,
-                synonym_id INTEGER NOT NULL,
+                %1$s_id INTEGER NOT NULL,
                 
                 FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,
-                FOREIGN KEY (synonym_id) REFERENCES words(id) ON DELETE CASCADE,
-                FOREIGN KEY (relation_id) REFERENCES syn_meanings(meaning_id) ON DELETE CASCADE
+                FOREIGN KEY (%1$s_id) REFERENCES words(id) ON DELETE CASCADE,
+                FOREIGN KEY (relation_id) REFERENCES %1$s_meanings(meaning_id) ON DELETE CASCADE
             );
         """;
         try (Statement stmt = conn.createStatement();) {
             stmt.addBatch(wordsTable);
             stmt.addBatch(meaningsTable);
-            stmt.addBatch(synMeaningTable);
-            stmt.addBatch(synonymTable);
+            for (ThesaurusType type : ThesaurusType.values()) {
+                stmt.addBatch(String.format(thesaurusMeaningTable, type.toString()));
+                stmt.addBatch(String.format(thesaurusTable, type.toString()));
+            }
             stmt.executeBatch();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -140,27 +149,24 @@ public class SQLiteDatabase {
      */
     public void updateWord(int id, Word word) {
         String sql = """
-            INSERT INTO words(id, word_target) VALUES(?,?) 
-            ON CONFLICT(id) DO UPDATE SET word_target = excluded.word_target;
+            UPDATE words SET word_target = ? WHERE id = ?;
         """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setString(2, word.getWordTarget());
+            pstmt.setString(1, word.getWordTarget());
+            pstmt.setInt(2, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
         sql = """
-            INSERT INTO meanings(id, word_explain, ipa_uk, ipa_us) VALUES(?,?,?,?) 
-            ON CONFLICT(id) 
-            DO UPDATE SET word_explain = excluded.word_explain, ipa_uk = excluded.ipa_uk, ipa_us = excluded.ipa_us;
+            UPDATE meanings SET word_explain = ?, ipa_uk = ?, ipa_us = ? WHERE id = ?;
         """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setString(2, word.getWordExplain());
-            pstmt.setString(3, word.getUkPron());
-            pstmt.setString(4, word.getUsPron());
+            pstmt.setString(1, word.getWordExplain());
+            pstmt.setString(2, word.getUkPron());
+            pstmt.setString(3, word.getUsPron());
+            pstmt.setInt(4, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -184,7 +190,6 @@ public class SQLiteDatabase {
 
     /**
      * Insert a new row into the table
-     * New row will replace the old row if the id is duplicated
      * 
      * @param tableName
      * @param word
@@ -211,8 +216,35 @@ public class SQLiteDatabase {
         }
     }
 
-    public void insertSynonym() {
+    public void insertThesaurus(Word word, Thesaurus thesaurus) throws Exception {
+        if (thesaurus.getType() == null) {
+            throw new InvalidQueryException("Thesaurus type is null");
+        }
+        String type = thesaurus.getType().toString();
+        String sql = "INSERT INTO " + type + "_meanings (word_id, part_of_speech, meaning) VALUES(?,?,?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, word.getId());
+        pstmt.setString(2, thesaurus.getPartOfSpeech().toEnglish());
+        pstmt.setString(3, thesaurus.getDescription());
+        pstmt.executeUpdate();
+
+        sql = "SELECT meaning_id FROM " + type + "_meanings "
+            + String.format("WHERE word_id = %d AND part_of_speech = '%s' AND meaning = '%s'", 
+                word.getId(), thesaurus.getPartOfSpeech().toEnglish(), thesaurus.getDescription());
+        int meaningId = -1;
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        meaningId = rs.getInt("meaning_id");
         
+        sql = "INSERT INTO " + type + "s (relation_id, word_id, " + type + "_id) VALUES(?,?,?)";
+        pstmt = conn.prepareStatement(sql);
+
+        for (Integer synonymId : thesaurus.getMostUsedIds()) {
+            pstmt.setInt(1, meaningId);
+            pstmt.setInt(2, word.getId());
+            pstmt.setInt(3, synonymId);
+            pstmt.executeUpdate();
+        }
     }
 
     /**
@@ -302,19 +334,5 @@ public class SQLiteDatabase {
         }
         SQLiteDatabase newDatabase = new SQLiteDatabase(newDbName);
         return newDatabase;
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        SQLiteDatabase database1 = new SQLiteDatabase("test.db");
-        database1.deleteAll("words");
-        // SQLiteDatabase database2 = new SQLiteDatabase("test.db");
-        // Word word1 = new Word("Hello", "Xin chao", "IPA", "IPA");
-        // Word word2 = new Word("Goodbye", "Tam biet", "IPA", "IPA");
-        // database1.insertWord(word1);
-        // database2.insertWord(word2);
-        // List<Word> words = database1.importFromDatabase();
-        // Thread.sleep(1000);
-        // System.out.println(words);
-        // System.out.println(database2.importFromDatabase());
     }
 }
