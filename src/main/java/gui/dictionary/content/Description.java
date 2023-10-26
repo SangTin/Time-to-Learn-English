@@ -2,6 +2,7 @@ package gui.dictionary.content;
 
 import data.Dictionary;
 import data.Word;
+import data.enums.PartOfSpeech;
 import gui.dictionary.Content;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -22,35 +23,6 @@ public class Description extends AnchorPane {
     private static final String DES_ICON = "M4 9h8v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z";
     private static final double DESPANE_TOP_PADDING = 10;
     private static final double TOOLBAR_HEIGHT = 40;
-    private static enum PartOfSpeech {
-        NOUN("danh từ"), VERB("động từ"), 
-        ADJECTIVE("tính từ"), ADVERB("phó từ"), 
-        PREPOSITION("giới từ"), CONJUNCTION("liên từ"), 
-        INTERJECTION("thán từ"), ARTICLE("mạo từ");
-
-        private final String text;
-
-        PartOfSpeech(String text) {
-            this.text = text;
-        }
-
-        static String fromString(String text) {
-            text = text.toLowerCase();
-            for (PartOfSpeech pos : PartOfSpeech.values()) {
-                if (text.contains(pos.text)) return pos.text;
-            }
-            for (PartOfSpeech pos : PartOfSpeech.values()) {
-                String posName = pos.name().toLowerCase();
-                if (text.contains(posName)) return posName;
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return text;
-        }
-    }
 
     @FXML private ButtonBar posBar;
     @FXML private ScrollPane desView;

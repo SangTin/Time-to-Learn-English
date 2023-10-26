@@ -3,7 +3,7 @@ package data;
 public class Word implements Comparable<Word> {
     private static int numWord = 0;
 
-    private int id = ++numWord;
+    private Integer id = ++numWord;
     private String wordTarget;
     private String wordExplain;
     private String usPron;
@@ -107,5 +107,9 @@ public class Word implements Comparable<Word> {
 
     public int compareTo(String word) {
         return wordTarget.compareToIgnoreCase(word);
+    }
+
+    public int compareTo(Integer wordId) {
+        return id.compareTo(wordId);
     }
 }
