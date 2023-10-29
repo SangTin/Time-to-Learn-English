@@ -121,8 +121,4 @@ public class Word implements Comparable<Word> {
     public int compareTo(String word) {
         return wordTarget.compareToIgnoreCase(word);
     }
-
-    public int compareTo(Integer wordId) {
-        return id.compareTo(wordId);
-    }
 }

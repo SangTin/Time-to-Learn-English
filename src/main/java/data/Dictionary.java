@@ -40,8 +40,6 @@ public class Dictionary {
                               return ((Word) o1).compareTo((Word) o2);
                         } else if (o2 instanceof String) {
                               return ((Word) o1).compareTo((String) o2);
-                        } else if (o2 instanceof Integer) {
-                              return ((Word) o1).compareTo((Integer) o2);
                         }
                   }
                   throw new IllegalArgumentException("Cannot compare " + 
@@ -80,19 +78,6 @@ public class Dictionary {
             int index = getLowerBound(newWord);
             if (index < 0) {
                   throw new NoSuchWordFoundException(newWord);
-            }
-
-            words.remove(index);
-      }
-
-      public void remove(Integer id) throws EditWordException {
-            if (id == null) {
-                  throw new NoSuchWordFoundException("ID is null");
-            }
-
-            int index = getLowerBound(id);
-            if (index < 0) {
-                  throw new NoSuchWordFoundException(id);
             }
 
             words.remove(index);
@@ -142,19 +127,6 @@ public class Dictionary {
                   throw new NoSuchWordFoundException(newString);
             }
 
-            return words.get(index);
-      }
-
-      public Word searchExactly(Integer id) throws NoSuchWordFoundException {
-            if (id == null) {
-                  throw new NoSuchWordFoundException("ID is null");
-            }
-
-            int index = getLowerBound(id);
-            if (index < 0) {
-                  throw new NoSuchWordFoundException(id);
-            }
-            
             return words.get(index);
       }
 
