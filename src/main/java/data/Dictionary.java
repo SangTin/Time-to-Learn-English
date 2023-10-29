@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import exception.editWord.EditWordException;
+import exception.editWord.ExistingWordException;
+import exception.editWord.NoSuchWordFoundException;
+
 
 public class Dictionary {
       private ArrayList<Word> words;
@@ -36,8 +40,6 @@ public class Dictionary {
                               return ((Word) o1).compareTo((Word) o2);
                         } else if (o2 instanceof String) {
                               return ((Word) o1).compareTo((String) o2);
-                        } else if (o2 instanceof Integer) {
-                              return ((Word) o1).compareTo((Integer) o2);
                         }
                   }
                   throw new IllegalArgumentException("Cannot compare " + 
@@ -53,45 +55,45 @@ public class Dictionary {
             return Collections.binarySearch(words, o, wordTargetCompartor);
       }
 
-      public boolean insert(Word newWord) {
+      public void insert(Word newWord) throws EditWordException {
             if (newWord == null) {
-                  return false;
+                  throw new NoSuchWordFoundException("Word is null");
             }
             
             int index = getLowerBound(newWord);
-            if (index < 0) {
-                  index = -(index + 1);
-                  words.add(index, newWord);
-                  return true;
+            if (index >= 0) {
+                  throw new ExistingWordException(words.get(index));
             }
-            return false;
+
+            index = -(index + 1);
+            words.add(index, newWord);
       }
 
-      public boolean remove(String newWord) {
+      public void remove(String newWord) throws EditWordException {
             if (newWord == null || newWord.isEmpty()) {
-                  return false;
+                  throw new NoSuchWordFoundException("Word is null");
             }
-
+      
             normalizeWord(newWord);
             int index = getLowerBound(newWord);
-            if(index >= 0) {
-                  words.remove(index);
-                  return true;
+            if (index < 0) {
+                  throw new NoSuchWordFoundException(newWord);
             }
-            return false;
+
+            words.remove(index);
       }
 
-      public boolean remove(Integer id) {
-            if (id == null) {
-                  return false;
+      public void fix(Word newWord) throws EditWordException {
+            if (newWord == null) {
+                  throw new NoSuchWordFoundException("Word is null");
+            }
+            
+            int index = getLowerBound(newWord.getWordTarget());
+            if (index < 0) {
+                  throw new NoSuchWordFoundException(newWord.getWordTarget());
             }
 
-            int index = getLowerBound(id);
-            if(index >= 0) {
-                  words.remove(index);
-                  return true;
-            }
-            return false;
+            words.set(index, newWord);
       }
 
       public Word[] search(String newString) {
@@ -114,42 +116,18 @@ public class Dictionary {
             return answer;
       }
 
-      public boolean fix(Word newWord) {
-            if (newWord == null) {
-                  return false;
-            }
-            
-            int index = getLowerBound(newWord.getWordTarget());
-            if(index >= 0) {
-                  words.set(index, newWord);
-                  return true;
-            }
-            return false;
-      }
-
-      public Word searchExactly(String newString) {
+      public Word searchExactly(String newString) throws NoSuchWordFoundException {
             if (newString == null || newString.isEmpty()) {
-                  return null;
+                  throw new NoSuchWordFoundException("Word is null");
             }
 
             normalizeWord(newString);
             int index = getLowerBound(newString);
-            if(index >= 0) {
-                  return words.get(index);
-            }
-            return null;
-      }
-
-      public Word searchExactly(Integer id) {
-            if (id == null) {
-                  return null;
+            if (index < 0) {
+                  throw new NoSuchWordFoundException(newString);
             }
 
-            int index = getLowerBound(id);
-            if(index >= 0) {
-                  return words.get(index);
-            }
-            return null;
+            return words.get(index);
       }
 
       public boolean have(String newString) {
