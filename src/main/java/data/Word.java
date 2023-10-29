@@ -101,6 +101,19 @@ public class Word implements Comparable<Word> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Word)) {
+            return false;
+        }
+        Word word = (Word) obj;
+        return id == word.id
+            && wordTarget.equals(word.wordTarget);
+    }
+
+    @Override
     public int compareTo(Word word) {
         return wordTarget.compareToIgnoreCase(word.getWordTarget());
     }

@@ -2,18 +2,22 @@ package gui.dictionary.content;
 
 import data.Dictionary;
 import data.Word;
+import exception.editWord.NoSuchWordFoundException;
 import gui.dictionary.Content;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
 
 public class TextToNode {
-    private static final String[] splitWordRegex = {"", "(?=\\W)[^'-]", "(?=\\W)[^'-]|'(.*)", "(?=\\W)[^-]", "(?=\\W)[^-](.*)"};
+    private static final String[] splitWordRegex = {"(?=\\W)[^'-]", "(?=\\W)[^'-]|'(.*)", "(?=\\W)[^-]", "(?=\\W)[^-](.*)"};
     
     public static String extractWord(String text, Dictionary dictionary) {
         text = text.replaceAll("_|\\s", " ");
         if (text.isEmpty()) return null;
-
+        if (dictionary.have(text)) {
+            return text;
+        }
+        
         for (String regex : splitWordRegex) {
             String tmp = text.replaceAll(regex, "");
             if (dictionary.have(tmp)) {
@@ -31,8 +35,12 @@ public class TextToNode {
         if (wordTarget != null) {
             Hyperlink wordLink = new Hyperlink(text);
             wordLink.setOnAction(e -> {
-                Word newWord = dictionary.searchExactly(wordTarget);
-                owner.display(newWord);
+                try {
+                    Word newWord = dictionary.searchExactly(wordTarget);
+                    owner.display(newWord);
+                } catch (NoSuchWordFoundException ex) {
+                    System.out.println(ex.getMessage());
+                }
             });
             engWord = wordLink;
         } else {

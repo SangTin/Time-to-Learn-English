@@ -1,5 +1,7 @@
 package data;
 
+import exception.editWord.EditWordException;
+
 public class Changes {
     private Dictionary dictionary;
     private SQLiteDatabase database;
@@ -9,21 +11,18 @@ public class Changes {
         this.database = new SQLiteDatabase(dbName);
     }
 
-    public boolean insert(Word newWord) {
-        if(!dictionary.insert(newWord)) return false;
+    public void insert(Word newWord) throws EditWordException {
+        dictionary.insert(newWord);
         database.insertWord(newWord);
-        return true;
     }
 
-    public boolean remove(Word newWord) {
-        if(!dictionary.remove(newWord.getWordTarget())) return false;
+    public void remove(Word newWord) throws EditWordException {
+        dictionary.remove(newWord.getWordTarget());
         database.deleteWord(newWord.getId());
-        return true;
     }
 
-    public boolean update(Word newWord) {
-        if(!dictionary.fix(newWord)) return false;
+    public void update(Word newWord) throws EditWordException {
+        dictionary.fix(newWord);
         database.updateWord(newWord.getId(), newWord);
-        return true;
     }
 }
