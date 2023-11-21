@@ -29,9 +29,7 @@ public class TrieWord {
     private void insert(TrieNode current, Word word, String target, int index) throws ExistingWordException {
         if (index >= target.length()) {
             if (current.word != null) {
-                System.out.println(word.getWordTarget());
-                System.out.println(current.word.getWordTarget());
-                throw new ExistingWordException(word.getWordTarget());
+                throw new ExistingWordException(word);
             }
             current.word = word;
             ++current.count;
