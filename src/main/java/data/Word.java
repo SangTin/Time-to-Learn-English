@@ -16,7 +16,7 @@ public class Word {
     public Word() {}
     
     public Word(String wordTarget, String wordExplain) {
-        this.wordTarget = wordTarget;
+        this.wordTarget = wordTarget.trim();
         this.wordExplain = wordExplain;
     }
 
@@ -32,17 +32,15 @@ public class Word {
     }
 
     public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
-        this.wordTarget = wordTarget;
-        this.wordExplain = wordExplain;
+        this(wordTarget, wordExplain);
         this.usPron = usPron;
         this.ukPron = ukPron;
     }
 
     public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
+        this(wordTarget, wordExplain);
         this.id = id;
         if (id > numWord) numWord = id;
-        this.wordTarget = wordTarget;
-        this.wordExplain = wordExplain;
         this.usPron = usPron;
         this.ukPron = ukPron;
     }

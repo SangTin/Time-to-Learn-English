@@ -26,13 +26,11 @@ public class TrieWord {
         root = new TrieNode();
     }
 
-    private String normalize(String word) {
-        return word.replaceAll("[\\s||-]", "").toLowerCase();
-    }
-
     private void insert(TrieNode current, Word word, String target, int index) throws ExistingWordException {
         if (index >= target.length()) {
             if (current.word != null) {
+                System.out.println(word.getWordTarget());
+                System.out.println(current.word.getWordTarget());
                 throw new ExistingWordException(word.getWordTarget());
             }
             current.word = word;
@@ -50,7 +48,7 @@ public class TrieWord {
     }
 
     public void insert(Word word) throws ExistingWordException {
-        insert(root, word, normalize(word.getWordTarget()), 0);
+        insert(root, word, word.getWordTarget(), 0);
     }
 
     private void remove(TrieNode current, String word, int index) throws NoSuchWordFoundException {
@@ -75,11 +73,11 @@ public class TrieWord {
     }
 
     public void remove(String word) throws NoSuchWordFoundException {
-        remove(root, normalize(word), 0);
+        remove(root, word.trim(), 0);
     }
 
     private TrieNode searchNode(String word) throws NoSuchWordFoundException {
-        String target = normalize(word);
+        String target = word.trim();
         TrieNode current = root;
         for (int i = 0; i < target.length(); i++) {
             char c = target.charAt(i);
