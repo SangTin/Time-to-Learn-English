@@ -1,23 +1,44 @@
 package data;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import data.enums.PartOfSpeech;
 import data.enums.ThesaurusType;
+import exception.editWord.NoSuchWordFoundException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Thesaurus {
     private final ThesaurusType type;
     private final PartOfSpeech partOfSpeech;
     private final Dictionary dictionary;
-    private final String description;
-
-    private Set<Integer> mostUsed;
-    private Set<Integer> lessUsed;
+    private final String meaning;
+    private final Set<String> mostUsed;
+    private final Set<String> lessUsed;
 
     /**
      * Create a new thesaurus
      * 
+     * @param meaning the meaning of the thesaurus
+     * @param dictionary the dictionary that the thesaurus' words belong to
+     * @param partOfSpeech the part of speech of the thesaurus' words
+     * @param type the type of the thesaurus (synonym or antonym)
+     * 
+     * @see data.enums.PartOfSpeech
+     * @see data.enums.ThesaurusType
+     */
+    public Thesaurus(String meaning, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
+        mostUsed = new HashSet<>();
+        lessUsed = new HashSet<>();
+        this.meaning = meaning;
+        this.dictionary = dictionary;
+        this.partOfSpeech = partOfSpeech;
+        this.type = type;
+    }
+
+    /**
+     * Create a new thesaurus
+     * 
+     * @param meaning the meaning of the thesaurus
      * @param description the description of the thesaurus
      * @param dictionary the dictionary that the thesaurus' words belong to
      * @param partOfSpeech the part of speech of the thesaurus' words
@@ -26,45 +47,19 @@ public class Thesaurus {
      * @see data.enums.PartOfSpeech
      * @see data.enums.ThesaurusType
      */
-    public Thesaurus(String description, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
-        mostUsed = new HashSet<>();
-        lessUsed = new HashSet<>();
-        this.description = description;
-        this.dictionary = dictionary;
-        this.partOfSpeech = partOfSpeech;
-        this.type = type;
-    }
-
-    /**
-     * Add a word to mostUsed set by id
-     * This method is recommended
-     * 
-     * @param id the id of the word to add
-     */
-    public void addMostUsedById(int id) {
-        mostUsed.add(id);
+    public Thesaurus(String meaning, String description, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
+        this(meaning, dictionary, partOfSpeech, type);
     }
 
     /** 
      * Add a word to mostUsed set by word
-     * This method is slower than using id
-     * 
-     * @param word the word to add
-     * @see addMostUsedById
-     */
-    public void addMostUsedByWord(String word) {
-        Word w = dictionary.searchExactly(word);
-        mostUsed.add(w.getId());
-    }
-
-    /**
-     * Add a word to lessUsed set by id
      * This method is recommended
      * 
-     * @param id the id of the word to add
+     * @param word the word to add
      */
-    public void addLessUsedById(int id) {
-        lessUsed.add(id);        
+    public void addMostUsedByWord(String word) throws NoSuchWordFoundException {
+        dictionary.searchExactly(word);
+        mostUsed.add(word);
     }
 
     /**
@@ -72,58 +67,57 @@ public class Thesaurus {
      * This method is slower than using id
      * 
      * @param word the word to add
-     * @see addLessUsedById
      */
-    public void addLessUsedByWord(String word) {
-        Word w = dictionary.searchExactly(word);
-        lessUsed.add(w.getId());
+    public void addLessUsedByWord(String word) throws NoSuchWordFoundException {
+        dictionary.searchExactly(word);
+        lessUsed.add(word);
+    }
+
+    /**
+     * Get a set of most used words' id
+     */
+    public Set<Integer> getMostUsedIds() {
+        return getIds(mostUsed);
+    }
+
+    /**
+     * Get a set of less used words' id
+     */
+    public Set<Integer> getLessUsedIds() {
+        return getIds(lessUsed);
+    }
+
+    private Set<Integer> getIds(Set<String> words) {
+        Set<Integer> ids = new HashSet<>();
+        for (String word : lessUsed) {
+            Word w;
+            try {
+                w = dictionary.searchExactly(word);
+            } catch (NoSuchWordFoundException e) {
+                continue;
+            }
+            ids.add(w.getId());
+        }
+        return ids;
     }
 
     /**
      * Get a set of most used words
      * This set contains words' target
-     * 
+     *
      * @return a set of most used words
      */
     public Set<String> getMostUsedWords() {
-        Set<String> words = new HashSet<>();
-        for (Integer id : mostUsed) {
-            words.add(dictionary.searchExactly(id).getWordTarget());
-        }
-        return words;
-    }
-
-    /**
-     * Get a set of less used words
-     * This set contains words' target
-     * 
-     * @return a set of less used words
-     */
-    public Set<String> getLessUsedWords() {
-        Set<String> words = new HashSet<>();
-        for (Integer id : lessUsed) {
-            words.add(dictionary.searchExactly(id).getWordTarget());
-        }
-        return words;
-    }
-
-    /**
-     * Get a set of most used words
-     * This set contains words' id
-     * 
-     * @return a set of most used words
-     */
-    public Set<Integer> getMostUsedIds() {
         return mostUsed;
     }
 
     /**
      * Get a set of less used words
-     * This set contains words' id
-     * 
+     * This set contains words' target
+     *
      * @return a set of less used words
      */
-    public Set<Integer> getLessUsedIds() {
+    public Set<String> getLessUsedWords() {
         return lessUsed;
     }
 
@@ -138,12 +132,12 @@ public class Thesaurus {
     }
 
     /**
-     * Get the description of the thesaurus
+     * Get the meaning of the thesaurus
      * 
-     * @return the description of the thesaurus
+     * @return the meaning of the thesaurus
      */
-    public String getDescription() {
-        return description;
+    public String getMeaning() {
+        return meaning;
     }
 
     /**

@@ -1,6 +1,8 @@
 package data;
 
-public class Word implements Comparable<Word> {
+import java.util.ArrayList;
+
+public class Word {
     private static int numWord = 0;
 
     private Integer id = ++numWord;
@@ -8,53 +10,64 @@ public class Word implements Comparable<Word> {
     private String wordExplain;
     private String usPron;
     private String ukPron;
+    private ArrayList<Thesaurus> synonyms;
+    private ArrayList<Thesaurus> antonyms;
 
     public Word() {}
     
     public Word(String wordTarget, String wordExplain) {
-        this.wordTarget = wordTarget;
+        this.wordTarget = wordTarget.trim();
         this.wordExplain = wordExplain;
     }
 
     public Word(Word word) {
         this.id = word.getId();
+        if (id > numWord) numWord = id;
         this.wordTarget = word.getWordTarget();
         this.wordExplain = word.getWordExplain();
         this.usPron = word.getUsPron();
         this.ukPron = word.getUkPron();
+        this.synonyms = word.getSynonyms();
+        this.antonyms = word.getAntonyms();
     }
 
     public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
-        this.wordTarget = wordTarget;
-        this.wordExplain = wordExplain;
+        this(wordTarget, wordExplain);
         this.usPron = usPron;
         this.ukPron = ukPron;
     }
 
     public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
+        this(wordTarget, wordExplain);
         this.id = id;
         if (id > numWord) numWord = id;
-        this.wordTarget = wordTarget;
-        this.wordExplain = wordExplain;
         this.usPron = usPron;
         this.ukPron = ukPron;
-    }
-
-    public void setWord(Word word) {
-        this.id = word.getId();
-        this.wordTarget = word.getWordTarget();
-        this.wordExplain = word.getWordExplain();
-        this.usPron = word.getUsPron();
-        this.ukPron = word.getUkPron();
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         if (id > numWord) numWord = id;
         this.id = id;
+    }
+
+    public ArrayList<Thesaurus> getSynonyms() {
+        return synonyms;
+    }
+
+    public void setSynonyms(ArrayList<Thesaurus> synonyms) {
+        this.synonyms = synonyms;
+    }
+
+    public ArrayList<Thesaurus> getAntonyms() {
+        return antonyms;
+    }
+
+    public void setAntonyms(ArrayList<Thesaurus> antonyms) {
+        this.antonyms = antonyms;
     }
 
     public String getWordTarget() {
@@ -105,20 +118,10 @@ public class Word implements Comparable<Word> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Word)) {
+        if (!(obj instanceof Word word)) {
             return false;
         }
-        Word word = (Word) obj;
-        return id == word.id
+        return id.equals(word.id)
             && wordTarget.equals(word.wordTarget);
-    }
-
-    @Override
-    public int compareTo(Word word) {
-        return wordTarget.compareToIgnoreCase(word.getWordTarget());
-    }
-
-    public int compareTo(String word) {
-        return wordTarget.compareToIgnoreCase(word);
     }
 }
