@@ -125,6 +125,16 @@ public class TrieWord {
     }
 
     public Word[] showALl() {
-        return search("");
+        Queue<TrieNode> queue = new java.util.LinkedList<>();
+        ArrayList<Word> list = new ArrayList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TrieNode current = queue.poll();
+            if (current.word != null) {
+                list.add(current.word);
+            }
+            queue.addAll(current.children.values());
+        }
+        return list.toArray(new Word[0]);
     }
 }

@@ -82,4 +82,7 @@ public class Dictionary {
                   return false;
             }
       }
+      public Word[] showALl() {
+            return trieWord.showALl();
+      }
 }
