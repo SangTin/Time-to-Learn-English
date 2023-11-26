@@ -4,15 +4,21 @@ import java.io.IOException;
 
 public class TestAPI {
     static void testTranslate() throws IOException {
+//        String sourceLanguage = "en";
+        String sourceLanguage = "zh";
+
         String targetLanguage = "vi";
-        String text = "It's time to learn English.";
-        String translatedText = TranslateTextAdvanced.translateText(targetLanguage, text);
+
+//        String text = "How are you today?";
+        String text = "你今天过得怎么样？";
+//        String translatedText = TranslateTextAdvanced.translateText(targetLanguage, text);
+        String translatedText = TranslateTextAdvanced.translateText(sourceLanguage, targetLanguage, text);
         System.out.println(translatedText);
     }
 
     static void testTextToSpeech() throws Exception {
-        String path = "src/main/resources/audio/output2.mp3";
-        String text = "you can say something more than that";
+        String path = "src/main/resources/audio/output3.mp3";
+        String text = "Hello, how are you?";
         TextToSpeech.textToSpeech(path, text);
     }
 
@@ -20,8 +26,9 @@ public class TestAPI {
         SpeechToText.Init();
         System.out.println(SpeechToText.streamingMicRecognize());
     }
+
     public static void main(String[] args) throws Exception {
-//        testTranslate();
+        testTranslate();
 //        testTextToSpeech();
 //        testSpeechToText();
     }
