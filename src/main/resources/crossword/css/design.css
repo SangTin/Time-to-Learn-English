@@ -1,0 +1,18 @@
+#Ok {
+    -fx-background-color:  #fff0f5
+}
+#Ok:pressed {
+    -fx-background-color: white; /* Background color when pressed */
+    -fx-effect: innershadow( gaussian , rgb(156, 79, 112) , 10,0,0,0 );
+}
+
+#Next {
+    -fx-background-color:  pink
+}
+
+#End {
+    -fx-background-color:  #fff0f5
+}
+#End:pressed {
+    -fx-effect: innershadow( gaussian , rgb(212, 83, 83) , 10,0,0,0 );
+}
