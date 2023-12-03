@@ -1,0 +1,28 @@
+#background {
+    -fx-background-color:  rgb(245, 236, 219)
+}
+
+#x {
+    -fx-background-color:  rgb(255, 244, 244);
+    -fx-background-radius: 100px; 
+    -fx-border-radius: 100px;
+    -fx-border-width: 10px; 
+    -fx-border-color: rgb(250,194, 194);
+}
+#Next {
+    -fx-text-fill: WHITE;
+    -fx-background-color:  rgb(250,194, 194);
+    -fx-cursor: hand;
+}
+
+
+
+#Ok {
+    -fx-background-color:  transparent;
+    -fx-cursor: hand;
+}
+
+#End {
+    -fx-background-color:  transparent;
+    -fx-cursor: hand;
+}
