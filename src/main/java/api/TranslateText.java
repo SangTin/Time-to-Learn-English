@@ -1,30 +1,50 @@
 package api;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.translate.Translate;
-import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
+// Imports the Google Cloud Translation library.
 
-import java.io.FileInputStream;
+import com.google.cloud.translate.v3.LocationName;
+import com.google.cloud.translate.v3.TranslateTextRequest;
+import com.google.cloud.translate.v3.TranslateTextResponse;
+
 import java.io.IOException;
 
 public class TranslateText {
-    private static final Translate translate;
 
-    static {
-        try {
-            translate = TranslateOptions.newBuilder()
-                    .setCredentials(ServiceAccountCredentials
-                            .fromStream(new FileInputStream("src/main/resources/json/client_secret.json")))
-                    .build().getService();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /**
+     * Translate source text into target language.
+     *
+     * @param sourceLanguage - language that the source text is.
+     * @param targetLanguage - language that the source text is translated into.
+     *                       further information about supported languages: https://cloud.google.com/translate/docs/languages
+     * @param text           - source text needed to be translated.
+     * @return The text after translate to target language.
+     */
+    public static String translateText(String sourceLanguage, String targetLanguage, String text)
+            throws IOException {
 
-    public static String detectText(String text) {
-        Translation translation = translate.translate(text);
-        return translation.getTranslatedText();
+        //Supported location: global.
+        LocationName parent = LocationName.of(CONST.PROJECT_ID, "global");
+
+        //Initialize a request.
+//        TranslateTextRequest request =
+//                TranslateTextRequest.newBuilder()
+//                        .setParent(parent.toString())
+//                        .setMimeType("text/plain")
+//                        .setTargetLanguageCode(targetLanguage)
+//                        .addContents(text)
+//                        .build();
+
+        TranslateTextRequest request =
+                TranslateTextRequest.newBuilder()
+                        .setParent(parent.toString())
+                        .setMimeType("text/plain")
+                        .setSourceLanguageCode(sourceLanguage)
+                        .setTargetLanguageCode(targetLanguage)
+                        .addContents(text)
+                        .build();
+
+        TranslateTextResponse response = CONST.TRANSLATION_SERVICE_CLIENT.translateText(request);
+
+        return response.getTranslationsList().get(0).getTranslatedText();
     }
 }

@@ -1,127 +1,141 @@
 package data;
 
-import java.util.ArrayList;
+import javafx.beans.property.SimpleBooleanProperty;
 
-public class Word {
-    private static int numWord = 0;
+public class Word implements Comparable<Word> {
+   private static int numWord = 0;
+   private int id;
+   private String wordTarget;
+   private String wordExplain;
+   private String usPron;
+   private String ukPron;
+   private SimpleBooleanProperty isFavorite;
 
-    private Integer id = ++numWord;
-    private String wordTarget;
-    private String wordExplain;
-    private String usPron;
-    private String ukPron;
-    private ArrayList<Thesaurus> synonyms;
-    private ArrayList<Thesaurus> antonyms;
+   public Word() {
+      this.id = ++numWord;
+      this.isFavorite = new SimpleBooleanProperty(false);
+   }
 
-    public Word() {}
-    
-    public Word(String wordTarget, String wordExplain) {
-        this.wordTarget = wordTarget.trim();
-        this.wordExplain = wordExplain;
-    }
+   public Word(String wordTarget, String wordExplain) {
+      this.id = ++numWord;
+      this.isFavorite = new SimpleBooleanProperty(false);
+      this.wordTarget = wordTarget.trim();
+      this.wordExplain = wordExplain;
+   }
 
-    public Word(Word word) {
-        this.id = word.getId();
-        if (id > numWord) numWord = id;
-        this.wordTarget = word.getWordTarget();
-        this.wordExplain = word.getWordExplain();
-        this.usPron = word.getUsPron();
-        this.ukPron = word.getUkPron();
-        this.synonyms = word.getSynonyms();
-        this.antonyms = word.getAntonyms();
-    }
+   public Word(Word word) {
+      this.id = word.id;
+      this.wordTarget = word.wordTarget;
+      this.wordExplain = word.wordExplain;
+      this.usPron = word.usPron;
+      this.ukPron = word.ukPron;
+      this.isFavorite = word.isFavorite;
+   }
 
-    public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
-        this(wordTarget, wordExplain);
-        this.usPron = usPron;
-        this.ukPron = ukPron;
-    }
+   public Word(String wordTarget, String wordExplain, String usPron, String ukPron) {
+      this(wordTarget, wordExplain);
+      this.usPron = usPron;
+      this.ukPron = ukPron;
+   }
 
-    public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
-        this(wordTarget, wordExplain);
-        this.id = id;
-        if (id > numWord) numWord = id;
-        this.usPron = usPron;
-        this.ukPron = ukPron;
-    }
+   public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
+      this(wordTarget, wordExplain);
+      this.id = id;
+      if (id > numWord) {
+         numWord = id;
+      }
 
-    public int getId() {
-        return id;
-    }
+      this.usPron = usPron;
+      this.ukPron = ukPron;
+   }
 
-    public void setId(Integer id) {
-        if (id > numWord) numWord = id;
-        this.id = id;
-    }
+   public int getId() {
+      return this.id;
+   }
 
-    public ArrayList<Thesaurus> getSynonyms() {
-        return synonyms;
-    }
+   public void setId(Integer id) {
+      if (id > numWord) {
+         numWord = id;
+      }
 
-    public void setSynonyms(ArrayList<Thesaurus> synonyms) {
-        this.synonyms = synonyms;
-    }
+      this.id = id;
+   }
 
-    public ArrayList<Thesaurus> getAntonyms() {
-        return antonyms;
-    }
+   public void set(Word word) {
+      this.id = word.id;
+      this.wordTarget = word.wordTarget;
+      this.wordExplain = word.wordExplain;
+      this.usPron = word.usPron;
+      this.ukPron = word.ukPron;
+      this.isFavorite = word.isFavorite;
+   }
 
-    public void setAntonyms(ArrayList<Thesaurus> antonyms) {
-        this.antonyms = antonyms;
-    }
+   public String getWordTarget() {
+      return this.wordTarget;
+   }
 
-    public String getWordTarget() {
-        return wordTarget;
-    }
+   public void setWordTarget(String wordTarget) {
+      this.wordTarget = wordTarget;
+   }
 
-    public void setWordTarget(String wordTarget) {
-        this.wordTarget = wordTarget;
-    }
+   public String getWordExplain() {
+      return this.wordExplain;
+   }
 
-    public String getWordExplain() {
-        return wordExplain;
-    }
+   public void setWordExplain(String wordExplain) {
+      this.wordExplain = wordExplain;
+   }
 
-    public void setWordExplain(String wordExplain) {
-        this.wordExplain = wordExplain;
-    }
+   public String getUsPron() {
+      return this.usPron;
+   }
 
-    public String getUsPron() {
-        return usPron;
-    }
+   public void setUsPron(String usPron) {
+      this.usPron = usPron;
+   }
 
-    public void setUsPron(String usPron) {
-        this.usPron = usPron;
-    }
+   public String getUkPron() {
+      return this.ukPron;
+   }
 
-    public String getUkPron() {
-        return ukPron;
-    }
+   public void setUkPron(String ukPron) {
+      this.ukPron = ukPron;
+   }
 
-    public void setUkPron(String ukPron) {
-        this.ukPron = ukPron;
-    }
+   public boolean isFavorite() {
+      return this.isFavorite.get();
+   }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(wordTarget + "\n");
-        if (usPron != null) sb.append("US: " + usPron + "\n");
-        if (ukPron != null) sb.append("UK: " + ukPron + "\n");
-        sb.append(wordExplain);
-        
-        return sb.toString();
-    }
+   public void setFavourite(boolean isFavorite) {
+      this.isFavorite.set(isFavorite);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Word word)) {
-            return false;
-        }
-        return id.equals(word.id)
-            && wordTarget.equals(word.wordTarget);
-    }
+   public SimpleBooleanProperty isFavoriteProperty() {
+      return this.isFavorite;
+   }
+
+   public String toString() {
+      return this.wordTarget;
+   }
+
+   public boolean equals(Object obj) {
+      if (obj == null) {
+         return false;
+      } else if (!(obj instanceof Word word)) {
+         return false;
+      } else {
+         return this.id == word.id
+                 && this.wordTarget.equals(word.wordTarget);
+      }
+   }
+
+   @Override
+   public int compareTo(Word word) {
+     return this.wordTarget.compareToIgnoreCase(word.wordTarget);
+   }
+
+   @Override
+   public int hashCode() {
+      return this.wordTarget.hashCode();
+   }
 }

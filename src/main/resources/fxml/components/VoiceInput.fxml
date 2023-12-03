@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+<?import javafx.stage.Stage?>
+
+<fx:root title="Voice" type="Stage" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <scene>
+        <Scene>
+            <AnchorPane prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: #171717;">
+            <children>
+               <TextArea fx:id="textResult" disable="true" editable="false" focusTraversable="false" layoutX="34.0" layoutY="251.0" prefHeight="70.0" prefWidth="330.0" wrapText="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0">
+                  <font>
+                     <Font size="20.0" />
+                  </font>
+               </TextArea>
+               <Group layoutX="200.0" layoutY="135.0" styleClass="symbol-group">
+                  <children>
+                     <Circle fx:id="soundWave" fill="#8eb7f54d" layoutX="10.0" layoutY="10.0" radius="65.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" />
+                     <Circle fill="#89b4f8" layoutX="10.0" layoutY="10.0" radius="65.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="5.0" />
+                     <SVGPath content="M36 6a9 9 0 0 0-9 9v21a9 9 0 1 0 18 0V15a9 9 0 0 0-9-9zM15 36a3 3 0 1 1 6 0 15 15 0 0 0 30 0 3 3 0 1 1 6 0 21.003 21.003 0 0 1-18 20.79V63a3 3 0 1 1-6 0v-6.21A21.003 21.003 0 0 1 15 36z" layoutX="-26.0" layoutY="-25.0" />
+                  </children>
+               </Group>
+            </children>
+            <stylesheets>
+               <URL value="@../../css/ConstantValues.css" />
+               <URL value="@../../css/components/VoiceInput.css" />
+            </stylesheets></AnchorPane>
+        </Scene>
+    </scene>
+</fx:root>

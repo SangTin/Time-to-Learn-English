@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<fx:root maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../../css/components/search/SearchPane.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane layoutX="10.0" layoutY="10.0" maxWidth="-Infinity" minWidth="0.0" prefHeight="400.0" prefWidth="250.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="65.0" tabMinHeight="65.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <tabs>
+            <Tab>
+               <graphic>
+                  <HBox fx:id="searchBox" alignment="CENTER" styleClass="hbox">
+                     <children>
+                        <SVGPath content="M14.3 7.15C10.351 7.15 7.15 10.351 7.15 14.3 7.15 18.249 10.351 21.45 14.3 21.45 16.275 21.45 18.061 20.652 19.356 19.356 20.652 18.061 21.45 16.275 21.45 14.3 21.45 10.351 18.249 7.15 14.3 7.15ZM4.29 14.3C4.29 8.771 8.771 4.29 14.3 4.29 19.829 4.29 24.31 8.771 24.31 14.3 24.31 16.548 23.568 18.624 22.317 20.294L29.611 27.589C30.169 28.148 30.169 29.052 29.611 29.611 29.052 30.169 28.148 30.169 27.589 29.611L20.294 22.317C18.624 23.568 16.548 24.31 14.3 24.31 8.771 24.31 4.29 19.829 4.29 14.3Z" fill="WHITE" fillRule="EVEN_ODD" />
+                        <Label fx:id="searchSelectionLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Search" textAlignment="CENTER" textFill="WHITE">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Search Word" />
+               </tooltip>
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: -dictionary-pane-color;">
+                     <children>
+                        <HBox alignment="CENTER" styleClass="search-bar">
+                           <children>
+                              <TextField fx:id="searchText" promptText="Search" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="searchBarButton" mnemonicParsing="false" prefHeight="31.0" prefWidth="31.0" styleClass="search-button">
+                                 <graphic>
+                                    <SVGPath fx:id="searchBarIcon" content="M12 2a3 3 0 0 0-3 3v7a3 3 0 1 0 6 0V5a3 3 0 0 0-3-3zM5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0 1 1 0 1 1 2 0 7.001 7.001 0 0 1-6 6.93V21a1 1 0 1 1-2 0v-2.07A7.001 7.001 0 0 1 5 12z" fill="TRANSPARENT" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="0.0" styleClass="icon" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Input from microphone" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <ListView fx:id="searchResult" styleClass="result-list" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab>
+               <graphic>
+                  <HBox alignment="CENTER" styleClass="hbox">
+                     <children>
+                        <SVGPath content="M3.51 6.64V3.51C3.51 2.864 2.986 2.34 2.34 2.34 1.694 2.34 1.17 2.864 1.17 3.51V8.19C1.17 9.482 2.218 10.53 3.51 10.53H8.19C8.836 10.53 9.36 10.006 9.36 9.36 9.36 8.714 8.836 8.19 8.19 8.19H5.291C5.314 8.161 5.337 8.13 5.359 8.099 6.577 6.319 8.319 4.948 10.357 4.186 12.762 3.288 15.413 3.299 17.81 4.219 20.206 5.139 22.185 6.904 23.37 9.181 24.556 11.458 24.868 14.091 24.248 16.582 23.628 19.074 22.118 21.251 20.002 22.707 17.887 24.162 15.313 24.794 12.763 24.482 10.215 24.171 7.869 22.939 6.166 21.016 4.723 19.388 3.827 17.36 3.587 15.217 3.514 14.574 2.991 14.049 2.345 14.05 1.699 14.05 1.165 14.576 1.225 15.219 1.474 17.937 2.583 20.517 4.407 22.575 6.49 24.926 9.361 26.434 12.479 26.815 15.597 27.196 18.746 26.424 21.334 24.643 23.923 22.863 25.77 20.198 26.529 17.15 27.288 14.101 26.906 10.881 25.455 8.095 24.003 5.309 21.584 3.15 18.651 2.024 15.72.9 12.476.885 9.534 1.985 7.092 2.898 4.996 4.527 3.51 6.64ZM14.04 5.85C13.394 5.85 12.87 6.374 12.87 7.02V14.586C12.87 14.586 12.87 14.892 13.018 15.12 13.117 15.315 13.272 15.484 13.476 15.601L18.88 18.723C19.44 19.045 20.155 18.854 20.479 18.294 20.801 17.735 20.61 17.018 20.05 16.696L15.21 13.901V7.02C15.21 6.374 14.686 5.85 14.04 5.85Z" fill="WHITE" fillRule="EVEN_ODD" />
+                        <Label fx:id="historySelectionLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="History" textAlignment="CENTER" textFill="WHITE">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="History" />
+               </tooltip>
+               <content>
+                  <ListView fx:id="historyResult" fixedCellSize="40.0" style="-fx-background-color: -dictionary-pane-color;" styleClass="recent-search" />
+               </content>
+            </Tab>
+            <Tab>
+               <graphic>
+                  <HBox alignment="CENTER" styleClass="hbox">
+                     <children>
+                        <SVGPath content="M24.981 9.443c-.187-.556-.668-.962-1.249-1.05l-6.751-1.031L13.95.901C13.692.351 13.139 0 12.532 0c-.607 0-1.16.351-1.418.901l-3.033 6.46L1.331 8.392c-.58.088-1.062.494-1.248 1.05-.187.556-.046 1.17.364 1.591l4.93 5.054-1.167 7.151c-.096.591 .155 1.187.645 1.533.489 .346 1.135.381 1.661.091l6.018-3.328 6.018 3.328c.238.131 .499.196 .759.196 .317 0 .633-.096.902-.286.49-.346.74-.941.643-1.533l-1.167-7.151 4.93-5.054C25.028 10.613 25.168 10 24.981 9.443z" fill="WHITE" fillRule="EVEN_ODD" />
+                        <Label fx:id="favouriteSelectionLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Favourite" textAlignment="CENTER" textFill="WHITE">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </graphic>
+               <content>
+                  <ListView fx:id="favouriteResult" fixedCellSize="40.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: -dictionary-pane-color;" styleClass="recent-search">
+                     <tooltip>
+                        <Tooltip text="Favourite Words" />
+                     </tooltip>
+                  </ListView>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </children>
+</fx:root>

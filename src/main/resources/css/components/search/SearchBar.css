@@ -1,0 +1,59 @@
+.search-bar {
+    -fx-background-color: -default-background-color;
+    -fx-background-radius: 10;
+}
+.search-field {
+    -fx-background-color: transparent;
+}
+
+.search-bar {
+    -fx-border-color: #cc00cc;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.search-bar:hover,
+.search-bar:focused {
+    -fx-border-color: #990099;
+}
+
+.search-bar > *.text-field {
+    -fx-background-color: transparent;
+}
+
+.search-bar > *.search-bar-button {
+    -fx-background-color: transparent;
+}
+
+.result-list .list-cell {
+    -fx-padding: 0 10 0 10;
+}
+
+.result-list *.cell-word,
+.result-list *.cell-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.result-list *.cell-icon {
+    -fx-fill: transparent;
+    -fx-stroke: black;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+    -fx-stroke-width: 2;
+}
+
+.result-list *.cell-button:hover *.cell-icon {
+    -fx-stroke: derive(black, 50%);
+}
+
+.result-list .scroll-bar {
+    -fx-scale-x: 0;
+    -fx-scale-y: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+.icon {
+    -fx-fill: -default-stroke-color;
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="248.0" styleClass="search-field" stylesheets="@../../../css/components/search/SearchBar.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" styleClass="search-bar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <SVGPath content="M21.824 18.411l-6.526-5.638c-.42-.419-1-.583-1.546-.495 2.278-2.999 2.054-7.303-.681-10.038-2.986-2.986-7.846-2.986-10.831 0-2.985 2.986-2.985 7.846 0 10.831 2.736 2.736 7.04 2.958 10.038.682-.086.546 .076 1.123.495 1.546l5.638 6.528c.696.697 2.271.25 2.967-.446C22.077 20.682 22.521 19.108 21.824 18.411zM11.291 11.29c-2.005 2.004-5.266 2.004-7.27 0-2.006-2.004-2.005-5.266 0-7.27 2.003-2.004 5.266-2.005 7.269 0C13.294 6.024 13.294 9.286 11.291 11.29zM4.547 7.472c-.004-.348-.288-.626-.637-.622-.35.004-.625.288-.622.636 .016 1.324.538 2.57 1.475 3.507.247 .246.646 .246.89 0 .247-.246.247-.644 0-.89C4.95 9.399 4.558 8.465 4.547 7.472z" stroke="TRANSPARENT" strokeWidth="2.0" styleClass="icon">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </SVGPath>
+            <TextField fx:id="searchText" prefHeight="32.0" prefWidth="185.0" promptText="Search English" HBox.hgrow="ALWAYS" />
+            <Button fx:id="searchBarButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" styleClass="search-bar-button">
+               <graphic>
+                  <SVGPath fx:id="searchBarIcon" content="M12 2a3 3 0 0 0-3 3v7a3 3 0 1 0 6 0V5a3 3 0 0 0-3-3zM5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0 1 1 0 1 1 2 0 7.001 7.001 0 0 1-6 6.93V21a1 1 0 1 1-2 0v-2.07A7.001 7.001 0 0 1 5 12z" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="0.0" styleClass="icon" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Input from microphone" />
+               </tooltip>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <ListView fx:id="searchResult" fixedCellSize="40.0" maxHeight="400.0" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefHeight="0.0" styleClass="result-list" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="37.0" />
+   </children>
+</fx:root>

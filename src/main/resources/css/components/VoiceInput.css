@@ -1,0 +1,19 @@
+.root {
+    -fx-default-color:  #171717;
+}
+
+.text-area {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-opacity: 1;
+}
+
+.text-area .scroll-pane * {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .content .text {
+    -fx-text-alignment: center;
+}
