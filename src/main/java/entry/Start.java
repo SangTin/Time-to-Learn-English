@@ -1,65 +1,78 @@
 package entry;
 
-import java.io.IOException;
-
+import gui.style.MenuStyle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import style.MenuStyle;
+
+import java.io.IOException;
 
 public class Start extends Application {
-    private Scene loadScene;
-    private Stage primaryStage;
+   private Scene loadScene;
+   private Stage primaryStage;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+   public static void main(String[] args) {
+      launch(args);
+   }
 
-    private void customizeLoadScene() throws Exception {
-        //Load scene, add fonts and css
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/start.fxml"));
-        loadScene = new Scene(root);
-        Font.loadFont(getClass().getResourceAsStream("/fonts/JetBrainsMono.ttf"), 15);
-        loadScene.getStylesheets().add(getClass().getResource("/css/word_display.css").toExternalForm());
+   private void customizeLoadScene() throws Exception {
+      Parent root = FXMLLoader.load(this.getClass().getResource("/fxml/Start.fxml"));
+      this.loadScene = new Scene(root);
+      Button CLIButton = (Button)root.lookup("#CLIButton");
+      Button GUIButton = (Button)root.lookup("#GUIButton");
+      CLIButton.setEffect(MenuStyle.getButtonShadowEffect());
+      CLIButton.setOnAction((e) -> {
+         this.commandLineInterface();
+      });
+      GUIButton.setEffect(MenuStyle.getButtonShadowEffect());
+      GUIButton.setOnAction((e) -> {
+         this.graphicalUserInterface();
+      });
+   }
 
-        Button CLIButton = (Button) root.lookup("#CLIButton");
-        Button GUIButton = (Button) root.lookup("#GUIButton");
-        CLIButton.setEffect(MenuStyle.getButtonShadowEffect());
-        CLIButton.setOnAction(e -> commandLineInterface());
-        GUIButton.setEffect(MenuStyle.getButtonShadowEffect());
-        GUIButton.setOnAction(e -> graphicalUserInterface());
-    }
+   public void start(Stage stage) {
+      this.primaryStage = stage;
 
-    @Override
-    public void start(Stage stage) {
-        primaryStage = stage;
-        try {
-            customizeLoadScene();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+      try {
+         this.customizeLoadScene();
+      } catch (Exception var3) {
+         var3.printStackTrace();
+      }
 
-        primaryStage.setTitle("Time to Learn English");
-        primaryStage.setScene(loadScene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
-    }
+      this.primaryStage.setTitle("Time to Learn English");
+      this.primaryStage.setScene(this.loadScene);
+      this.primaryStage.setResizable(false);
+      this.primaryStage.show();
+   }
 
-    public void commandLineInterface() {
-        String filename = Main.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
-        try {
-            Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd", "/k"});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+   public void commandLineInterface() {
+      String var1 = Main.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
 
-    public void graphicalUserInterface() {
-        new GraphicalUserInterface();
-        primaryStage.close();
-    }
+      try {
+         Runtime.getRuntime().exec("cmd /c start cmd /k java -jar bin/CommandLine.jar");
+         this.primaryStage.close();
+      } catch (IOException var3) {
+         var3.printStackTrace();
+      }
+   }
+
+
+
+   public void graphicalUserInterface() {
+      new GraphicalUserInterface();
+      this.primaryStage.close();
+
+//      Stage stage = new Stage();
+//      stage.setTitle("Voice Input");
+//      stage.setResizable(false);
+//      stage.centerOnScreen();
+//      stage.initModality(Modality.APPLICATION_MODAL);
+//
+//      Scene scene = new Scene(new EditWord());
+//      stage.setScene(scene);
+//      stage.showAndWait();
+   }
 }

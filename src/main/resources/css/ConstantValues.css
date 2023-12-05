@@ -1,0 +1,29 @@
+.root * {
+    -dictionary-toolbar-color: #ff9fb3;
+    -dictionary-pane-color: #FCE2E1;
+    -header-color: #282828;
+    -content-color: #3C3C3C;
+    -editor-toolbar-color: #e56700;
+    -default-background-color: #f0f0f0;
+    -default-stroke-color: purple;
+}
+
+.recent-search .list-cell:odd {
+    -fx-background-color: #f9cee7;
+}
+
+.recent-search .list-cell:even {
+    -fx-background-color: -dictionary-pane-color;
+}
+
+.recent-search .list-cell:hover {
+    -fx-font-weight: bold;
+}
+
+.recent-search .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.recent-search {
+    -fx-background-color: transparent;
+}

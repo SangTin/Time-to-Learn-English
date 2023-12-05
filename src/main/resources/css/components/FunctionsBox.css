@@ -1,0 +1,22 @@
+@import "../ConstantValues.css";
+
+.function-bar {
+    -fx-background-color: -dictionary-pane-color;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+}
+
+.button {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-pref-height: 70;
+    -fx-pref-width: 100;
+}
+
+.button .label {
+    -fx-text-fill: -content-color;
+}
+
+.icon {
+    -fx-stroke: -default-stroke-color;
+}

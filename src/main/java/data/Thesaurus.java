@@ -1,5 +1,6 @@
 package data;
 
+import data.dictionary.Word;
 import data.enums.PartOfSpeech;
 import data.enums.ThesaurusType;
 import exception.editWord.NoSuchWordFoundException;
@@ -8,145 +9,85 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Thesaurus {
-    private final ThesaurusType type;
-    private final PartOfSpeech partOfSpeech;
-    private final Dictionary dictionary;
-    private final String meaning;
-    private final Set<String> mostUsed;
-    private final Set<String> lessUsed;
+   public static int count = 0;
+   private final ThesaurusType type;
+   private final PartOfSpeech partOfSpeech;
+   private final Dictionary dictionary;
+   private final String meaning;
+   private final Set<Word> mostUsed;
+   private final Set<Word> lessUsed;
 
-    /**
-     * Create a new thesaurus
-     * 
-     * @param meaning the meaning of the thesaurus
-     * @param dictionary the dictionary that the thesaurus' words belong to
-     * @param partOfSpeech the part of speech of the thesaurus' words
-     * @param type the type of the thesaurus (synonym or antonym)
-     * 
-     * @see data.enums.PartOfSpeech
-     * @see data.enums.ThesaurusType
-     */
-    public Thesaurus(String meaning, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
-        mostUsed = new HashSet<>();
-        lessUsed = new HashSet<>();
-        this.meaning = meaning;
-        this.dictionary = dictionary;
-        this.partOfSpeech = partOfSpeech;
-        this.type = type;
+   Changes changes;
+   public Thesaurus(String meaning, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
+      this.mostUsed = new HashSet<>();
+      this.lessUsed = new HashSet<>();
+      this.meaning = meaning;
+      this.dictionary = dictionary;
+      this.partOfSpeech = partOfSpeech;
+      this.type = type;
+      this.changes = new Changes(dictionary, "dictionary.db");
+   }
+
+   public Thesaurus(String meaning, String description, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
+      this(meaning, dictionary, partOfSpeech, type);
+   }
+
+   public void addMostUsedByWord(String word) throws NoSuchWordFoundException {
+      this.addByWord(word, this.mostUsed);
+   }
+
+   public void addLessUsedByWord(String word) throws NoSuchWordFoundException {
+      this.addByWord(word, this.lessUsed);
+   }
+
+   private void addByWord(String word, Set<Word> set) throws NoSuchWordFoundException {
+      try {
+         set.add(this.dictionary.searchExactly(word));
+      } catch (NoSuchWordFoundException ignored) {}
+   }
+
+   public void addMostUsedByWord(Word word) {
+      this.mostUsed.add(word);
+   }
+
+    public void addLessUsedByWord(Word word) {
+        this.lessUsed.add(word);
     }
 
-    /**
-     * Create a new thesaurus
-     * 
-     * @param meaning the meaning of the thesaurus
-     * @param description the description of the thesaurus
-     * @param dictionary the dictionary that the thesaurus' words belong to
-     * @param partOfSpeech the part of speech of the thesaurus' words
-     * @param type the type of the thesaurus (synonym or antonym)
-     * 
-     * @see data.enums.PartOfSpeech
-     * @see data.enums.ThesaurusType
-     */
-    public Thesaurus(String meaning, String description, Dictionary dictionary, PartOfSpeech partOfSpeech, ThesaurusType type) {
-        this(meaning, dictionary, partOfSpeech, type);
-    }
+   public Set<Integer> getMostUsedIds() {
+      return this.getIds(this.mostUsed);
+   }
 
-    /** 
-     * Add a word to mostUsed set by word
-     * This method is recommended
-     * 
-     * @param word the word to add
-     */
-    public void addMostUsedByWord(String word) throws NoSuchWordFoundException {
-        dictionary.searchExactly(word);
-        mostUsed.add(word);
-    }
+   public Set<Integer> getLessUsedIds() {
+      return this.getIds(this.lessUsed);
+   }
 
-    /**
-     * Add a word to lessUsed set
-     * This method is slower than using id
-     * 
-     * @param word the word to add
-     */
-    public void addLessUsedByWord(String word) throws NoSuchWordFoundException {
-        dictionary.searchExactly(word);
-        lessUsed.add(word);
-    }
+   private Set<Integer> getIds(Set<Word> words) {
+      Set<Integer> ids = new HashSet();
+      for (Word word : words) {
+         ids.add(word.getId());
+      }
 
-    /**
-     * Get a set of most used words' id
-     */
-    public Set<Integer> getMostUsedIds() {
-        return getIds(mostUsed);
-    }
+      return ids;
+   }
 
-    /**
-     * Get a set of less used words' id
-     */
-    public Set<Integer> getLessUsedIds() {
-        return getIds(lessUsed);
-    }
+   public Set<Word> getMostUsedWords() {
+      return this.mostUsed;
+   }
 
-    private Set<Integer> getIds(Set<String> words) {
-        Set<Integer> ids = new HashSet<>();
-        for (String word : lessUsed) {
-            Word w;
-            try {
-                w = dictionary.searchExactly(word);
-            } catch (NoSuchWordFoundException e) {
-                continue;
-            }
-            ids.add(w.getId());
-        }
-        return ids;
-    }
+   public Set<Word> getLessUsedWords() {
+      return this.lessUsed;
+   }
 
-    /**
-     * Get a set of most used words
-     * This set contains words' target
-     *
-     * @return a set of most used words
-     */
-    public Set<String> getMostUsedWords() {
-        return mostUsed;
-    }
+   public PartOfSpeech getPartOfSpeech() {
+      return this.partOfSpeech;
+   }
 
-    /**
-     * Get a set of less used words
-     * This set contains words' target
-     *
-     * @return a set of less used words
-     */
-    public Set<String> getLessUsedWords() {
-        return lessUsed;
-    }
+   public String getMeaning() {
+      return this.meaning;
+   }
 
-    /**
-     * Get the part of speech of the thesaurus' words
-     * 
-     * @return the part of speech of the thesaurus' words
-     * @see data.enums.PartOfSpeech
-     */
-    public PartOfSpeech getPartOfSpeech() {
-        return partOfSpeech;
-    }
-
-    /**
-     * Get the meaning of the thesaurus
-     * 
-     * @return the meaning of the thesaurus
-     */
-    public String getMeaning() {
-        return meaning;
-    }
-
-    /**
-     * Get the type of the thesaurus
-     * 
-     * @return the type of the thesaurus (synonym or antonym)
-     * @see data.enums.ThesaurusType
-     */
-    public ThesaurusType getType() {
-        return type;
-    }
+   public ThesaurusType getType() {
+      return this.type;
+   }
 }

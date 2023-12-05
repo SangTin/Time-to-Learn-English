@@ -1,0 +1,44 @@
+@import "../ConstantValues.css";
+
+.root * {
+    -header-height: 40px;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+}
+
+.translate-bar {
+    -fx-background-color: -dictionary-pane-color;
+    -fx-background-radius: 20;
+    -fx-padding: 10;
+}
+
+.language-label {
+    -fx-text-fill: -content-color;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-padding: 7 20 7 20;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-background-color: white;
+}
+
+.icon-button .icon {
+    -fx-fill: -default-stroke-color;
+}
+
+.icon-button:hover .icon {
+    -fx-fill: derive(-default-stroke-color, 50%);
+}
+
+.translate-box {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+.text-field {
+    -fx-background-color: transparent;
+}
