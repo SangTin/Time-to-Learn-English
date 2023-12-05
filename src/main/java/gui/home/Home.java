@@ -1,17 +1,16 @@
 package gui.home;
 
 import data.Dictionary;
-import data.Word;
+import data.dictionary.Word;
 import data.enums.AppFunction;
 import gui.GraphicalDictionary;
 import gui.components.SearchBase;
-import gui.style.Synchronized;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 
-public class Home extends ScrollPane implements Synchronized {
+public class Home extends ScrollPane {
    @FXML
    private SearchBase searchBar;
    @FXML
@@ -82,9 +81,5 @@ public class Home extends ScrollPane implements Synchronized {
              GraphicalDictionary.appFunctionProperty().set(new Pair<>(AppFunction.SEARCH, newValue));
           }
       });
-   }
-
-   public void synchronize() {
-      this.searchBar.synchronize();
    }
 }

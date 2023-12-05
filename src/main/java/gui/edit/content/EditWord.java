@@ -1,9 +1,8 @@
 package gui.edit.content;
 
-import data.Word;
+import data.dictionary.Word;
 import gui.dictionary.content.Description;
 import gui.style.DisplayContent;
-import gui.style.Synchronized;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +18,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class EditWord extends AnchorPane implements DisplayContent, Synchronized {
+public class EditWord extends AnchorPane implements DisplayContent {
     @FXML private TextField wordTarget;
     @FXML private TextField ipaUK;
     @FXML private TextField ipaUS;
@@ -86,20 +85,11 @@ public class EditWord extends AnchorPane implements DisplayContent, Synchronized
 
     public void createNewWord() {
         currentWord = new Word();
-        synchronize();
     }
 
     public void displaySearch(Word word) {
         currentWord = word;
         editedWord = new Word(word);
-        synchronize();
-    }
-
-    public void synchronize() {
-        wordTarget.setText(editedWord.getWordTarget());
-        ipaUK.setText(editedWord.getUkPron());
-        ipaUS.setText(editedWord.getUsPron());
-        wordExplain.setText(editedWord.getWordExplain());
     }
 
     private static void preview(Word word) {

@@ -1,7 +1,7 @@
 package gui.dictionary.content;
 
 import data.Thesaurus;
-import data.Word;
+import data.dictionary.Word;
 import data.enums.AppFunction;
 import gui.GraphicalDictionary;
 import javafx.fxml.FXML;

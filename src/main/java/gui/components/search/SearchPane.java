@@ -1,7 +1,7 @@
 package gui.components.search;
 
 import data.Dictionary;
-import data.Word;
+import data.dictionary.Word;
 import data.enums.SearchResultType;
 import gui.components.SearchBase;
 import javafx.application.Platform;
@@ -60,10 +60,6 @@ public class SearchPane extends SearchBase {
 
       this.historyResult.setItems(this.dictionary.getHistorySearch().getWords());
       this.favouriteResult.setItems(this.dictionary.getFavouriteSearch());
-   }
-
-   public void synchronize() {
-      this.search();
    }
 
    protected void search() {

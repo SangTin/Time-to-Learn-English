@@ -1,6 +1,6 @@
 package exception.editWord;
 
-import data.Word;
+import data.dictionary.Word;
 
 public class ExistingWordException extends EditWordException {
    public ExistingWordException() {

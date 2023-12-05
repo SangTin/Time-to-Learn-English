@@ -1,6 +1,6 @@
 package gui.dictionary.content;
 
-import data.Word;
+import data.dictionary.Word;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;

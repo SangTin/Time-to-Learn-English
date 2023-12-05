@@ -1,6 +1,6 @@
 package gui.dictionary;
 
-import data.Word;
+import data.dictionary.Word;
 import data.enums.ThesaurusType;
 import gui.GraphicalDictionary;
 import gui.components.WordDisplay;
@@ -26,8 +26,8 @@ public class Dictionary extends WordDisplay {
    @FXML private Thesaurus antonymPane;
    @FXML protected Button sideTabButton;
 
-   private final UniqueStack<Word> previous = new UniqueStack<>();
-   private final UniqueStack<Word> next = new UniqueStack<>();
+   private final UniqueWordStack previous = new UniqueWordStack();
+   private final UniqueWordStack next = new UniqueWordStack();
    protected final SimpleBooleanProperty isSideTabOpen = new SimpleBooleanProperty(false);
 
    public Dictionary() {
@@ -77,7 +77,7 @@ public class Dictionary extends WordDisplay {
       this.isSideTabOpen.set(true);
    }
 
-   public void displaySearch(data.Word word) {
+   public void displaySearch(Word word) {
       this.searchPane.selectedWordProperty().set(null);
       next.clear();
       if (word != null) {
@@ -144,23 +144,23 @@ public class Dictionary extends WordDisplay {
       contentTabPane.getSelectionModel().selectFirst();
    }
 
-   public void synchronize() {
-      this.searchPane.synchronize();
-      this.descriptionPane.displaySearch(searchPane.getSelectedWord());
-   }
-
-   private static class UniqueStack<E> extends LinkedHashSet<E> {
-      public E pop() {
+   private static class UniqueWordStack extends LinkedHashSet<Word> {
+      public Word pop() {
          return super.removeLast();
       }
 
-      public E peek() {
+      public Word peek() {
          return super.getLast();
       }
 
-      public void push(E e) {
-         super.remove(e);
-         super.add(e);
+      public void push(Word e) {
+         remove(e);
+         e.deletedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+               this.remove(e);
+            }
+         });
+         add(e);
       }
    }
 }

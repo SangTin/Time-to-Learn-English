@@ -1,7 +1,7 @@
 package gui.dictionary.content;
 
 import data.Dictionary;
-import data.Word;
+import data.dictionary.Word;
 import data.enums.PartOfSpeech;
 import gui.style.DisplayContent;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -77,7 +77,7 @@ public class Description extends AnchorPane implements DisplayContent {
       posBar.getButtons().clear();
    }
 
-   public void displaySearch(data.Word word) throws NullPointerException {
+   public void displaySearch(Word word) throws NullPointerException {
       clear();
 
       // Set description
@@ -94,7 +94,7 @@ public class Description extends AnchorPane implements DisplayContent {
       // Set favourite button
       isFavourite.unbind();
       isFavourite.set(word.isFavorite());
-      isFavourite.bind(word.isFavoriteProperty());
+      isFavourite.bind(word.favoriteProperty());
       favouriteButton.setOnAction(e -> {
          if (word.isFavorite()) {
             dictionary.removeFavourite(word);

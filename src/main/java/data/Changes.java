@@ -1,5 +1,6 @@
 package data;
 
+import data.dictionary.Word;
 import exception.editWord.EditWordException;
 
 public class Changes {

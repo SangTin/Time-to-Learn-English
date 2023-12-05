@@ -1,5 +1,7 @@
 package gui.style;
 
+import data.dictionary.Word;
+
 public interface DisplayContent {
-    void displaySearch(data.Word word);
+    void displaySearch(Word word);
 }

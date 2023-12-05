@@ -1,5 +1,6 @@
 package data;
 
+import data.dictionary.Word;
 import data.enums.PartOfSpeech;
 import data.enums.ThesaurusType;
 import exception.editWord.NoSuchWordFoundException;

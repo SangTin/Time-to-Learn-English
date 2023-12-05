@@ -1,12 +1,14 @@
 package data;
 
+import data.dictionary.AutoDeleteWordList;
+import data.dictionary.HistorySearch;
+import data.dictionary.TrieWord;
+import data.dictionary.Word;
 import exception.editWord.EditWordException;
 import exception.editWord.NoSuchWordFoundException;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 
@@ -14,11 +16,11 @@ public class Dictionary {
       private final TrieWord trieWord;
       private SQLiteDatabase database;
       private HistorySearch historySearch;
-      private ObservableList<Word> favouriteSearch;
+      private final AutoDeleteWordList favouriteSearch;
 
       public Dictionary() {
             trieWord = new TrieWord();
-            favouriteSearch = FXCollections.observableArrayList(new ArrayDeque<>());
+            favouriteSearch = new AutoDeleteWordList();
             favouriteSearch.addListener((ListChangeListener<Word>) c -> {
                   while (c.next()) {
                         if (c.wasAdded()) {

@@ -2,10 +2,9 @@ package gui;
 
 import data.Dictionary;
 import data.SQLiteDatabase;
-import data.Word;
+import data.dictionary.Word;
 import data.enums.AppFunction;
 import gui.home.Home;
-import gui.style.Synchronized;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -75,14 +74,6 @@ public class GraphicalDictionary extends AnchorPane {
    private void displaySearch(Word word) {
       this.menuPane.getSelectionModel().select(this.dictionaryTab);
       this.dictionaryPane.displaySearch(word);
-   }
-
-   public void refresh() {
-      menuPane.getTabs().forEach(tab -> {
-         if (tab.getContent() instanceof Synchronized) {
-            ((Synchronized) tab.getContent()).synchronize();
-         }
-      });
    }
 
    static {

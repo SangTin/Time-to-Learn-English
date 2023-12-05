@@ -1,7 +1,7 @@
 package gui.dictionary.content;
 
 import data.Dictionary;
-import data.Word;
+import data.dictionary.Word;
 import data.enums.AppFunction;
 import exception.editWord.NoSuchWordFoundException;
 import gui.GraphicalDictionary;

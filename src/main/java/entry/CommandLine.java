@@ -1,7 +1,7 @@
 package entry;
 
 import data.Dictionary;
-import data.Word;
+import data.dictionary.Word;
 import exception.editWord.EditWordException;
 import exception.editWord.NoSuchWordFoundException;
 

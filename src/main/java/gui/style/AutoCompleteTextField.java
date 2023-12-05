@@ -1,6 +1,6 @@
 package gui.style;
 
-import data.Word;
+import data.dictionary.Word;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;

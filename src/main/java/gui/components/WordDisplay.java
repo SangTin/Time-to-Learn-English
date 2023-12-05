@@ -1,13 +1,13 @@
 package gui.components;
 
+import data.dictionary.Word;
 import gui.style.DisplayContent;
-import gui.style.Synchronized;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
-public abstract class WordDisplay extends SplitPane implements DisplayContent, Synchronized {
+public abstract class WordDisplay extends SplitPane implements DisplayContent {
 
     @FXML protected SearchBase searchPane;
     @FXML protected TabPane contentTabPane;
@@ -18,5 +18,5 @@ public abstract class WordDisplay extends SplitPane implements DisplayContent, S
     protected data.SQLiteDatabase database;
     protected data.Dictionary dictionary;
 
-    public abstract void displaySearch(data.Word word);
+    public abstract void displaySearch(Word word);
 }

@@ -1,6 +1,6 @@
 package gui.components.search;
 
-import data.Word;
+import data.dictionary.Word;
 import data.enums.AppFunction;
 import data.enums.SearchResultType;
 import entry.GraphicalUserInterface;
@@ -59,10 +59,6 @@ public class SearchBar extends SearchBase {
             isSearching.set(GraphicalUserInterface.inHierarchy(event.getPickResult().getIntersectedNode(), this));
          });
       });
-   }
-
-   public void synchronize() {
-      this.search();
    }
 
    protected void search() {

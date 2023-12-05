@@ -1,6 +1,7 @@
 package data;
 
 import api.TranslateText;
+import data.dictionary.Word;
 import data.enums.PartOfSpeech;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,15 +1,11 @@
 package gui.edit;
 
+import data.dictionary.Word;
 import gui.GraphicalDictionary;
 import gui.components.WordDisplay;
-import gui.components.search.SearchPane;
-import gui.style.Synchronized;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
-public class Editor extends WordDisplay implements Synchronized {
-    @FXML private SearchPane searchPane;
-
+public class Editor extends WordDisplay {
     public Editor() {
         super();
         try {
@@ -25,15 +21,9 @@ public class Editor extends WordDisplay implements Synchronized {
     public void initialize() {
         dictionary = GraphicalDictionary.getDictionaryInstance();
         database = GraphicalDictionary.getDatabaseInstance();
-
-        searchPane.setDictionary(dictionary);
     }
 
-    public void displaySearch(data.Word word) {
-
-    }
-
-    public void synchronize() {
+    public void displaySearch(Word word) {
 
     }
 }
