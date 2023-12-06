@@ -1,147 +1,126 @@
 package api;
 
-// Imports the Google Cloud client library
-
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
-import com.google.cloud.speech.v1.RecognitionConfig;
-import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
-import com.google.cloud.speech.v1.StreamingRecognitionConfig;
-import com.google.cloud.speech.v1.StreamingRecognitionResult;
-import com.google.cloud.speech.v1.StreamingRecognizeRequest;
-import com.google.cloud.speech.v1.StreamingRecognizeResponse;
+import com.google.cloud.speech.v1.*;
+import com.google.cloud.speech.v1.RecognitionConfig.AudioEncoding;
 import com.google.protobuf.ByteString;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine.Info;
+import javax.sound.sampled.TargetDataLine;
 import java.util.ArrayList;
 
 public class SpeechToText {
-    private static boolean stop = false;
-    private static String textOfSpeech;
-
+    private static final int STREAMING_LIMIT = 20000;
+    private static final int IDLE_LIMIT = 6000;
     private static ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
-
-    private static ClientStream<StreamingRecognizeRequest> clientStream;
-
+    private static final ClientStream<StreamingRecognizeRequest> clientStream;
     private static StreamingRecognizeRequest request;
+    private static TargetDataLine targetDataLine;
+    private static final SimpleStringProperty textOfSpeech;
+    private static final SimpleBooleanProperty isDone;
+    private static boolean isIdle;
 
-    /**
-     * If you want to use Speech to Text api, you need to call this function first.
-     * This function initialize things which don't need to initialize more than once.
-     */
-    public static void Init() {
-        InitializeResponseObserver();
-        clientStream = CONST.SPEECH_CLIENT.streamingRecognizeCallable().splitCall(responseObserver);
-        InitializeFirstRequest();
-    }
-
-    /**
-     * Initialize Response Observer.
-     */
     private static void InitializeResponseObserver() {
-        responseObserver =
-                new ResponseObserver<StreamingRecognizeResponse>() {
-                    ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
+        responseObserver = new ResponseObserver<>() {
+            final ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
 
-                    public void onStart(StreamController controller) {
-                    }
+            public void onStart(StreamController controller) {
+            }
 
-                    public void onResponse(StreamingRecognizeResponse response) {
-                        responses.add(response);
-                    }
+            public void onResponse(StreamingRecognizeResponse response) {
+                this.responses.add(response);
+                StreamingRecognitionResult result = response.getResultsList().get(0);
+                SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
+                SpeechToText.textOfSpeech.set(alternative.getTranscript());
+                SpeechToText.isDone.set(result.getIsFinal());
 
-                    public void onComplete() {
-                        for (StreamingRecognizeResponse response : responses) {
-                            StreamingRecognitionResult result = response.getResultsList().get(0);
-                            SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-                            textOfSpeech = alternative.getTranscript();
-                            stop = true;
-                        }
-                    }
+                SpeechToText.isIdle = false;
+            }
 
-                    public void onError(Throwable t) {
-                        System.out.println(t);
-                    }
-                };
+            public void onComplete() {
+            }
+
+            public void onError(Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        };
     }
 
-    /**
-     * Initialize first request.
-     * Because the first request has to be a config, this function did this work.
-     */
     private static void InitializeFirstRequest() {
-        RecognitionConfig recognitionConfig =
-                RecognitionConfig.newBuilder()
-                        .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                        .setLanguageCode("en-US")
-                        .setSampleRateHertz(16000)
-                        .build();
-
-        StreamingRecognitionConfig streamingRecognitionConfig =
-                StreamingRecognitionConfig.newBuilder().setConfig(recognitionConfig).build();
-
-        request =
-                StreamingRecognizeRequest.newBuilder()
-                        .setStreamingConfig(streamingRecognitionConfig)
-                        .build();
+        RecognitionConfig recognitionConfig = RecognitionConfig.newBuilder().setEncoding(AudioEncoding.LINEAR16).setLanguageCode("en-US").setSampleRateHertz(16000).build();
+        StreamingRecognitionConfig streamingRecognitionConfig = StreamingRecognitionConfig.newBuilder().setConfig(recognitionConfig).setInterimResults(true).build();
+        request = StreamingRecognizeRequest.newBuilder().setStreamingConfig(streamingRecognitionConfig).build();
         clientStream.send(request);
     }
 
-    /**
-     * This function convert the streaming into text.
-     *
-     * @return: - String "Microphone not supported" if the device has no microphone or did not support.
-     * - String "You did not speak anything." if user has not spoken in 60 seconds.
-     * - String: text that user spoke.
-     */
     public static String streamingMicRecognize() throws Exception {
-        stop = false;
-        textOfSpeech = null;
-
-        AudioFormat audioFormat =
-                new AudioFormat(16000, 16, 1, true, false);
-        DataLine.Info targetInfo =
-                new DataLine.Info(
-                        TargetDataLine.class,
-                        audioFormat);
-
+        textOfSpeech.set("");
+        isDone.set(false);
+        isIdle = true;
+        AudioFormat audioFormat = new AudioFormat(16000.0F, 16, 1, true, false);
+        Info targetInfo = new Info(TargetDataLine.class, audioFormat);
         if (!AudioSystem.isLineSupported(targetInfo)) {
-            return "Microphone not supported";
-        }
+            throw new UnsupportedOperationException("Microphone not supported");
+        } else {
+            targetDataLine = (TargetDataLine)AudioSystem.getLine(targetInfo);
+            targetDataLine.open(audioFormat);
+            targetDataLine.start();
+            AudioInputStream audio = new AudioInputStream(targetDataLine);
+            long startTime = System.currentTimeMillis();
 
-        TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(targetInfo);
-        targetDataLine.open(audioFormat);
-        targetDataLine.start();
-        System.out.println("Start speaking");
-        long startTime = System.currentTimeMillis();
+            while(!isDone()) {
+                long estimatedTime = System.currentTimeMillis() - startTime;
+                System.out.println(estimatedTime);
+                if (estimatedTime >= IDLE_LIMIT && isIdle || estimatedTime >= STREAMING_LIMIT) {
+                    break;
+                }
 
-        // Audio Input Stream
-        AudioInputStream audio = new AudioInputStream(targetDataLine);
-        while (!stop) {
-            long estimatedTime = System.currentTimeMillis() - startTime;
-            byte[] data = new byte[6400];
-            audio.read(data);
-            if (estimatedTime > 60000) { // 60 seconds
-                System.out.println("Stop speaking.");
-                targetDataLine.stop();
-                targetDataLine.close();
-                break;
+                byte[] data = new byte[6400];
+                audio.read(data);
+                request = StreamingRecognizeRequest.newBuilder().setAudioContent(ByteString.copyFrom(data)).build();
+                clientStream.send(request);
             }
-            request =
-                    StreamingRecognizeRequest.newBuilder()
-                            .setAudioContent(ByteString.copyFrom(data))
-                            .build();
-            clientStream.send(request);
-            responseObserver.onComplete();
-            if (textOfSpeech != null) {
-                return textOfSpeech;
+
+            targetDataLine.stop();
+            targetDataLine.close();
+//            clientStream.closeSend();
+            if (isDone()) {
+                return getTextOfSpeech();
+            } else {
+                throw new RuntimeException("You did not speak anything.");
             }
         }
-        return "You did not speak anything.";
+    }
+
+    public static String getTextOfSpeech() {
+        return textOfSpeech.get();
+    }
+
+    public static boolean isDone() {
+        return isDone.get();
+    }
+
+    public static SimpleStringProperty textOfSpeechProperty() {
+        return textOfSpeech;
+    }
+
+    public static void stopStreaming() {
+        isDone.set(true);
+    }
+
+    static {
+        System.out.println("initialize");
+        InitializeResponseObserver();
+        clientStream = CONST.SPEECH_CLIENT.streamingRecognizeCallable().splitCall(responseObserver);
+        InitializeFirstRequest();
+        textOfSpeech = new SimpleStringProperty();
+        isDone = new SimpleBooleanProperty(false);
     }
 }
