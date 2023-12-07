@@ -27,6 +27,8 @@ public class SpeechToText {
     private static final SimpleBooleanProperty isDone;
     private static boolean isIdle;
 
+    private static Thread startThread, stopThread;
+
     private static void InitializeResponseObserver() {
         responseObserver = new ResponseObserver<>() {
             final ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
@@ -60,7 +62,7 @@ public class SpeechToText {
         clientStream.send(request);
     }
 
-    public static String streamingMicRecognize() throws Exception {
+    public static void streamingMicRecognize() throws Exception {
         textOfSpeech.set("");
         isDone.set(false);
         isIdle = true;
@@ -79,7 +81,8 @@ public class SpeechToText {
                 long estimatedTime = System.currentTimeMillis() - startTime;
                 System.out.println(estimatedTime);
                 if (estimatedTime >= IDLE_LIMIT && isIdle || estimatedTime >= STREAMING_LIMIT) {
-                    break;
+                    stopStreaming();
+//                    break;
                 }
 
                 byte[] data = new byte[6400];
@@ -91,11 +94,11 @@ public class SpeechToText {
             targetDataLine.stop();
             targetDataLine.close();
 //            clientStream.closeSend();
-            if (isDone()) {
-                return getTextOfSpeech();
-            } else {
-                throw new RuntimeException("You did not speak anything.");
-            }
+//            if (isDone()) {
+//                return getTextOfSpeech();
+//            } else {
+//                throw new RuntimeException("You did not speak anything.");
+//            }
         }
     }
 
@@ -115,6 +118,16 @@ public class SpeechToText {
         isDone.set(true);
     }
 
+    public static void startRecord() {
+        startThread.start();
+    }
+
+    public static String stopRecord() {
+        stopThread.start();
+        while(!isDone()) {}
+        return getTextOfSpeech();
+    }
+
     static {
         System.out.println("initialize");
         InitializeResponseObserver();
@@ -122,5 +135,31 @@ public class SpeechToText {
         InitializeFirstRequest();
         textOfSpeech = new SimpleStringProperty();
         isDone = new SimpleBooleanProperty(false);
+    }
+}
+
+class stopStream extends Thread {
+    public void run()
+    {
+        try {
+            SpeechToText.stopStreaming();
+        }
+        catch (Exception e) {
+            // Throwing an exception
+            System.out.println("Exception is caught");
+        }
+    }
+}
+
+class startStream extends Thread {
+    public void run()
+    {
+        try {
+            SpeechToText.streamingMicRecognize();
+        }
+        catch (Exception e) {
+            // Throwing an exception
+            System.out.println("Exception is caught");
+        }
     }
 }
