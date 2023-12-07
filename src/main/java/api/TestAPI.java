@@ -24,7 +24,7 @@ public class TestAPI {
 
     static void testSpeechToText() throws Exception {
 //        SpeechToText.Init();
-        System.out.println(SpeechToText.streamingMicRecognize());
+//        System.out.println(SpeechToText.streamingMicRecognize());
     }
 
     public static void main(String[] args) throws Exception {
@@ -37,34 +37,5 @@ public class TestAPI {
         start.start();
         stop.start();
 //        testSpeechToText();
-    }
-}
-
-class stopStream extends Thread {
-    public void run()
-    {
-        try {
-            Thread.sleep(3000);
-            System.out.println("stop\n");
-            SpeechToText.stopStreaming();
-        }
-        catch (Exception e) {
-            // Throwing an exception
-            System.out.println("Exception is caught");
-        }
-    }
-}
-
-class startStream extends Thread {
-    public void run()
-    {
-        try {
-            System.out.println("start\n");
-            SpeechToText.streamingMicRecognize();
-        }
-        catch (Exception e) {
-            // Throwing an exception
-            System.out.println("Exception is caught");
-        }
     }
 }
