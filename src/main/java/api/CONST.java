@@ -8,7 +8,10 @@ import com.google.cloud.texttospeech.v1.TextToSpeechClient;
 import com.google.cloud.texttospeech.v1.TextToSpeechSettings;
 import com.google.cloud.translate.v3.TranslationServiceClient;
 import com.google.cloud.translate.v3.TranslationServiceSettings;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import java.io.FileReader;
 import java.io.IOException;
 
 public class CONST {
@@ -28,7 +31,8 @@ public class CONST {
     static {
         try {
             TRANSLATION_SERVICE_SETTINGS = TranslationServiceSettings
-                    .newBuilder().setCredentialsProvider(CONST.CREDENTIALS_PROVIDER).build();
+                    .newBuilder()
+                    .setCredentialsProvider(CONST.CREDENTIALS_PROVIDER).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -79,6 +83,31 @@ public class CONST {
         try {
             SPEECH_CLIENT = SpeechClient.create(CONST.SPEECH_SETTINGS);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final Gson gson = new Gson();
+    public static final JsonObject SUPPORTED_LANGUAGES;
+
+    static {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(CONST.class.getResource("/json/supported_languages.json").getFile());
+            SUPPORTED_LANGUAGES = gson.fromJson(reader, JsonObject.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final JsonObject CONTRY_CODE;
+
+    static {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(CONST.class.getResource("/json/country_code.json").getFile());
+            CONTRY_CODE = gson.fromJson(reader, JsonObject.class);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -17,14 +17,16 @@ import javax.sound.sampled.TargetDataLine;
 import java.util.ArrayList;
 
 public class SpeechToText {
-    private static final int STREAMING_LIMIT = 20000;
-    private static final int IDLE_LIMIT = 6000;
+    private static final int STREAMING_LIMIT = 6000;
+    private static final int IDLE_LIMIT = 3000;
     private static ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
-    private static final ClientStream<StreamingRecognizeRequest> clientStream;
+    private static ClientStream<StreamingRecognizeRequest> clientStream;
     private static StreamingRecognizeRequest request;
     private static TargetDataLine targetDataLine;
-    private static final SimpleStringProperty textOfSpeech;
-    private static final SimpleBooleanProperty isDone;
+    private static SimpleStringProperty textOfSpeech;
+    private static  SimpleBooleanProperty isStart;
+    private static SimpleBooleanProperty isDone;
+    private static SimpleBooleanProperty isPaused;
     private static boolean isIdle;
 
     private static Thread startThread, stopThread;
@@ -64,8 +66,14 @@ public class SpeechToText {
 
     public static void streamingMicRecognize() throws Exception {
         textOfSpeech.set("");
+        clientStream = CONST.SPEECH_CLIENT.streamingRecognizeCallable().splitCall(responseObserver);
+        InitializeFirstRequest();
+
         isDone.set(false);
+        isPaused.set(false);
+        isStart.set(true);
         isIdle = true;
+
         AudioFormat audioFormat = new AudioFormat(16000.0F, 16, 1, true, false);
         Info targetInfo = new Info(TargetDataLine.class, audioFormat);
         if (!AudioSystem.isLineSupported(targetInfo)) {
@@ -76,13 +84,15 @@ public class SpeechToText {
             targetDataLine.start();
             AudioInputStream audio = new AudioInputStream(targetDataLine);
             long startTime = System.currentTimeMillis();
-
-            while(!isDone()) {
-                long estimatedTime = System.currentTimeMillis() - startTime;
+            long estimatedTime = 0;
+            while(estimatedTime < STREAMING_LIMIT && !isPaused()) {
+                estimatedTime = System.currentTimeMillis() - startTime;
                 System.out.println(estimatedTime);
-                if (estimatedTime >= IDLE_LIMIT && isIdle || estimatedTime >= STREAMING_LIMIT) {
-                    stopStreaming();
-//                    break;
+                if(getTextOfSpeech() != null && getTextOfSpeech() != "") {
+                    isIdle = false;
+                }
+                if (estimatedTime >= IDLE_LIMIT && isIdle) {
+                    break;
                 }
 
                 byte[] data = new byte[6400];
@@ -93,12 +103,9 @@ public class SpeechToText {
 
             targetDataLine.stop();
             targetDataLine.close();
-//            clientStream.closeSend();
-//            if (isDone()) {
-//                return getTextOfSpeech();
-//            } else {
-//                throw new RuntimeException("You did not speak anything.");
-//            }
+            isDone.set(true);
+            isPaused.set(false);
+            isStart.set(false);
         }
     }
 
@@ -110,31 +117,37 @@ public class SpeechToText {
         return isDone.get();
     }
 
+    public static boolean isPaused() {
+        return isPaused.get();
+    }
+    public static boolean isStart() {
+        return isStart.get();
+    }
+
     public static SimpleStringProperty textOfSpeechProperty() {
         return textOfSpeech;
     }
 
     public static void stopStreaming() {
-        isDone.set(true);
+        isPaused.set(true);
     }
 
     public static void startRecord() {
+        startThread = new startStream();
         startThread.start();
     }
 
-    public static String stopRecord() {
+    public static void stopRecord() {
+        stopThread = new stopStream();
         stopThread.start();
-        while(!isDone()) {}
-        return getTextOfSpeech();
     }
 
     static {
-        System.out.println("initialize");
         InitializeResponseObserver();
-        clientStream = CONST.SPEECH_CLIENT.streamingRecognizeCallable().splitCall(responseObserver);
-        InitializeFirstRequest();
         textOfSpeech = new SimpleStringProperty();
         isDone = new SimpleBooleanProperty(false);
+        isPaused = new SimpleBooleanProperty(false);
+        isStart = new SimpleBooleanProperty(false);
     }
 }
 
@@ -156,6 +169,7 @@ class startStream extends Thread {
     {
         try {
             SpeechToText.streamingMicRecognize();
+            System.out.println(SpeechToText.getTextOfSpeech());
         }
         catch (Exception e) {
             // Throwing an exception

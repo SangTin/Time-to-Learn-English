@@ -17,25 +17,30 @@ public class TestAPI {
     }
 
     static void testTextToSpeech() throws Exception {
-        String path = "src/main/resources/audio/output4.mp3";
-        String text = "dynasty";
+        String path = "src/main/resources/audio/output3.mp3";
+        String text = "Hello, how are you?";
         TextToSpeech.textToSpeech(path, text);
     }
 
     static void testSpeechToText() throws Exception {
-//        SpeechToText.Init();
 //        System.out.println(SpeechToText.streamingMicRecognize());
     }
 
+    static void testSpeechtoTextButoon() {
+        if(SpeechToText.isPaused() && !SpeechToText.isDone()) {
+            return;
+        }
+        if(SpeechToText.isStart() && !SpeechToText.isPaused()) {
+            SpeechToText.stopRecord();
+            return;
+        }
+        SpeechToText.startRecord();
+
+    }
+
     public static void main(String[] args) throws Exception {
-        System.out.println("hi");
 //        testTranslate();
 //        testTextToSpeech();
-//        testSpeechToText();
-        Thread start = new startStream();
-        Thread stop = new stopStream();
-        start.start();
-        stop.start();
 //        testSpeechToText();
     }
 }
