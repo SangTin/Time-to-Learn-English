@@ -12,7 +12,7 @@ public class TestAPI {
 //        String text = "How are you today?";
         String text = "你今天过得怎么样？";
 //        String translatedText = TranslateTextAdvanced.translateText(targetLanguage, text);
-        String translatedText = TranslateTextAdvanced.translateText(sourceLanguage, targetLanguage, text);
+        String translatedText = TranslateText.translateText(sourceLanguage, targetLanguage, text);
         System.out.println(translatedText);
     }
 
@@ -35,7 +35,6 @@ public class TestAPI {
             return;
         }
         SpeechToText.startRecord();
-
     }
 
     public static void main(String[] args) throws Exception {

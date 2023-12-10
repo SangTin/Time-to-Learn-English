@@ -2,65 +2,84 @@ package gui;
 
 import data.Dictionary;
 import data.SQLiteDatabase;
-import gui.dictionary.Content;
-import gui.dictionary.SearchMenu;
+import data.dictionary.Word;
+import data.enums.AppFunction;
+import gui.home.Home;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Pair;
 
-public class GraphicalDictionary {
-    private LinkedStage owner;
-    private Scene scene;
+public class GraphicalDictionary extends AnchorPane {
+   private static SQLiteDatabase databaseInstance = null;
+   private static Dictionary dictionaryInstance = null;
+   private static SimpleObjectProperty<Pair<AppFunction, Word>> appFunctionWithWord = null;
 
-    private SQLiteDatabase database;
-    private Dictionary dictionary;
+   @FXML private TabPane menuPane;
+   @FXML private Tab homeTab;
+   @FXML private Home homePane;
+   @FXML private Tab dictionaryTab;
+   @FXML private gui.dictionary.Dictionary dictionaryPane;
+   @FXML private Tab editTab;
+   @FXML private Tab gamingTab;
 
-    private SearchMenu searchMenu;
-    private Content content;
-    private AnchorPane mainPane;
+   public static SQLiteDatabase getDatabaseInstance() {
+      return databaseInstance;
+   }
 
-    public GraphicalDictionary(LinkedStage owner) {
-        this.owner = owner;
+   public static Dictionary getDictionaryInstance() {
+      return dictionaryInstance;
+   }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dictionary/Dictionary.fxml"));
-            
-            scene = new Scene(loader.load());
-            searchMenu = (SearchMenu) scene.lookup("#searchMenu");
-            content = (Content) scene.lookup("#content");
-            mainPane = (AnchorPane) scene.lookup("#mainPane");
-            initialize();
-            
-            //Add CSS and effects
-            scene.getStylesheets().add(getClass().getResource("/css/dictionary.css").toExternalForm());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+   public static SimpleObjectProperty<Pair<AppFunction, Word>> appFunctionProperty() {
+     return appFunctionWithWord;
+   }
 
-    public void initialize() {
-        mainPane.getChildren().add(LoadingProgressBar.getLoadingProgressBar());
+   public GraphicalDictionary() {
+      try {
+         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/GUIApplication.fxml"));
+         loader.setController(this);
+         loader.setRoot(this);
+         loader.load();
+      } catch (Exception e) {
+         System.out.println(e.getMessage());
+      }
+   }
 
-        database = new SQLiteDatabase("dictionary.db");
-        dictionary = new Dictionary(database.importFromDatabase());
-
-        searchMenu.setDictionary(dictionary);
-        searchMenu.setContent(content);
-
-        content.visibleProperty().addListener((observable, oldVal, newVal) -> {
-            if (!newVal) {
-                close();
+   public void initialize() {
+      appFunctionProperty().addListener((observable, oldValue, newValue) -> {
+         if (newValue == null) {
+             return;
+         }
+         switch(newValue.getKey()) {
+            case SEARCH: {
+               this.displaySearch(newValue.getValue());
+               break;
             }
-        });
-    }
+            case CREATE:
+            case FIX:
+            case DELETE: {
+               break;
+            }
+            case GAMING:
+            default:
+         }
+         appFunctionProperty().set(null);
+      });
+   }
 
-    public void show() {
-        owner.setScene(scene);
-        content.reset();
-        searchMenu.reset();
-    }
+   private void displaySearch(Word word) {
+      this.menuPane.getSelectionModel().select(this.dictionaryTab);
+      this.dictionaryPane.displaySearch(word);
+   }
 
-    public void close() {
-        owner.backToStage();
-    }
+   static {
+      databaseInstance = new SQLiteDatabase("dictionary.db");
+      dictionaryInstance = new Dictionary(databaseInstance);
+      databaseInstance.importToDictionary(dictionaryInstance);
+      appFunctionWithWord = new SimpleObjectProperty<>();
+   }
 }

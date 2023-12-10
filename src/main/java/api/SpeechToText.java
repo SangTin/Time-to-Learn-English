@@ -28,7 +28,7 @@ public class SpeechToText {
     private static SimpleBooleanProperty isDone;
     private static SimpleBooleanProperty isPaused;
     private static boolean isIdle;
-
+  
     private static Thread startThread, stopThread;
 
     private static void InitializeResponseObserver() {

@@ -1,3 +1,5 @@
+@import "../../ConstantValues.css";
+
 .root * {
     -head-color: #1A3561;
     -des-color: #b645ce;
@@ -71,6 +73,7 @@
 
 .des-text {
     -fx-fill: -des-color;
+    -fx-text-fill: -des-color;
 }
 
 .eng-line {
@@ -89,4 +92,20 @@
 .hyperlink {
     -fx-underline: true;
     -fx-padding: 0;
+}
+
+.favourite-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.favourite-button SVGPath {
+    -fx-stroke: -default-stroke-color;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-join: round;
+    -fx-stroke-line-cap: round;
+}
+
+.is-favourite SVGPath {
+    -fx-fill: #ffcc00;
 }

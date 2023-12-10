@@ -1,0 +1,55 @@
+@import "ConstantValues.css";
+
+.root * {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -idle-icon-color: #a5a5a5;
+}
+
+.menu-pane {
+    tab-width: 90px;
+    tab-height: 60px;
+
+    -fx-tab-min-height: tab-height;
+    -fx-tab-max-height: tab-height;
+
+    -fx-tab-min-width: tab-width;
+    -fx-tab-max-width: tab-width;
+}
+
+.menu-pane > *.tab-header-area .tab-header-background {
+    -fx-background-color: #e5e5e5;
+}
+
+.menu-pane > *.tab-header-area {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.menu-pane > *.tab-header-area .tab {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.menu-pane > *.tab-header-area .tab .menu-content .label {
+    /* -fx-font-size: 12px; */
+    -fx-font-weight: bold;
+}
+
+.menu-pane > *.tab-header-area .tab .menu-icon {
+    -fx-stroke: -idle-icon-color;
+}
+
+.menu-pane > *.tab-header-area .tab .label {
+    -fx-text-fill: -idle-icon-color;
+}
+
+.menu-pane > *.tab-header-area .tab:selected .menu-icon {
+    -fx-stroke: -default-stroke-color;
+}
+
+.menu-pane > *.tab-header-area .tab:selected .label {
+    -fx-text-fill: -default-stroke-color;
+}

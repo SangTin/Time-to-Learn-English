@@ -1,22 +1,17 @@
 package entry;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import data.Dictionary;
+import data.dictionary.Word;
+import exception.editWord.EditWordException;
+import exception.editWord.NoSuchWordFoundException;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import data.Dictionary;
-import data.Word;
-import exception.editWord.EditWordException;
-import exception.editWord.ExistingWordException;
-import exception.editWord.NoSuchWordFoundException;
-
 public class CommandLine {
     static Scanner sc = new Scanner(System.in);
-    private Dictionary words = new Dictionary();
+    private final Dictionary words = new Dictionary();
 
     public void Init() {
     }
@@ -111,7 +106,7 @@ public class CommandLine {
         for (int i = 0; i < summary.size(); ++i) {
             try {
             Word word = words.searchExactly(summary.get(i));
-            System.out.printf("%-6s", Integer.toString(i + 1));
+            System.out.printf("%-6s", i + 1);
             System.out.printf("%-5s", "|");
             System.out.printf("%-11s", word.getWordTarget());
             System.out.printf("%-5s", "|");
@@ -191,7 +186,7 @@ public class CommandLine {
         int n = allWords.length;
         System.out.println("No    |    English    |    Vietnamese");
         for (int i = 0; i < n; ++i) {
-            System.out.printf("%-6s", Integer.toString(i + 1));
+            System.out.printf("%-6s", i + 1);
             System.out.printf("%-5s", "|");
             System.out.printf("%-11s", allWords[i].getWordTarget());
             System.out.printf("%-5s", "|");
@@ -285,7 +280,7 @@ public class CommandLine {
                         words.insert(newWord);
                         summary.add(wordTarget);
                     } catch (EditWordException e) {
-                        if (overwrite == false) {
+                        if (!overwrite) {
                         wordDuplicate.add(newWord);
                         } else {
                         try {
@@ -343,7 +338,7 @@ public class CommandLine {
         for (int i = 0; i < summary.size(); ++i) {
             try {
             Word word = words.searchExactly(summary.get(i));
-            System.out.printf("%-6s", Integer.toString(i + 1));
+            System.out.printf("%-6s", i + 1);
             System.out.printf("%-5s", "|");
             System.out.printf("%-11s", word.getWordTarget());
             System.out.printf("%-5s", "|");

@@ -1,22 +1,38 @@
+@font-face {
+    font-family: VarelaRound;
+    src: url('../fonts/VarelaRound-Regular.ttf');
+}
+
+.root * {
+    /* -fx-font-family: Arial; */
+}
+
+.label {
+    -fx-font-size: 25px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1A3561;
+    -fx-text-alignment: center;
+}
+
 .button {
-    -fx-alignment: center;
-    -fx-background-color: #6ccff7;
-    -fx-border-radius: 4px;
-    -fx-border-width: 0;
-    -fx-text-fill: #36395A;
+    -fx-background-color: #1CB0F6;
+    -fx-border-color: transparent;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-width: 0 0 4 0;
+    -fx-text-fill: white;
     -fx-cursor: pointer;
-    -fx-font-family: "JetBrains Mono", monospace;
-    -fx-content-display: center;
-    -fx-line-spacing: 1;
-    -fx-padding: 0 16px 0 16px;
-    -fx-font-size: 18px;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-padding: 13 0 13 0;
+    -fx-effect: dropshadow(gaussian, #1899D6, 0, 1, 0, 5);
 }
 
 .button:hover {
-    -fx-translate-y: -3px;
+    -fx-background-color: derive(#1CB0F6, 10%);
 }
-  
+
 .button:pressed {
-    -fx-effect: innershadow(gaussian, #0076a3, 7px, 0, 0, -3px);
-    -fx-translate-y: 3px;
+    -fx-translate-y: 5;
+    -fx-effect: none;
 }

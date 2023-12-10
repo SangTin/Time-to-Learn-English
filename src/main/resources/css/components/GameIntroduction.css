@@ -1,0 +1,16 @@
+@import "../ConstantValues.css";
+
+.content-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+}
+
+.content-pane .header-field .label {
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
+.content-pane:hover {
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}

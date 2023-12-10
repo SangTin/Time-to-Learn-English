@@ -1,0 +1,34 @@
+.header-panel {
+    -fx-font-family: "JetBrains Mono", monospace;
+}
+
+#alertYes, #alertNo {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 20 20 20 20;
+    -fx-background-radius: 20 20 20 20;
+}
+
+#alertYes {
+    -fx-background-color: #00b100;
+}
+
+#alertYes:hover {
+    -fx-background-color: #06DA06;
+}
+
+#alertNo {
+    -fx-background-color: #d62929;
+}
+
+#alertNo:hover {
+    -fx-background-color: #ea5252;
+}
+
+#alertCancel {
+    -fx-background-color: #999900;
+}
+
+#alertCancel:hover {
+    -fx-background-color: #cccc00;
+}
