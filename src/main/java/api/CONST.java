@@ -31,7 +31,8 @@ public class CONST {
     static {
         try {
             TRANSLATION_SERVICE_SETTINGS = TranslationServiceSettings
-                    .newBuilder().setCredentialsProvider(CONST.CREDENTIALS_PROVIDER).build();
+                    .newBuilder()
+                    .setCredentialsProvider(CONST.CREDENTIALS_PROVIDER).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -23,11 +23,22 @@ public class TestAPI {
     }
 
     static void testSpeechToText() throws Exception {
-        System.out.println(SpeechToText.streamingMicRecognize());
+//        System.out.println(SpeechToText.streamingMicRecognize());
+    }
+
+    static void testSpeechtoTextButoon() {
+        if(SpeechToText.isPaused() && !SpeechToText.isDone()) {
+            return;
+        }
+        if(SpeechToText.isStart() && !SpeechToText.isPaused()) {
+            SpeechToText.stopRecord();
+            return;
+        }
+        SpeechToText.startRecord();
     }
 
     public static void main(String[] args) throws Exception {
-        testTranslate();
+//        testTranslate();
 //        testTextToSpeech();
 //        testSpeechToText();
     }
