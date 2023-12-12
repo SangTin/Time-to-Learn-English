@@ -333,6 +333,7 @@ public class CrossWord extends GameBase {
 
     @Override
     public void startGame() {
+        super.startGame();
         backgroundMusic.play();
         loadData();
     }
