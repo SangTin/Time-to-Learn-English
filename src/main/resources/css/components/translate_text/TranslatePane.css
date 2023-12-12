@@ -1,0 +1,98 @@
+@import "../../ConstantValues.css";
+
+.translate-pane {
+    -fx-background-color: -dictionary-pane-color;
+}
+
+.language-bar {
+    -fx-background-color: -dictionary-toolbar-color;
+    -fx-background-radius: 20;
+    -fx-padding: 10;
+}
+
+.switch-button {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}
+
+.switch-button .icon {
+    -fx-fill: -default-stroke-color;
+}
+
+.switch-button:hover .icon {
+    -fx-fill: derive(-default-stroke-color, 50%);
+}
+
+.language-select {
+    -fx-background-color: transparent;
+}
+
+.language-select .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.language-select .list-cell {
+    -fx-background-color: -dictionary-toolbar-color;
+}
+
+.language-select .list-cell .text {
+    -fx-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+}
+
+.language-select .combo-box-popup .list-view .list-cell .text {
+    -fx-fill: -default-stroke-color;
+    -fx-font-weight: normal;
+    -fx-font-size: 14;
+}
+
+.language-select .combo-box-popup .list-view .list-cell:hover .text {
+    -fx-font-weight: bold;
+}
+
+.language-select .combo-box-popup .list-view .list-cell:odd {
+    -fx-background-color: #f9cee7;
+}
+
+.language-select .combo-box-popup .list-view .list-cell:even {
+    -fx-background-color: -dictionary-pane-color;
+}
+
+.language-select .combo-box-popup .list-view .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-scale-x: 0;
+    -fx-scale-y: 0;
+    -fx-pref-width: 0;
+    -fx-min-width: 0;
+}
+
+.text-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+}
+
+.text-pane .text-input {
+    -fx-wrap-text: true;
+}
+
+.text-pane .text-input,
+.text-pane .text-input .content,
+.text-pane .text-input .viewport {
+    -fx-background-color: transparent;
+}
+
+.text-pane .button-bar,
+.text-pane .button-bar .button {
+    -fx-background-color: transparent;
+}
+
+.text-pane .button-bar .button .icon {
+    -fx-fill: transparent;
+    -fx-stroke: #646464;
+    -fx-stroke-line-join: round;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-width: 2;
+}

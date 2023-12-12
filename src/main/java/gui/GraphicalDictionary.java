@@ -9,6 +9,7 @@ import game.GameBase;
 import game.crossword.CrossWord;
 import game.guessword.GuessWord;
 import gui.home.Home;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -57,7 +58,7 @@ public class GraphicalDictionary extends AnchorPane {
          loader.setRoot(this);
          loader.load();
       } catch (Exception e) {
-         System.out.println(e.getMessage());
+            System.out.println("Error loading GUIApplication.fxml");
       }
    }
 
@@ -114,7 +115,11 @@ public class GraphicalDictionary extends AnchorPane {
    static {
       databaseInstance = new SQLiteDatabase("dictionary.db");
       dictionaryInstance = new Dictionary(databaseInstance);
-      databaseInstance.importToDictionary(dictionaryInstance);
+      new Thread(() -> {
+         Platform.runLater(() -> {
+            databaseInstance.importToDictionary(dictionaryInstance);
+         });
+      }).start();
       changesInstance = new Changes(dictionaryInstance, databaseInstance);
       appFunctionWithWord = new SimpleObjectProperty<>();
    }

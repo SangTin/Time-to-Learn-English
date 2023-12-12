@@ -1,5 +1,6 @@
 package gui.dictionary.search;
 
+import api.TextToSpeech;
 import data.Dictionary;
 import data.dictionary.Word;
 import data.enums.PartOfSpeech;
@@ -16,8 +17,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Description extends DisplayWord {
    private static final String DESCRIPTION_FXML = "/fxml/dictionary/search/Description.fxml";
@@ -33,12 +39,24 @@ public class Description extends DisplayWord {
    @FXML private HBox ukPron;
    @FXML private HBox usPron;
    @FXML private Button favouriteButton;
+   @FXML private Button ukSoundButton;
+   @FXML private Button usSoundButton;
 
    private Dictionary dictionary;
    private final SimpleBooleanProperty isFavourite = new SimpleBooleanProperty(false);
+   private final MediaPlayer outputSound;
 
    public Description() {
       super();
+      File soundFile = new File("src/main/resources/audio/pronounce.mp3");
+      if (!soundFile.exists()) {
+         try {
+            soundFile.createNewFile();
+         } catch (IOException ignored) {}
+      }
+      Media player = new Media(soundFile.toURI().toString());
+      outputSound = new MediaPlayer(player);
+
       try {
          FXMLLoader loader = new FXMLLoader(getClass().getResource(DESCRIPTION_FXML));
          loader.setController(this);
@@ -68,6 +86,16 @@ public class Description extends DisplayWord {
          }
       });
       clear();
+      ukSoundButton.setOnAction(e -> {
+         TextToSpeech.textToSpeech("en-UK", headWord.getText(), "pronounce");
+         outputSound.stop();
+         outputSound.play();
+      });
+      usSoundButton.setOnAction(e -> {
+         TextToSpeech.textToSpeech("en-US", headWord.getText(), "pronounce");
+         outputSound.stop();
+         outputSound.play();
+      });
    }
 
    public void clear() {
@@ -77,6 +105,7 @@ public class Description extends DisplayWord {
       desView.setVvalue(0);
       desPane.getChildren().clear();
       posBar.getButtons().clear();
+      outputSound.stop();
    }
 
    public void display(Word word) {

@@ -4,7 +4,8 @@ import data.Dictionary;
 import data.dictionary.Word;
 import data.enums.AppFunction;
 import gui.GraphicalDictionary;
-import gui.components.SearchBase;
+import gui.components.search.SearchBase;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -30,10 +31,17 @@ public class Home extends ScrollPane {
          loader.load();
       } catch (Exception e) {
          System.out.println("Error in Home.java");
+         e.printStackTrace();
       }
    }
 
    public void initialize() {
+      new Thread(() -> {
+         Platform.runLater(this::doInitialize);
+      }).start();
+   }
+
+   public void doInitialize() {
       this.searchBar.setDictionary(GraphicalDictionary.getDictionaryInstance());
       this.searchBar.selectedWordProperty().addListener((observable, oldValue, newValue) -> {
          if (newValue != null) {
@@ -54,8 +62,8 @@ public class Home extends ScrollPane {
       this.favouriteView.setPlaceholder(new Label("No favourite"));
       customRecentSearch(this.favouriteView);
       this.clearFavourite.setOnAction((event) -> {
-          dictionary.clearFavouriteSearch();
-          this.favouriteView.refresh();
+         dictionary.clearFavouriteSearch();
+         this.favouriteView.refresh();
       });
    }
 

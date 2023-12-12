@@ -4,7 +4,6 @@ import data.Dictionary;
 import data.dictionary.Word;
 import data.enums.AppFunction;
 import data.enums.SearchResultType;
-import gui.components.SearchBase;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,6 +34,10 @@ public class SearchPane extends SearchBase {
 
    public void initialize() {
       super.initialize();
+   }
+
+   protected void doInitialize() {
+      super.doInitialize();
       setRecentSearch(this.searchResult, SearchResultType.SUGGESTION);
       setRecentSearch(this.favouriteResult, SearchResultType.FAVOURITE);
       setRecentSearch(this.historyResult, SearchResultType.HISTORY);

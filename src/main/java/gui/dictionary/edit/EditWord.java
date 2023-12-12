@@ -33,7 +33,7 @@ public class EditWord extends DisplayWord {
     public EditWord() {
         super();
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/edit/content/EditWord.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dictionary/edit/EditWord.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();
@@ -42,7 +42,7 @@ public class EditWord extends DisplayWord {
         }
 
         try {
-            Parent tooltip = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/edit/content/EditWordToolTip.fxml")));
+            Parent tooltip = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/dictionary/edit/EditWordToolTip.fxml")));
             howToUse.setGraphic(tooltip);
         } catch (Exception e) {
             System.out.println("Error loading EditWordToolTip.fxml");
@@ -131,7 +131,7 @@ public class EditWord extends DisplayWord {
 
         Parent tooltip = null;
         try {
-            tooltip = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/edit/content/EditWordToolTip.fxml")));
+            tooltip = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/dictionary/edit/EditWordToolTip.fxml")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

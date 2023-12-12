@@ -7,6 +7,7 @@ import exception.editWord.NoSuchWordFoundException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -443,39 +444,15 @@ public class SQLiteDatabase {
       return thesauruses;
    }
 
-   public ArrayList<Word> importFromDatabase() {
-      if (this.conn == null) {
-         return new ArrayList<>();
-      } else {
-         ArrayList<Word> words = new ArrayList<>();
-         ImportWordThread importWordThread = new ImportWordThread(this.conn, words);
-         importWordThread.start();
-         return words;
-      }
-   }
-
    public void importToDictionary(Dictionary dictionary) {
-      Thread thread = new Thread(() -> {
-         ArrayList<Word> words = new ArrayList<>();
-         ImportWordThread importWordThread = new ImportWordThread(this.conn, words);
-         importWordThread.start();
-
-         try {
-            importWordThread.join();
-            System.out.println("Imported " + words.size() + " words");
-            dictionary.setWords(words);
-            dictionary.getHistorySearch().load();
-         } catch (InterruptedException var5) {
-            System.out.println(var5.getMessage());
-         }
-
+      ArrayList<Word> words = new ArrayList<>();
+      ImportWordTask importWordTask = new ImportWordTask(this.conn, words);
+      importWordTask.run();
+      importWordTask.setOnSucceeded(event -> {
+         System.out.println("Imported " + words.size() + " words");
+         dictionary.setWords(words);
+         dictionary.getHistorySearch().load();
       });
-      thread.start();
-      try {
-         thread.join();
-      } catch (InterruptedException e) {
-         throw new RuntimeException(e);
-      }
    }
 
    public static SQLiteDatabase exportToDatabase(String dbName, ArrayList<Word> words) {
@@ -573,16 +550,17 @@ public class SQLiteDatabase {
       }
    }
 
-   private static class ImportWordThread extends Thread {
+   private static class ImportWordTask extends Task<Void> {
       private final Connection conn;
       private final ArrayList<Word> words;
 
-      public ImportWordThread(Connection conn, ArrayList<Word> words) {
+      public ImportWordTask(Connection conn, ArrayList<Word> words) {
          this.conn = conn;
          this.words = words;
       }
 
-      public void run() {
+      @Override
+      protected Void call() throws Exception {
          String sql = """
             SELECT w.id, w.word_target, m.word_explain, m.ipa_uk, m.ipa_us, m.is_favourite
             FROM words w
@@ -608,14 +586,14 @@ public class SQLiteDatabase {
                   this.words.add(word);
                }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+               System.out.println(e.getMessage());
             }
 
-             stmt.close();
+            stmt.close();
          } catch (SQLException var7) {
             System.out.println(var7.getMessage());
          }
-
+         return null;
       }
    }
 }
