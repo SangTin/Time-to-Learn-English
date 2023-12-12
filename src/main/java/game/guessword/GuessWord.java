@@ -102,19 +102,11 @@ public class GuessWord extends GameBase {
                     }
                 }
                 break;
+            case F2:
+                currentTextField.setText(String.valueOf(hint.charAt(col-start)));
+                break;
             default:
                 return;
-        }
-    }
-
-    private void handleKeyTyped(KeyEvent event) {
-        TextField textField = (TextField) event.getSource();
-        String typedCharacter = event.getCharacter();
-        int col = GridPane.getColumnIndex(textField);
-
-        if ("$".equals(typedCharacter)) {
-            // Nếu người dùng nhập ký tự "$", thay đổi giá trị của TextField thành ký tự mong muốn
-            textField.setText(String.valueOf(hint.charAt(col-start)));  // Thay đổi thành ký tự bạn muốn
         }
     }
 
@@ -176,7 +168,6 @@ public class GuessWord extends GameBase {
                 text.setOnKeyPressed(event -> {
                     handleArrowKeys(text, event.getCode());
                 });
-                text.setOnKeyTyped(event -> handleKeyTyped(event));
                 answer.add(text, i, 0);
             }
         }

@@ -102,9 +102,9 @@ public class CrossWord extends GameBase {
                 break;
             case DOWN:
                 if (row < 8) {
-                    row++;
-                }
-                break;
+                row++;
+            }
+            break;
             case LEFT:
                 if (col > 0) {
                     col--;
@@ -112,8 +112,11 @@ public class CrossWord extends GameBase {
                 break;
             case RIGHT:
                 if (col < 8) {
-                    col++;
-                }
+                col++;
+            }
+            break;
+            case F2:
+                currentTextField.setText(hint[row][col]);
                 break;
             default:
                 return;
@@ -178,18 +181,6 @@ public class CrossWord extends GameBase {
         return answer;
     }
 
-    private void handleKeyTyped(KeyEvent event) {
-        TextField textField = (TextField) event.getSource();
-        String typedCharacter = event.getCharacter();
-        int row = GridPane.getRowIndex(textField);
-        int col = GridPane.getColumnIndex(textField);
-
-        if ("$".equals(typedCharacter)) {
-            // Nếu người dùng nhập ký tự "$", thay đổi giá trị của TextField thành ký tự mong muốn
-            textField.setText(hint[row][col]);  // Thay đổi thành ký tự bạn muốn
-        }
-    }
-
     public void SetUpGridPane() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -209,7 +200,6 @@ public class CrossWord extends GameBase {
                     text.setOnKeyPressed(event -> {
                         handleArrowKeys(text, event.getCode());
                     });
-                    text.setOnKeyTyped(event -> handleKeyTyped(event));
                     table.add(text, col, row);
                     if(!dataId[row][col].equals("0")) {
                         Label id = new Label(dataId[row][col]);
@@ -244,7 +234,7 @@ public class CrossWord extends GameBase {
             for (int col = 0; col < 8; col++) {
                 if(!dataId[row][col].equals("-1")) {
                     String newId = "textField_" + row + "_" + col;
-                    TextField text= (TextField) table.lookup("#" + newId);
+                    TextField text = (TextField) table.lookup("#" + newId);
                     String answer = text.getText();
                     answer = answer.toLowerCase();
                     if(!hint[row][col].equals(answer)) {
@@ -334,6 +324,7 @@ public class CrossWord extends GameBase {
     @Override
     public void startGame() {
         super.startGame();
+        table.getChildren().clear();
         backgroundMusic.play();
         loadData();
     }
