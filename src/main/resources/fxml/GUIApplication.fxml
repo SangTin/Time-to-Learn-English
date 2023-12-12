@@ -79,7 +79,7 @@
                   </BorderPane>
                </graphic>
                <content>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane fx:id="gamingPane">
                      <children>
                         <Button fx:id="crossWordButton" layoutX="246.0" layoutY="271.0" mnemonicParsing="false" text="CrossWord" />
                         <Button fx:id="guessWordButton" layoutX="524.0" layoutY="271.0" mnemonicParsing="false" text="GuessWord" />
