@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -115,6 +114,9 @@ public class CrossWord extends GameBase {
                     col++;
                 }
                 break;
+            case F2:
+                currentTextField.setText(hint[row][col]);
+                break;
             default:
                 return;
         }
@@ -178,18 +180,6 @@ public class CrossWord extends GameBase {
         return answer;
     }
 
-    private void handleKeyTyped(KeyEvent event) {
-        TextField textField = (TextField) event.getSource();
-        String typedCharacter = event.getCharacter();
-        int row = GridPane.getRowIndex(textField);
-        int col = GridPane.getColumnIndex(textField);
-
-        if ("$".equals(typedCharacter)) {
-            // Nếu người dùng nhập ký tự "$", thay đổi giá trị của TextField thành ký tự mong muốn
-            textField.setText(hint[row][col]);  // Thay đổi thành ký tự bạn muốn
-        }
-    }
-
     public void SetUpGridPane() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -209,7 +199,6 @@ public class CrossWord extends GameBase {
                     text.setOnKeyPressed(event -> {
                         handleArrowKeys(text, event.getCode());
                     });
-                    text.setOnKeyTyped(event -> handleKeyTyped(event));
                     table.add(text, col, row);
                     if(!dataId[row][col].equals("0")) {
                         Label id = new Label(dataId[row][col]);
@@ -268,12 +257,12 @@ public class CrossWord extends GameBase {
     }
 
     public void Next(ActionEvent event) {
-        table.getChildren().clear();
         ++currentGame;
         loadData();
     }
 
     public void loadData() {
+        table.getChildren().clear();
         Next.setVisible(false);
         Next.setManaged(false);
         int type = (currentGame + 1) / 2;
@@ -327,8 +316,8 @@ public class CrossWord extends GameBase {
         Anchor.setStyle("-fx-background-color: white;");
         table.setStyle("-fx-border-color: pink; -fx-border-width: 0.5;");
         Border.setStyle("-fx-border-color: pink; -fx-border-width: 3;");
-        Notification.setFont(Font.font(customFont.getFamily(), 12));
-        Notification.setText("With each other cell\nPress \"$\" to see hint");
+        Notification.setFont(Font.font(customFont.getFamily(), 11));
+        Notification.setText("With each other cell\nPress \"F2\" to see hint");
     }
 
     @Override
@@ -338,3 +327,4 @@ public class CrossWord extends GameBase {
         loadData();
     }
 }
+
