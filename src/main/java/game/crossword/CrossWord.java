@@ -117,9 +117,6 @@ public class CrossWord extends GameBase {
             case F2:
                 currentTextField.setText(hint[row][col]);
                 break;
-            case F2:
-                currentTextField.setText(hint[row][col]);
-                break;
             default:
                 return;
         }
