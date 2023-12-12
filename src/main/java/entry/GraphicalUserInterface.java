@@ -29,7 +29,6 @@ public class GraphicalUserInterface {
          e.consume();
          this.quitAlert();
       });
-      this.primaryStage.show();
    }
 
    private void quitAlert() {
@@ -64,4 +63,7 @@ public class GraphicalUserInterface {
       return false;
    }
 
+    public void show() {
+        this.primaryStage.show();
+    }
 }

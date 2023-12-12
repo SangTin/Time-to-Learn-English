@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 public class CONST {
     static final String PROJECT_ID = "dictionary-403316";
@@ -93,7 +94,7 @@ public class CONST {
     static {
         FileReader reader = null;
         try {
-            reader = new FileReader(CONST.class.getResource("/json/supported_languages.json").getFile());
+            reader = new FileReader(Objects.requireNonNull(CONST.class.getResource("/json/supported_languages.json")).getFile());
             SUPPORTED_LANGUAGES = gson.fromJson(reader, JsonObject.class);
         } catch (Exception e) {
             throw new RuntimeException(e);

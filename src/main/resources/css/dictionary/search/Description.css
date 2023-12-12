@@ -1,0 +1,111 @@
+@import "../../ConstantValues.css";
+
+.root * {
+    -head-color: #1A3561;
+    -des-color: #b645ce;
+    -fx-font-family: Arial, Helvetica, sans-serif;
+}
+
+#posBar {
+    -fx-padding: 0 10 0 10;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: lightgray;
+}
+
+#posBar .button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 30 30 30 30;
+    -fx-border-color: #1d5d8a;
+    -fx-border-radius: 30 30 30 30;
+    -fx-text-fill: #1d5d8a;
+}
+
+#posBar .button:hover {
+    -fx-background-color: #1d5d8a;
+    -fx-text-fill: white;
+}
+
+.scroll-pane, .ipa-voice-button {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+#desPane * {
+    -fx-font-size: 16px;
+}
+
+#desPane .label {
+    -fx-text-fill: -head-color;
+    -fx-font-weight: 700;
+}
+
+#headWord .text {
+    -fx-underline: true;
+    -fx-font-size: 30px;
+}
+
+.pron .button {
+    -fx-padding: 0 10 0 0;
+    -fx-background-color: transparent;
+}
+
+.pron .button SVGPath {
+    -fx-fill: none;
+    -fx-stroke: -head-color;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-join: round;
+    -fx-stroke-line-cap: round;
+}
+
+.pos, .pos-text {
+    -fx-underline: true;
+    -fx-font-weight: 700;
+}
+
+.des-icon {
+    -fx-fill: none;
+    -fx-stroke: -des-color;
+    -fx-stroke-width: 1;
+    -fx-stroke-line-join: round;
+    -fx-stroke-line-cap: round;
+}
+
+.des-text {
+    -fx-fill: -des-color;
+    -fx-text-fill: -des-color;
+}
+
+.eng-line {
+    -fx-spacing: 5;
+    -fx-alignment: center-left;
+    -fx-pref-height: -1;
+    -fx-pref-width: -1;
+}
+
+.eng-text {
+    -eng-color: #2874c6;
+    -fx-fill: -eng-color;
+    -fx-text-fill: -eng-color;
+}
+
+.hyperlink {
+    -fx-underline: true;
+    -fx-padding: 0;
+}
+
+.favourite-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.favourite-button SVGPath {
+    -fx-stroke: -default-stroke-color;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-join: round;
+    -fx-stroke-line-cap: round;
+}
+
+.is-favourite SVGPath {
+    -fx-fill: #ffcc00;
+}

@@ -2,6 +2,7 @@ package entry;
 
 import gui.style.MenuStyle;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,6 +15,7 @@ import java.util.Objects;
 public class Start extends Application {
    private Scene loadScene;
    private Stage primaryStage;
+   private GraphicalUserInterface graphicalUserInterface;
 
    public static void main(String[] args) {
       launch(args);
@@ -40,13 +42,17 @@ public class Start extends Application {
       try {
          this.customizeLoadScene();
       } catch (Exception var3) {
-         var3.printStackTrace();
+         System.out.println("Error: " + var3.getMessage());
       }
 
       this.primaryStage.setTitle("Time to Learn English");
       this.primaryStage.setScene(this.loadScene);
       this.primaryStage.setResizable(false);
       this.primaryStage.show();
+
+      Platform.runLater(() -> {
+         graphicalUserInterface = new GraphicalUserInterface();
+      });
    }
 
    public void commandLineInterface() {
@@ -56,24 +62,12 @@ public class Start extends Application {
          Runtime.getRuntime().exec("cmd /c start cmd /k java -jar bin/CommandLine.jar");
          this.primaryStage.close();
       } catch (IOException var3) {
-         var3.printStackTrace();
+         System.out.println("Error: " + var3.getMessage());
       }
    }
 
-
-
    public void graphicalUserInterface() {
-      new GraphicalUserInterface();
+      this.graphicalUserInterface.show();
       this.primaryStage.close();
-
-//      Stage stage = new Stage();
-//      stage.setTitle("Voice Input");
-//      stage.setResizable(false);
-//      stage.centerOnScreen();
-//      stage.initModality(Modality.APPLICATION_MODAL);
-//
-//      Scene scene = new Scene(new EditWord());
-//      stage.setScene(scene);
-//      stage.showAndWait();
    }
 }

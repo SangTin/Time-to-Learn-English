@@ -24,7 +24,7 @@ public class DictionaryFunctionBox extends GridPane {
     public DictionaryFunctionBox() {
         super();
         try {
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/home/DictionaryFunctionBox.fxml"));
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/home/content/DictionaryFunctionBox.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

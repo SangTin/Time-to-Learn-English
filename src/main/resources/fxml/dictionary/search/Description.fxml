@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Text?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="577.0" prefWidth="579.0" stylesheets="@../../../css/dictionary/content/Description.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="577.0" prefWidth="579.0" stylesheets="@../../../css/dictionary/search/Description.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ButtonBar fx:id="posBar" prefWidth="530.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         <ScrollPane fx:id="desView" hbarPolicy="NEVER" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -32,7 +32,7 @@
                         <HBox fx:id="ukPron" alignment="CENTER_LEFT">
                             <children>
                                 <Label prefWidth="28.0" text="UK" HBox.hgrow="NEVER" />
-                                <Button mnemonicParsing="false" HBox.hgrow="NEVER">
+                                <Button fx:id="ukSoundButton" mnemonicParsing="false" HBox.hgrow="NEVER">
                                     <graphic>
                                         <SVGPath content="M15 8a5 5 0 0 1 0 8 M17.7 5a9 9 0 0 1 0 14 M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
                                     </graphic>
@@ -47,7 +47,7 @@
                         <HBox fx:id="usPron" alignment="CENTER_LEFT">
                             <children>
                                 <Label prefWidth="28.0" text="US" HBox.hgrow="NEVER" />
-                                <Button mnemonicParsing="false" HBox.hgrow="NEVER">
+                                <Button fx:id="usSoundButton" mnemonicParsing="false" HBox.hgrow="NEVER">
                                     <graphic>
                                         <SVGPath content="M15 8a5 5 0 0 1 0 8 M17.7 5a9 9 0 0 1 0 14 M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
                                     </graphic>
