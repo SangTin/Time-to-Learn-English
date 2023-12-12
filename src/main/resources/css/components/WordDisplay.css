@@ -38,6 +38,7 @@
 .edit-button {
     -fx-background-color: #f29c00;
 }
+
 .content-tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: -dictionary-toolbar-color;
 }
@@ -60,10 +61,8 @@
 }
 
 .content-tab-pane .tab:disabled {
-    -fx-scale-x: 0;
-    -fx-scale-y: 0;
+    -fx-opacity: 0;
     -fx-pref-width: 0;
-    -fx-pref-height: 0;
 }
 
 .content-tab-pane .tab .tab-label {

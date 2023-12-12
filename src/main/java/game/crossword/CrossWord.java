@@ -1,29 +1,11 @@
 package game.crossword;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.function.UnaryOperator;
-
-import javax.sound.sampled.*;
-
-import gui.game.GameBase;
-import javafx.application.Application;
+import game.GameBase;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -33,6 +15,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.function.UnaryOperator;
 
 public class CrossWord extends GameBase {
     @FXML
@@ -69,37 +57,16 @@ public class CrossWord extends GameBase {
     public static Stage primaryStage;
 
     private static final String CONTENT_FXML = "/crossword/fxml/crossword.fxml";
-//    private static final String CONTENT_FXML = "/fxml/dictionary/Content.fxml";
 
     public CrossWord() {
         super();
+        setBackgroundMusic("src/main/resources/crossword/sound/sound.wav");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(CONTENT_FXML));
             loader.setController(this);
             loader.setRoot(this);
             loader.load();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void playSound(String soundFilePath) {
-        try {
-            File soundFile = new File(soundFilePath);
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-
-            // Lắng nghe sự kiện kết thúc để bắt đầu lại từ đầu
-            clip.addLineListener(event -> {
-                if (event.getType() == LineEvent.Type.STOP) {
-                    clip.setMicrosecondPosition(0);
-                    clip.start();
-                }
-            });
-
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
@@ -265,7 +232,7 @@ public class CrossWord extends GameBase {
         alert.getButtonTypes().setAll(yes, cancel);
 
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("crossword/css/alert.css").toExternalForm());
+        dialogPane.getStylesheets().add(getClass().getResource("/css/alert.css").toExternalForm());
 
         Optional<ButtonType> choice = alert.showAndWait();
         if(choice.get() == yes) {
@@ -352,9 +319,7 @@ public class CrossWord extends GameBase {
         End.setTextFill(Color.PURPLE);
     }
 
-    @Override
     public void initialize() {
-        playSound("src/main/resources/crossword/sound/sound.wav");
         table.getChildren().clear();
         customFont = Font.loadFont(getClass().getResourceAsStream("/crossword/font/lazy.ttf"), 17);
         HeightOfCellInGridPane = table.getPrefHeight() / 8;
@@ -364,7 +329,11 @@ public class CrossWord extends GameBase {
         Border.setStyle("-fx-border-color: pink; -fx-border-width: 3;");
         Notification.setFont(Font.font(customFont.getFamily(), 12));
         Notification.setText("With each other cell\nPress \"$\" to see hint");
-        loadData();
     }
 
+    @Override
+    public void startGame() {
+        backgroundMusic.play();
+        loadData();
+    }
 }

@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Start extends Application {
    private Scene loadScene;
@@ -19,7 +20,7 @@ public class Start extends Application {
    }
 
    private void customizeLoadScene() throws Exception {
-      Parent root = FXMLLoader.load(this.getClass().getResource("/fxml/Start.fxml"));
+      Parent root = FXMLLoader.load(Objects.requireNonNull(this.getClass().getResource("/fxml/Start.fxml")));
       this.loadScene = new Scene(root);
       Button CLIButton = (Button)root.lookup("#CLIButton");
       Button GUIButton = (Button)root.lookup("#GUIButton");

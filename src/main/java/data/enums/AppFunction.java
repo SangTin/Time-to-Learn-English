@@ -1,5 +1,5 @@
 package data.enums;
 
 public enum AppFunction {
-   SEARCH, CREATE, FIX, DELETE, GAMING;
+   SEARCH, ADD, FIX, DELETE, GAMING;
 }

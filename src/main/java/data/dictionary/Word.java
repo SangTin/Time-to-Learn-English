@@ -3,8 +3,7 @@ package data.dictionary;
 import javafx.beans.property.SimpleBooleanProperty;
 
 public class Word implements Comparable<Word> {
-   private static int numWord = 0;
-   private int id;
+   private int id = -1;
    private String wordTarget;
    private String wordExplain;
    private String usPron;
@@ -13,7 +12,6 @@ public class Word implements Comparable<Word> {
    private final SimpleBooleanProperty isDeleted;
 
    public Word() {
-      this.id = ++numWord;
       this.isFavorite = new SimpleBooleanProperty(false);
       this.isDeleted = new SimpleBooleanProperty(false);
    }
@@ -43,9 +41,6 @@ public class Word implements Comparable<Word> {
    public Word(int id, String wordTarget, String wordExplain, String usPron, String ukPron) {
       this(wordTarget, wordExplain);
       this.id = id;
-      if (id > numWord) {
-         numWord = id;
-      }
       this.usPron = usPron;
       this.ukPron = ukPron;
    }
@@ -55,10 +50,6 @@ public class Word implements Comparable<Word> {
    }
 
    public void setId(Integer id) {
-      if (id > numWord) {
-         numWord = id;
-      }
-
       this.id = id;
    }
 

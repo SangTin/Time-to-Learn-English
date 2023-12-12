@@ -40,7 +40,7 @@ public class HistorySearch {
 
    public void add(Word word) {
       this.reload();
-      this.words.add(word);
+      this.words.addFirst(word);
       this.database.insertHistorySearch(word.getId());
    }
 
@@ -69,10 +69,9 @@ public class HistorySearch {
          }
       }
 
-      public boolean add(Word e) {
+      public void addFirst(Word e) {
          onProposedChange(Collections.singletonList(e), size(), size());
-         addFirst(e);
-         return true;
+         super.addFirst(e);
       }
    }
 }

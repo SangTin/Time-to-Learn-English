@@ -1,6 +1,7 @@
 package entry;
 
 import data.Dictionary;
+import data.dictionary.AutoDeleteWordList;
 import data.dictionary.Word;
 import exception.editWord.EditWordException;
 import exception.editWord.NoSuchWordFoundException;
@@ -182,15 +183,15 @@ public class CommandLine {
 
     public void Display() {
         System.out.print("\033\143");
-        Word[] allWords = words.showALl();
-        int n = allWords.length;
+        AutoDeleteWordList allWords = words.showALl();
+        int n = allWords.size();
         System.out.println("No    |    English    |    Vietnamese");
         for (int i = 0; i < n; ++i) {
             System.out.printf("%-6s", i + 1);
             System.out.printf("%-5s", "|");
-            System.out.printf("%-11s", allWords[i].getWordTarget());
+            System.out.printf("%-11s", allWords.get(i).getWordTarget());
             System.out.printf("%-5s", "|");
-            System.out.println(allWords[i].getWordExplain());
+            System.out.println(allWords.get(i).getWordExplain());
         }
         System.out.println();
         System.out.print("Press:\n[0] Exit\n[1] Show Menu\nYour choice: ");
@@ -218,8 +219,6 @@ public class CommandLine {
             showMenu();
         } else if (type == 2) {
             Lookup();
-        } else if (type == 2) {
-            Lookup();
         }
     }
 
@@ -227,13 +226,13 @@ public class CommandLine {
         System.out.print("\033\143");
         System.out.print("Word you want to search: ");
         String wordString = sc.next();
-        Word[] result = words.search(wordString);
+        AutoDeleteWordList result = words.search(wordString);
         System.out.print("Search result : ");
-        for (int i = 0; i < result.length; ++i) {
-            if (i < result.length - 1)
-                System.out.print(result[i].getWordTarget() + ", ");
+        for (int i = 0; i < result.size(); ++i) {
+            if (i < result.size() - 1)
+                System.out.print(result.get(i).getWordTarget() + ", ");
             else
-                System.out.println(result[i].getWordTarget() + ".");
+                System.out.println(result.get(i).getWordTarget() + ".");
         }
         System.out.println();
         System.out.print("Press:\n[0] Exit\n[1] Show Menu\n[2] Continue to Search\n[3] Look up\nYour choice: ");

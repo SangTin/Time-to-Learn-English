@@ -3,7 +3,6 @@ package data.dictionary;
 import exception.editWord.ExistingWordException;
 import exception.editWord.NoSuchWordFoundException;
 
-import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -60,7 +59,6 @@ public class TrieWord {
             --current.count;
             Word result = current.word;
             current.word = null;
-            result.setDeleted(true);
             return result;
          }
       } else {
@@ -80,7 +78,9 @@ public class TrieWord {
    }
 
    public Word remove(String word) throws NoSuchWordFoundException {
-      return this.remove(this.root, word.trim(), 0);
+      Word result = this.remove(this.root, word.trim(), 0);
+      result.setDeleted(true);
+      return result;
    }
 
    public Word searchExactly(String word) throws NoSuchWordFoundException {
@@ -101,20 +101,20 @@ public class TrieWord {
       }
    }
 
-   public Word[] search(String word) {
+   public AutoDeleteWordList search(String word) {
       return this.searchLimit(word, -1);
    }
 
-   public Word[] searchLimit(String word, int limit) {
+   public AutoDeleteWordList searchLimit(String word, int limit) {
       TrieNode node;
       try {
          node = this.searchNode(word);
       } catch (NoSuchWordFoundException var6) {
-         return new Word[0];
+         return new AutoDeleteWordList();
       }
 
       Stack<TrieNode> stack = new Stack<>();
-      ArrayList<Word> list = new ArrayList<>();
+      AutoDeleteWordList list = new AutoDeleteWordList();
       stack.add(node);
       while (!stack.isEmpty()) {
          TrieNode current = stack.pop();
@@ -127,10 +127,10 @@ public class TrieWord {
          stack.addAll(current.children.values().stream().toList().reversed());
       }
 
-      return list.toArray(new Word[0]);
+      return list;
    }
 
-   public Word[] showALl() {
+   public AutoDeleteWordList showALl() {
       return this.search("");
    }
 

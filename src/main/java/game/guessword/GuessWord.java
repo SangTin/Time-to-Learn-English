@@ -1,33 +1,13 @@
 package game.guessword;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.function.UnaryOperator;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import gui.game.GameBase;
-import javafx.application.Application;
+import game.GameBase;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -36,6 +16,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 public class GuessWord extends GameBase {
     public static Stage primaryStage;
@@ -60,33 +43,13 @@ public class GuessWord extends GameBase {
 
     public GuessWord() {
         super();
+        setBackgroundMusic("src/main/resources/guessword/sound/sound.wav");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(CONTENT_FXML));
             loader.setController(this);
             loader.setRoot(this);
             loader.load();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void playSound(String soundFilePath) {
-        try {
-            File soundFile = new File(soundFilePath);
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-
-            // Lắng nghe sự kiện kết thúc để bắt đầu lại từ đầu
-            clip.addLineListener(event -> {
-                if (event.getType() == LineEvent.Type.STOP) {
-                    clip.setMicrosecondPosition(0);
-                    clip.start();
-                }
-            });
-
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
@@ -236,7 +199,6 @@ public class GuessWord extends GameBase {
     }
 
     public void initialize() {
-        playSound("src/main/resources/guessword/sound/sound.wav");
         customFont = Font.loadFont(getClass().getResourceAsStream("/guessword/font/times.ttf"), 14);
         Next.setTextFill(Color.WHITE);
         Notification.setFont(Font.font(customFont.getFamily(), 12));
@@ -249,7 +211,10 @@ public class GuessWord extends GameBase {
         Title.setFont(Font.font(customFont.getFamily(), 16));
         Title.setAlignment(Pos.CENTER);
         End.setFont(Font.font(customFont.getFamily(), 13));
-        loadData();
     }
 
+    public void startGame() {
+        backgroundMusic.play();
+        loadData();
+    }
 }

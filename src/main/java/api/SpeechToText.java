@@ -17,19 +17,18 @@ import javax.sound.sampled.TargetDataLine;
 import java.util.ArrayList;
 
 public class SpeechToText {
-    private static final int STREAMING_LIMIT = 6000;
-    private static final int IDLE_LIMIT = 3000;
+    private static final int STREAMING_LIMIT = 20000;
+    private static final int IDLE_LIMIT = 6000;
     private static ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
     private static ClientStream<StreamingRecognizeRequest> clientStream;
     private static StreamingRecognizeRequest request;
     private static TargetDataLine targetDataLine;
-    private static SimpleStringProperty textOfSpeech;
-    private static  SimpleBooleanProperty isStart;
-    private static SimpleBooleanProperty isDone;
-    private static SimpleBooleanProperty isPaused;
+    private static final SimpleStringProperty textOfSpeech;
+    private static final SimpleBooleanProperty isStart;
+    private static final SimpleBooleanProperty isDone;
+    private static final SimpleBooleanProperty isPaused;
     private static boolean isIdle;
-  
-    private static Thread startThread, stopThread;
+    private static Thread streamingThread;
 
     private static void InitializeResponseObserver() {
         responseObserver = new ResponseObserver<>() {
@@ -43,8 +42,6 @@ public class SpeechToText {
                 StreamingRecognitionResult result = response.getResultsList().get(0);
                 SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
                 SpeechToText.textOfSpeech.set(alternative.getTranscript());
-                SpeechToText.isDone.set(result.getIsFinal());
-
                 SpeechToText.isIdle = false;
             }
 
@@ -69,11 +66,6 @@ public class SpeechToText {
         clientStream = CONST.SPEECH_CLIENT.streamingRecognizeCallable().splitCall(responseObserver);
         InitializeFirstRequest();
 
-        isDone.set(false);
-        isPaused.set(false);
-        isStart.set(true);
-        isIdle = true;
-
         AudioFormat audioFormat = new AudioFormat(16000.0F, 16, 1, true, false);
         Info targetInfo = new Info(TargetDataLine.class, audioFormat);
         if (!AudioSystem.isLineSupported(targetInfo)) {
@@ -85,12 +77,14 @@ public class SpeechToText {
             AudioInputStream audio = new AudioInputStream(targetDataLine);
             long startTime = System.currentTimeMillis();
             long estimatedTime = 0;
+
+            isDone.set(false);
+            isPaused.set(false);
+            isStart.set(true);
+            isIdle = true;
             while(estimatedTime < STREAMING_LIMIT && !isPaused()) {
                 estimatedTime = System.currentTimeMillis() - startTime;
                 System.out.println(estimatedTime);
-                if(getTextOfSpeech() != null && getTextOfSpeech() != "") {
-                    isIdle = false;
-                }
                 if (estimatedTime >= IDLE_LIMIT && isIdle) {
                     break;
                 }
@@ -117,11 +111,16 @@ public class SpeechToText {
         return isDone.get();
     }
 
+    public static SimpleBooleanProperty isDoneProperty() {
+        return isDone;
+    }
+
     public static boolean isPaused() {
         return isPaused.get();
     }
-    public static boolean isStart() {
-        return isStart.get();
+
+    public static SimpleBooleanProperty isStartProperty() {
+        return isStart;
     }
 
     public static SimpleStringProperty textOfSpeechProperty() {
@@ -130,16 +129,12 @@ public class SpeechToText {
 
     public static void stopStreaming() {
         isPaused.set(true);
+        streamingThread.interrupt();
     }
 
     public static void startRecord() {
-        startThread = new startStream();
-        startThread.start();
-    }
-
-    public static void stopRecord() {
-        stopThread = new stopStream();
-        stopThread.start();
+        streamingThread = new startStream();
+        streamingThread.start();
     }
 
     static {
@@ -151,25 +146,10 @@ public class SpeechToText {
     }
 }
 
-class stopStream extends Thread {
-    public void run()
-    {
-        try {
-            SpeechToText.stopStreaming();
-        }
-        catch (Exception e) {
-            // Throwing an exception
-            System.out.println("Exception is caught");
-        }
-    }
-}
-
 class startStream extends Thread {
-    public void run()
-    {
+    public void run() {
         try {
             SpeechToText.streamingMicRecognize();
-            System.out.println(SpeechToText.getTextOfSpeech());
         }
         catch (Exception e) {
             // Throwing an exception

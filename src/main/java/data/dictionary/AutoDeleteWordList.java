@@ -20,4 +20,8 @@ public class AutoDeleteWordList extends VetoableListDecorator<Word> {
             });
         }
     }
+
+    public void addFirst(Word word) {
+        this.add(0, word);
+    }
 }

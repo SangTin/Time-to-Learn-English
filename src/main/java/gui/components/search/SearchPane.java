@@ -2,18 +2,20 @@ package gui.components.search;
 
 import data.Dictionary;
 import data.dictionary.Word;
+import data.enums.AppFunction;
 import data.enums.SearchResultType;
 import gui.components.SearchBase;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MultipleSelectionModel;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+
+import java.util.Timer;
 
 public class SearchPane extends SearchBase {
    @FXML private ListView<Word> historyResult;
@@ -42,17 +44,7 @@ public class SearchPane extends SearchBase {
 
    private void setRecentSearch(ListView<Word> listView, SearchResultType type) {
       setResultList(listView);
-      MultipleSelectionModel<Word> selectionModel = listView.getSelectionModel();
-      listView.setCellFactory((param) -> {
-         SearchCell cell = new SuggestionCell(type);
-         cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-            listView.requestFocus();
-            if (!cell.isEmpty()) {
-               selectionModel.clearSelection();
-            }
-         });
-         return cell ;
-      });
+      listView.setCellFactory((param) -> new SuggestionCell(type));
    }
 
    public void setDictionary(Dictionary dictionary) {
@@ -63,9 +55,15 @@ public class SearchPane extends SearchBase {
    }
 
    protected void search() {
-      int limit = (int) (searchResult.getHeight() / SUGGESTION_CELL_HEIGHT);
-      Word[] result = this.dictionary.search(this.searchText.getText(), limit);
-      this.searchResult.getItems().setAll(result);
+      ObservableList<Word> result = this.dictionary.search(this.searchText.getText(), -1);
+      this.searchResult.setItems(result);
+      this.searchResult.setCellFactory((param) -> new SuggestionCell(SearchResultType.SUGGESTION));
+      if (result.isEmpty()) {
+         createWordTimer = new Timer();
+         createWordTimer.schedule(new SearchBar.CreateWordTask(() -> {
+            this.searchResult.setCellFactory((param) -> new SuggestionCell(SearchResultType.CREATE));
+         }), 1000);
+      }
    }
 
    protected void history() {
@@ -85,18 +83,44 @@ public class SearchPane extends SearchBase {
          this.row.setPrefWidth(SearchPane.this.searchResult.getWidth() - 20.0D);
 
          Button button = switch (type) {
-             case FAVOURITE -> createButton(DELETE_ICON, "Delete from favourite", () -> {
-                dictionary.removeFavourite(getItem());
-             });
-             case HISTORY -> createButton(DELETE_ICON, "Delete from history", () -> {
-                dictionary.removeHistory(getItem());
-             });
-             case SUGGESTION -> createButton(PASTE_ICON, "Paste to search bar", () -> {
-                SearchPane.this.searchText.setText(getItem().getWordTarget());
-             });
-            default -> null;
+            case FAVOURITE -> createButton(DELETE_ICON, "Delete from favourite", () -> {
+               dictionary.removeFavourite(getItem());
+            });
+            case HISTORY -> createButton(DELETE_ICON, "Delete from history", () -> {
+               dictionary.removeHistory(getItem());
+            });
+            case SUGGESTION -> createButton(PASTE_ICON, "Paste to search bar", () -> {
+               SearchPane.this.searchText.setText(getItem().getWordTarget());
+            });
+            case CREATE -> createButton(CREATE_ICON, "Create new word", () -> {
+               SearchPane.this.searchText.setText(getItem().getWordTarget());
+            });
          };
          this.row.getChildren().addAll(this.word, button);
+         switch (type) {
+            case SUGGESTION: {
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
+                  Platform.runLater(() -> {
+                     SearchPane.this.dictionary.addHistory(getItem());
+                  });
+               });
+            }
+            case HISTORY:
+            case FAVOURITE: {
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
+                  appFunction = AppFunction.SEARCH;
+                  selectedWord.set(this.getItem());
+               });
+               break;
+            }
+            case CREATE: {
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
+                  appFunction = AppFunction.ADD;
+                  selectedWord.set(this.getItem());
+               });
+               break;
+            }
+         }
       }
    }
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 
 public class Dictionary {
+      private static int ID = 0;
       private final TrieWord trieWord;
       private SQLiteDatabase database;
       private HistorySearch historySearch;
@@ -74,6 +75,11 @@ public class Dictionary {
             }
 
             trieWord.insert(newWord);
+            if (newWord.getId() > 0) {
+                  ID = Math.max(ID, newWord.getId());
+            } else {
+                  newWord.setId(++ID);
+            }
             if (newWord.isFavorite()) {
                   favouriteSearch.add(newWord);
             }
@@ -84,9 +90,7 @@ public class Dictionary {
                   throw new NoSuchWordFoundException("Word is null");
             }
             target = normalizeWord(target);
-            Word word = trieWord.remove(target);
-            historySearch.remove(word);
-            favouriteSearch.remove(word);
+            trieWord.remove(target);
       }
 
       public void fix(Word newWord) throws EditWordException {
@@ -96,7 +100,7 @@ public class Dictionary {
             trieWord.fix(newWord);
       }
 
-      public Word[] search(String target, int limit) {
+      public AutoDeleteWordList search(String target, int limit) {
             if (target == null) {
                   return null;
             }
@@ -104,7 +108,7 @@ public class Dictionary {
             return trieWord.searchLimit(target, limit);
       }
 
-      public Word[] search(String target) {
+      public AutoDeleteWordList search(String target) {
             if (target == null) {
                   return null;
             }
@@ -128,7 +132,7 @@ public class Dictionary {
                   return false;
             }
       }
-      public Word[] showALl() {
+      public AutoDeleteWordList showALl() {
             return trieWord.showALl();
       }
 
@@ -140,7 +144,7 @@ public class Dictionary {
             return historySearch;
       }
 
-      public void insertHistory(Word word) {
+      public void addHistory(Word word) {
             historySearch.add(word);
       }
 
