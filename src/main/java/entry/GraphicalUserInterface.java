@@ -32,7 +32,7 @@ public class GraphicalUserInterface {
       this.primaryStage.show();
    }
 
-   public void quitAlert() {
+   private void quitAlert() {
       Alert alert = new Alert(AlertType.CONFIRMATION);
       alert.setTitle("Quit");
       alert.setHeaderText("Are you sure you want to quit?");

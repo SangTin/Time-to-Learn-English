@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import gui.dictionary.Dictionary?>
-<?import gui.edit.Editor?>
 <?import gui.home.Home?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.SVGPath?>
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="830.0" stylesheets="@../css/GUIApplication.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TabPane fx:id="menuPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="830.0" side="BOTTOM" styleClass="menu-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -51,24 +45,6 @@
                   <Dictionary fx:id="dictionaryPane" />
                </content>
             </Tab>
-            <Tab fx:id="editTab">
-               <tooltip>
-                  <Tooltip text="Editing Word" />
-               </tooltip>
-               <graphic>
-                  <BorderPane prefHeight="45.0" styleClass="menu-content">
-                     <center>
-                        <SVGPath content="M9.317 9.317h-1.331a2.662 2.662 0 0 0-2.662 2.662v11.979a2.662 2.662 0 0 0 2.662 2.662h11.979a2.662 2.662 0 0 0 2.662-2.662v-1.331M27.133 8.765a2.795 2.795 0 0 0-3.953-3.953l-11.2 11.161v3.993h3.993l11.161-11.2zM21.296 6.655l3.993 3.993" fill="TRANSPARENT" stroke="BLACK" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="2.0" styleClass="menu-icon" BorderPane.alignment="CENTER" />
-                     </center>
-                     <bottom>
-                        <Label text="Edit Word" textAlignment="CENTER" BorderPane.alignment="CENTER" />
-                     </bottom>
-                  </BorderPane>
-               </graphic>
-               <content>
-                  <Editor />
-               </content>
-            </Tab>
             <Tab fx:id="dictionaryTab1">
                <tooltip>
                   <Tooltip text="Dictionary" />
@@ -98,6 +74,14 @@
                      </bottom>
                   </BorderPane>
                </graphic>
+               <content>
+                  <AnchorPane fx:id="gamingPane">
+                     <children>
+                        <Button fx:id="crossWordButton" layoutX="246.0" layoutY="271.0" mnemonicParsing="false" text="CrossWord" />
+                        <Button fx:id="guessWordButton" layoutX="524.0" layoutY="271.0" mnemonicParsing="false" text="GuessWord" />
+                     </children>
+                  </AnchorPane>
+               </content>
             </Tab>
          </tabs>
       </TabPane>

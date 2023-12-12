@@ -3,7 +3,9 @@ package gui.components;
 import data.Dictionary;
 import data.dictionary.Word;
 import data.enums.AppFunction;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -11,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 
 import java.util.Timer;
+import java.util.TimerTask;
 
 public abstract class SearchBase extends AnchorPane {
     protected static final String MICROPHONE_ICON = "M12 2a3 3 0 0 0-3 3v7a3 3 0 1 0 6 0V5a3 3 0 0 0-3-3zM5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0 1 1 0 1 1 2 0 7.001 7.001 0 0 1-6 6.93V21a1 1 0 1 1-2 0v-2.07A7.001 7.001 0 0 1 5 12z";
@@ -46,7 +49,6 @@ public abstract class SearchBase extends AnchorPane {
         // Set up search bar
         setSearchButton(this.searchBarButton, this.searchText);
         this.searchText.textProperty().addListener((observable, oldVal, newVal) -> {
-            appFunction = AppFunction.SEARCH;
             createWordTimer.cancel();
             createWordTimer.purge();
 
@@ -63,18 +65,17 @@ public abstract class SearchBase extends AnchorPane {
 
         // Set up search result list view
         setResultList(this.searchResult);
-        this.searchResult.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-            if (newVal != null) {
-                this.dictionary.getHistorySearch().add(newVal);
-                this.selectedWord.set(newVal);
-            }
-        });
     }
 
-
-    protected static void setResultList(ListView<Word> listView) {
+    protected void setResultList(ListView<Word> listView) {
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listView.setFixedCellSize(SUGGESTION_CELL_HEIGHT);
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
+            Platform.runLater(() -> {
+                listView.getSelectionModel().clearSelection();
+                selectedWord.set(null);
+            });
+        });
     }
 
     public void setDictionary(Dictionary dictionary) {
@@ -130,6 +131,26 @@ public abstract class SearchBase extends AnchorPane {
                 this.setGraphic(this.row);
             }
         }
+    }
 
+    protected class CreateWordTask extends TimerTask {
+        Runnable action;
+
+        public CreateWordTask(Runnable action) {
+            this.action = action;
+        }
+
+        @Override
+        public void run() {
+            Platform.runLater(() -> {
+                createWord();
+                action.run();
+            });
+        }
+
+        private void createWord() {
+            Word word = new Word(searchText.getText(), "");
+            searchResult.setItems(FXCollections.observableArrayList(word));
+        }
     }
 }

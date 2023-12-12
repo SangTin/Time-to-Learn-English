@@ -18,6 +18,11 @@
     -fx-background-color: #eea1cd;
 }
 
+.word-flow .button:hover {
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
 .word-flow .level-1 {
     -fx-background-color: #f9cee7;
 }

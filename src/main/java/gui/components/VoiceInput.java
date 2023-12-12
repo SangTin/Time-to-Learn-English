@@ -1,6 +1,8 @@
 package gui.components;
 
+import api.SpeechToText;
 import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,9 +11,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
+import javafx.scene.media.Media;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class VoiceInput extends Stage {
@@ -37,6 +41,34 @@ public class VoiceInput extends Stage {
    }
 
    public void initialize() {
+      SpeechToText.isStartProperty().addListener((observable, oldValue, newValue) -> {
+         if (newValue) {
+            Media sound = new Media(Objects.requireNonNull(this.getClass().getResource("/audio/voice-start.mp3")).toExternalForm());
+            (new javafx.scene.media.MediaPlayer(sound)).play();
+         }
+
+      });
+      this.process = new Service<>() {
+         @Override
+         protected Task<Void> createTask() {
+            return new Task<>() {
+               @Override
+               protected Void call() throws Exception {
+                  SpeechToText.startRecord();
+                  SpeechToText.textOfSpeechProperty().addListener((observable, oldValue, newValue) -> {
+                     textResult.setText(newValue);
+                  });
+                  return null;
+               }
+            };
+         }
+
+         @Override
+         public boolean cancel() {
+            SpeechToText.stopStreaming();
+            return super.cancel();
+         }
+      };
    }
 
    public String getTextResult() {

@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * This class is a TextField which implements an "autocomplete" functionality,
  * based on a supplied list of entries.<p>
  *
- * If the entered text matches a part of any of the supplied entries these are
+ * If the entered text matches a part of the supplied entries these are
  * going to be displayed in a popup. Further the matching part of the entry is
  * going to be displayed in a special style, defined by
  * {@link #textOccurenceStyle textOccurenceStyle}. The maximum number of
@@ -109,6 +109,10 @@ public class AutoCompleteTextField extends TextField {
      */
     private int maxEntries = 10;
 
+    public AutoCompleteTextField() {
+        this(null);
+    }
+
     /**
      * Construct a new AutoCompleteTextField.
      */
@@ -123,7 +127,7 @@ public class AutoCompleteTextField extends TextField {
         textProperty().addListener((ObservableValue<? extends String> observableValue, String s, String s2) ->
         {
 
-            if (getText() == null || getText().length() == 0)
+            if (getText() == null || getText().isEmpty())
             {
                 filteredEntries.clear();
                 filteredEntries.addAll(entries);
@@ -290,5 +294,4 @@ public class AutoCompleteTextField extends TextField {
     {
         this.maxEntries = maxEntries;
     }
-
 }

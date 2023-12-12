@@ -4,6 +4,9 @@ import data.dictionary.Word;
 import data.enums.PartOfSpeech;
 import data.enums.ThesaurusType;
 import exception.editWord.NoSuchWordFoundException;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +15,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SQLiteDatabase {
    private static final String PATH = "data/database/";
@@ -434,58 +436,10 @@ public class SQLiteDatabase {
         }
    }
 
-   public List<Thesaurus> getThesaurus(Word word, ThesaurusType type, Dictionary dictionary) {
-      List<Thesaurus> thesauruses = new ArrayList<>();
-      String sql = String.format("""
-         SELECT meaning_id, meaning, part_of_speech
-         FROM %1$s_meanings
-         WHERE word_id = ?;
-      """, type);
-      try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-         stmt.setInt(1, word.getId());
-
-         ResultSet rs = stmt.executeQuery();
-         while (rs.next()) {
-            int meaningId = rs.getInt("meaning_id");
-            String meaning = rs.getString("meaning");
-            PartOfSpeech partOfSpeech = PartOfSpeech.fromString(rs.getString("part_of_speech"));
-            Thesaurus thesaurus = new Thesaurus(meaning, dictionary, partOfSpeech, type);
-
-            Statement most = conn.createStatement();
-            String mostSql = String.format("""
-               SELECT word_target FROM
-                  (SELECT word_id FROM %1$ss
-                  WHERE relation_id = %2$d AND priority = 1) as ids
-               INNER JOIN words ON ids.word_id = words.id;
-            """, type, meaningId);
-            ResultSet mostRs = most.executeQuery(mostSql);
-            while (mostRs.next()) {
-               String wordTarget = mostRs.getString("word_target");
-               try {
-                  thesaurus.addMostUsedByWord(dictionary.searchExactly(wordTarget));
-               } catch (NoSuchWordFoundException ignored) {
-               }
-            }
-
-            String lessSql = String.format("""
-               SELECT word_target FROM
-                  (SELECT word_id FROM %1$ss
-                  WHERE relation_id = %2$d AND priority = 2) as ids
-               INNER JOIN words ON ids.word_id = words.id;
-            """, type, meaningId);
-            ResultSet lessRs = most.executeQuery(lessSql);
-            while (lessRs.next()) {
-               String wordTarget = lessRs.getString("word_target");
-               try {
-                  thesaurus.addLessUsedByWord(dictionary.searchExactly(wordTarget));
-               } catch (NoSuchWordFoundException ignored) {
-               }
-            }
-            thesauruses.add(thesaurus);
-         }
-      } catch (SQLException e) {
-         System.out.println(e.getMessage());
-      }
+   public ObservableList<Thesaurus> getThesaurus(Word word, ThesaurusType type, Dictionary dictionary) {
+      ObservableList<Thesaurus> thesauruses = FXCollections.observableArrayList();
+      ImportThesaurusThread importThesaurusThread = new ImportThesaurusThread(this.conn, thesauruses, word, type, dictionary);
+      importThesaurusThread.start();
       return thesauruses;
    }
 
@@ -494,20 +448,20 @@ public class SQLiteDatabase {
          return new ArrayList<>();
       } else {
          ArrayList<Word> words = new ArrayList<>();
-         SQLiteDatabase.ImportThread importThread = new SQLiteDatabase.ImportThread(this.conn, words);
-         importThread.start();
+         ImportWordThread importWordThread = new ImportWordThread(this.conn, words);
+         importWordThread.start();
          return words;
       }
    }
 
    public void importToDictionary(Dictionary dictionary) {
-      new Thread(() -> {
+      Thread thread = new Thread(() -> {
          ArrayList<Word> words = new ArrayList<>();
-         SQLiteDatabase.ImportThread importThread = new SQLiteDatabase.ImportThread(this.conn, words);
-         importThread.start();
+         ImportWordThread importWordThread = new ImportWordThread(this.conn, words);
+         importWordThread.start();
 
          try {
-            importThread.join();
+            importWordThread.join();
             System.out.println("Imported " + words.size() + " words");
             dictionary.setWords(words);
             dictionary.getHistorySearch().load();
@@ -515,7 +469,13 @@ public class SQLiteDatabase {
             System.out.println(var5.getMessage());
          }
 
-      }).start();
+      });
+      thread.start();
+      try {
+         thread.join();
+      } catch (InterruptedException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public static SQLiteDatabase exportToDatabase(String dbName, ArrayList<Word> words) {
@@ -544,11 +504,80 @@ public class SQLiteDatabase {
       return new SQLiteDatabase(newDbName);
    }
 
-   private static class ImportThread extends Thread {
+   private static class ImportThesaurusThread extends Thread {
+      private final Connection conn;
+      private final Word word;
+      private final ObservableList<Thesaurus> thesauruses;
+      private final Dictionary dictionary;
+      private final ThesaurusType type;
+
+      public ImportThesaurusThread(Connection conn, ObservableList<Thesaurus> thesauruses, Word word, ThesaurusType type, Dictionary dictionary) {
+         this.conn = conn;
+         this.thesauruses = thesauruses;
+         this.type = type;
+         this.word = word;
+         this.dictionary = dictionary;
+      }
+
+      public void run() {
+         String sql = String.format("""
+            SELECT meaning_id, meaning, part_of_speech
+            FROM %1$s_meanings
+            WHERE word_id = ?;
+         """, type);
+         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, word.getId());
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+               int meaningId = rs.getInt("meaning_id");
+               String meaning = rs.getString("meaning");
+               PartOfSpeech partOfSpeech = PartOfSpeech.fromString(rs.getString("part_of_speech"));
+               Thesaurus thesaurus = new Thesaurus(meaning, dictionary, partOfSpeech, type);
+
+               Statement most = conn.createStatement();
+               String mostSql = String.format("""
+               SELECT word_target FROM
+                     (SELECT word_id FROM %1$ss
+                     WHERE relation_id = %2$d AND priority = 1) as ids
+                  INNER JOIN words ON ids.word_id = words.id;
+               """, type, meaningId);
+               ResultSet mostRs = most.executeQuery(mostSql);
+               while (mostRs.next()) {
+                  String wordTarget = mostRs.getString("word_target");
+                  try {
+                     thesaurus.addMostUsedByWord(dictionary.searchExactly(wordTarget));
+                  } catch (NoSuchWordFoundException ignored) {
+                  }
+               }
+
+               String lessSql = String.format("""
+                  SELECT word_target FROM
+                     (SELECT word_id FROM %1$ss
+                     WHERE relation_id = %2$d AND priority = 2) as ids
+                  INNER JOIN words ON ids.word_id = words.id;
+               """, type, meaningId);
+               ResultSet lessRs = most.executeQuery(lessSql);
+               while (lessRs.next()) {
+                  String wordTarget = lessRs.getString("word_target");
+                  try {
+                     thesaurus.addLessUsedByWord(dictionary.searchExactly(wordTarget));
+                  } catch (NoSuchWordFoundException ignored) {
+                  }
+               }
+               Platform.runLater(() -> thesauruses.add(thesaurus));
+            }
+         } catch (SQLException e) {
+            System.out.println(e.getMessage());
+         }
+      }
+   }
+
+   private static class ImportWordThread extends Thread {
       private final Connection conn;
       private final ArrayList<Word> words;
 
-      public ImportThread(Connection conn, ArrayList<Word> words) {
+      public ImportWordThread(Connection conn, ArrayList<Word> words) {
          this.conn = conn;
          this.words = words;
       }
@@ -578,16 +607,8 @@ public class SQLiteDatabase {
                   word.setFavourite(rs.getDouble("is_favourite") > 0);
                   this.words.add(word);
                }
-            } catch (Throwable var6) {
-               if (stmt != null) {
-                  try {
-                     stmt.close();
-                  } catch (Throwable var5) {
-                     var6.addSuppressed(var5);
-                  }
-               }
-
-               throw var6;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
 
              stmt.close();

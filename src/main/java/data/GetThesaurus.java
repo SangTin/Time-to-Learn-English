@@ -53,6 +53,7 @@ public class GetThesaurus {
                     String syn = synonym.text();
                     try {
                         thesaurus.addMostUsedByWord(syn);
+                        pb.setExtraMessage("Found: " + syn);
                     } catch (Exception e) {
 //                        System.out.println("Not found: " + syn);
                     }
@@ -63,6 +64,7 @@ public class GetThesaurus {
                         String syn = synonym.text();
                         try {
                             thesaurus.addLessUsedByWord(syn);
+                            pb.setExtraMessage("Found: " + syn);
                         } catch (Exception e) {
 //                            System.out.println("Not found: " + syn);
                         }
@@ -78,6 +80,7 @@ public class GetThesaurus {
                     String ant = antonym.text();
                     try {
                         thesaurus.addMostUsedByWord(ant);
+                        pb.setExtraMessage("Found: " + ant);
                     } catch (Exception e) {
 //                        System.out.println("Not found: " + ant);
                     }
@@ -88,6 +91,7 @@ public class GetThesaurus {
                         String ant = antonym.text();
                         try {
                             thesaurus.addLessUsedByWord(ant);
+                            pb.setExtraMessage("Found: " + ant);
                         } catch (Exception e) {
 //                            System.out.println("Not found: " + ant);
                         }

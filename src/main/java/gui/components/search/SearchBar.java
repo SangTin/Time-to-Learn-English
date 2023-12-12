@@ -8,6 +8,7 @@ import gui.components.SearchBase;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -17,7 +18,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.shape.SVGPath;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class SearchBar extends SearchBase {
    private final SimpleBooleanProperty isSearching = new SimpleBooleanProperty(false);
@@ -41,10 +41,13 @@ public class SearchBar extends SearchBase {
          }
       });
       this.searchResult.setMaxHeight(400.0D);
-      this.searchResult.getItems().addListener(new ListChangeListener<Word>() {
-         public void onChanged(Change<? extends Word> c) {
+      this.searchResult.itemsProperty().addListener((observable, oldVal, newVal) -> {
+         SearchBar.this.searchResult.setPrefHeight(40.0D * (double)SearchBar.this.searchResult.getItems().size());
+         ListChangeListener<? super Word> listener = (c) -> {
             SearchBar.this.searchResult.setPrefHeight(40.0D * (double)SearchBar.this.searchResult.getItems().size());
-         }
+         };
+         newVal.addListener(listener);
+         oldVal.removeListener(listener);
       });
 
       isSearching.addListener((observable, oldVal, newVal) -> {
@@ -62,18 +65,21 @@ public class SearchBar extends SearchBase {
    }
 
    protected void search() {
-      Word[] result = this.dictionary.search(this.searchText.getText());
-      this.searchResult.getItems().setAll(result);
+      ObservableList<Word> result = this.dictionary.search(this.searchText.getText());
+      this.searchResult.setItems(result);
       this.searchResult.setCellFactory((param) ->
               new SuggestionCell(SearchResultType.SUGGESTION));
-      if (result.length == 0) {
+      if (result.isEmpty()) {
          createWordTimer = new Timer();
-         createWordTimer.schedule(new CreateWordTask(), 1000);
+         createWordTimer.schedule(new CreateWordTask(() -> {
+            this.searchResult.setCellFactory((param) ->
+                    new SuggestionCell(SearchResultType.CREATE));
+         }), 1000);
       }
    }
 
    protected void history() {
-      this.searchResult.getItems().setAll(this.dictionary.getHistorySearch().getWords());
+      this.searchResult.setItems(this.dictionary.getHistorySearch().getWords());
       this.searchResult.setCellFactory((param) ->
               new SuggestionCell(SearchResultType.HISTORY));
    }
@@ -99,38 +105,38 @@ public class SearchBar extends SearchBase {
          switch(type) {
             case HISTORY: {
                Button deleteHistoryButton = createButton(DELETE_ICON, "Delete", () -> {
-                  SearchBar.this.dictionary.getHistorySearch().remove(this.getItem());
-                  SearchBar.this.searchResult.getItems().remove(this.getItem());
+                  SearchBar.this.dictionary.removeHistory(this.getItem());
                });
                icon.setContent(HISTORY_ICON);
                this.row.getChildren().addAll(icon, this.word, deleteHistoryButton, pasteButton);
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
+                  appFunction = AppFunction.SEARCH;
+                  selectedWord.set(this.getItem());
+               });
                break;
             }
             case SUGGESTION: {
                icon.setContent(MAGNIFYING_GLASS_ICON);
                this.row.getChildren().addAll(icon, this.word, pasteButton);
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
+                  appFunction = AppFunction.SEARCH;
+                  selectedWord.set(this.getItem());
+                  Platform.runLater(() -> {
+                     SearchBar.this.dictionary.addHistory(this.getItem());
+                  });
+               });
                break;
             }
             case CREATE: {
                icon.setContent(CREATE_ICON);
                this.row.getChildren().addAll(icon, this.word);
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
+                  appFunction = AppFunction.ADD;
+                  selectedWord.set(this.getItem());
+               });
+               break;
             }
          }
-      }
-   }
-
-   private class CreateWordTask extends TimerTask {
-      @Override
-      public void run() {
-         Platform.runLater(this::createWord);
-      }
-
-      private void createWord() {
-         appFunction = AppFunction.CREATE;
-         Word word = new Word(SearchBar.this.searchText.getText(), "");
-         SearchBar.this.searchResult.getItems().setAll(word);
-         SearchBar.this.searchResult.setCellFactory((param) ->
-                 new SuggestionCell(SearchResultType.CREATE));
       }
    }
 }
