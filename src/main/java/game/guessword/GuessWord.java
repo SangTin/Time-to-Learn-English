@@ -11,7 +11,6 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -103,7 +102,7 @@ public class GuessWord extends GameBase {
                 }
                 break;
             case F2:
-                currentTextField.setText(String.valueOf(hint.charAt(col-start)));
+                currentTextField.setText(String.valueOf(hint.charAt(col-start))); 
                 break;
             default:
                 return;
@@ -183,7 +182,7 @@ public class GuessWord extends GameBase {
         String imagePath = "src/main/resources/guessword/image/level/" + current + ".png";
         Image image = new Image("file:" + imagePath);
         data.setImage(image);
-        Notification.setText("With each other cell\nPress \"$\" to see hint");
+        Notification.setText("With each other cell\nPress \"F2\" to see hint");
         Level.setText("Level: " + current + "/20");
         Level.setAlignment(Pos.CENTER);
         setUpAnswer();

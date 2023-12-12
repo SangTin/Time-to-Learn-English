@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -115,6 +114,9 @@ public class CrossWord extends GameBase {
                 col++;
             }
             break;
+            case F2:
+                currentTextField.setText(hint[row][col]);
+                break;
             case F2:
                 currentTextField.setText(hint[row][col]);
                 break;
@@ -258,12 +260,12 @@ public class CrossWord extends GameBase {
     }
 
     public void Next(ActionEvent event) {
-        table.getChildren().clear();
         ++currentGame;
         loadData();
     }
 
     public void loadData() {
+        table.getChildren().clear();
         Next.setVisible(false);
         Next.setManaged(false);
         int type = (currentGame + 1) / 2;
@@ -317,8 +319,8 @@ public class CrossWord extends GameBase {
         Anchor.setStyle("-fx-background-color: white;");
         table.setStyle("-fx-border-color: pink; -fx-border-width: 0.5;");
         Border.setStyle("-fx-border-color: pink; -fx-border-width: 3;");
-        Notification.setFont(Font.font(customFont.getFamily(), 12));
-        Notification.setText("With each other cell\nPress \"$\" to see hint");
+        Notification.setFont(Font.font(customFont.getFamily(), 11));
+        Notification.setText("With each other cell\nPress \"F2\" to see hint");
     }
 
     @Override
@@ -329,3 +331,4 @@ public class CrossWord extends GameBase {
         loadData();
     }
 }
+
