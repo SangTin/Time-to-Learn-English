@@ -214,6 +214,7 @@ public class GuessWord extends GameBase {
     }
 
     public void startGame() {
+        super.startGame();
         backgroundMusic.play();
         loadData();
     }
