@@ -101,9 +101,9 @@ public class CrossWord extends GameBase {
                 break;
             case DOWN:
                 if (row < 8) {
-                    row++;
-                }
-                break;
+                row++;
+            }
+            break;
             case LEFT:
                 if (col > 0) {
                     col--;
@@ -111,8 +111,11 @@ public class CrossWord extends GameBase {
                 break;
             case RIGHT:
                 if (col < 8) {
-                    col++;
-                }
+                col++;
+            }
+            break;
+            case F2:
+                currentTextField.setText(hint[row][col]);
                 break;
             case F2:
                 currentTextField.setText(hint[row][col]);
@@ -233,7 +236,7 @@ public class CrossWord extends GameBase {
             for (int col = 0; col < 8; col++) {
                 if(!dataId[row][col].equals("-1")) {
                     String newId = "textField_" + row + "_" + col;
-                    TextField text= (TextField) table.lookup("#" + newId);
+                    TextField text = (TextField) table.lookup("#" + newId);
                     String answer = text.getText();
                     answer = answer.toLowerCase();
                     if(!hint[row][col].equals(answer)) {
@@ -323,6 +326,7 @@ public class CrossWord extends GameBase {
     @Override
     public void startGame() {
         super.startGame();
+        table.getChildren().clear();
         backgroundMusic.play();
         loadData();
     }

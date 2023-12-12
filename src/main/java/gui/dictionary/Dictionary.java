@@ -7,12 +7,13 @@ import data.enums.AppFunction;
 import data.enums.ThesaurusType;
 import exception.editWord.EditWordException;
 import gui.GraphicalDictionary;
-import gui.components.SearchBase;
+import gui.components.search.SearchBase;
 import gui.dictionary.edit.EditWord;
 import gui.dictionary.search.Description;
 import gui.dictionary.search.Thesaurus;
 import gui.style.DisplayThesaurus;
 import gui.style.DisplayWord;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -66,6 +67,12 @@ public class Dictionary extends SplitPane {
    }
 
    public void initialize() {
+      new Thread(() -> {
+         Platform.runLater(this::doInitialize);
+      }).start();
+   }
+
+   public void doInitialize() {
       searchPane.setDictionary(dictionary);
       previousWord.setOnAction(e -> back());
       nextWord.setOnAction(e -> forward());

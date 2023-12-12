@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import gui.components.translate_text.TranslatePane?>
 <?import gui.dictionary.Dictionary?>
 <?import gui.home.Home?>
 <?import javafx.scene.control.*?>
@@ -59,6 +60,9 @@
                      </bottom>
                   </BorderPane>
                </graphic>
+               <content>
+                  <TranslatePane fx:id="translatePane" />
+               </content>
             </Tab>
             <Tab fx:id="gamingTab">
                <tooltip>

@@ -43,6 +43,7 @@ public class SpeechToText {
                 SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
                 SpeechToText.textOfSpeech.set(alternative.getTranscript());
                 SpeechToText.isIdle = false;
+                SpeechToText.isPaused.set(result.getIsFinal());
             }
 
             public void onComplete() {

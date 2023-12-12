@@ -1,0 +1,53 @@
+@import "../../ConstantValues.css";
+
+.root{
+    -fx-background-color: #f0f5f9;
+}
+
+.root * {
+    -border-color: #cad7e0;
+}
+
+.content-pane *:disabled {
+    -fx-opacity: 1;
+}
+
+.input-field {
+    -fx-prompt-text-fill: -border-color;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0px;
+    -fx-border-color: -border-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0px;
+    -fx-wrap-text: true;
+}
+
+.input-field .content {
+    -fx-background-color: white;
+    -fx-prompt-text-fill: -border-color;
+}
+
+.required .label {
+    -fx-text-fill: red;
+}
+
+.required .input-field {
+    -fx-border-color: red;
+}
+
+.warning .label {
+    -fx-text-fill: #c1a000;
+}
+
+.warning .input-field {
+    -fx-border-color: #c1a000;
+}
+
+.warning .icon {
+    -fx-fill: #c1a000;
+    -fx-stroke: black;
+}
+
+.label {
+    -fx-font-size: 11px;
+}

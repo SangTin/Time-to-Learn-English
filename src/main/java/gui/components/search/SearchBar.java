@@ -3,8 +3,6 @@ package gui.components.search;
 import data.dictionary.Word;
 import data.enums.AppFunction;
 import data.enums.SearchResultType;
-import entry.GraphicalUserInterface;
-import gui.components.SearchBase;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
@@ -12,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.shape.SVGPath;
@@ -35,6 +32,10 @@ public class SearchBar extends SearchBase {
 
    public void initialize() {
       super.initialize();
+   }
+
+   protected void doInitialize() {
+      super.doInitialize();
       this.searchText.focusedProperty().addListener((observable, oldVal, newVal) -> {
          if (newVal && this.searchText.getText().isEmpty()) {
             this.history();
@@ -57,10 +58,8 @@ public class SearchBar extends SearchBase {
          }
       });
 
-      Platform.runLater(() -> {
-         this.getScene().addEventFilter(MouseEvent.MOUSE_PRESSED, (event) -> {
-            isSearching.set(GraphicalUserInterface.inHierarchy(event.getPickResult().getIntersectedNode(), this));
-         });
+      this.searchText.focusedProperty().addListener((observable, oldVal, newVal) -> {
+         isSearching.set(newVal);
       });
    }
 
