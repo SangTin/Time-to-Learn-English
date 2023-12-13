@@ -3,19 +3,15 @@
 
 #  Time To Learn English
 
-  
-
 Welcome to the Time To Learn English App! This application is designed to help users enhance their English language skills through various features such as a comprehensive dictionary, Google Translate integration, and interactive English learning games.
 
-  
+![Home.png](src%2Fmain%2Fresources%2Fimg%2Fdemo%2FHome.png)
 
 ##  I. Functionality
 
-  
-
 ###  1. Learn English with a Dictionary
 
-  
+![img.png](src/main/resources/img/demo/Dictionary.png)
 
 ####  Search Words
 
@@ -27,15 +23,13 @@ Welcome to the Time To Learn English App! This application is designed to help u
 
 -  **Examples:** Access example sentences and links to related words within the examples.
 
-  
-
 ####  Show All Words
 
 - Display the entire dictionary of over 100,000 words.
 
-
-
 #### Customize Your Dictionary
+
+![Editor.png](src%2Fmain%2Fresources%2Fimg%2Fdemo%2FEditor.png)
 
 - Add your new word
 
@@ -47,7 +41,7 @@ Welcome to the Time To Learn English App! This application is designed to help u
 
 ###  2. Google Translate Integration
 
-  
+![Translate-Text.png](src%2Fmain%2Fresources%2Fimg%2Fdemo%2FTranslate-Text.png)
 
 ####  Translate Text
 
@@ -69,23 +63,21 @@ Welcome to the Time To Learn English App! This application is designed to help u
 
 ###  3. English Learning Games
 
-  
-
 ####  Cross Game
+
+![CrossWord.png](src%2Fmain%2Fresources%2Fimg%2Fdemo%2FCrossWord.png)
 
 - Receive explanations or synonyms, then guess the word to complete the table.
 
-  
-
 ####  Catch the Word
+
+![GuessWord.png](src%2Fmain%2Fresources%2Fimg%2Fdemo%2FGuessWord.png)
 
 - View a picture and guess the corresponding English word.
 
   
 
 ##  II. Technologies Used
-
-  
 
 ###  1. JavaFX
 
@@ -121,28 +113,22 @@ Welcome to the Time To Learn English App! This application is designed to help u
 
 ##  III. How to Run the Application
 
-  
-
 1. Clone the repository: ...
 
 2. Open the project in your preferred Java IDE.
 
 3. Set up the necessary API keys for Google Translate.
 
-4. Ensure MySQL is installed and configured with the necessary database schema.
+4. Run the application.
 
-5. Run the application.
 
-  
 
 ##  IV. Contributions
 
-  
-
 We welcome contributions from the community! If you find a bug, have a feature request, or would like to contribute in any way, please open an issue or submit a pull request.
 
-  
-  
-  
-
 Happy learning! 📚
+
+##  V. Class Diagram
+
+![classes-diagram.png](src%2Fmain%2Fresources%2Fimg%2Fclasses-diagram.png)
