@@ -79,6 +79,9 @@ public class VoiceInput extends Stage {
       });
 
       SpeechToText.isDoneProperty().addListener((observable, oldValue, newValue) -> {
+         if (!newValue) {
+            return;
+         }
          Media sound = new Media(Objects.requireNonNull(this.getClass().getResource("/audio/voice-end.mp3")).toExternalForm());
          (new javafx.scene.media.MediaPlayer(sound)).play();
          stopButton.getStyleClass().add("done");

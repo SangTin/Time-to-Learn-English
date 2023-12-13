@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.Scene?>
@@ -21,17 +20,13 @@
                      <Font size="20.0" />
                   </font>
                </TextArea>
-               <Button fx:id="stopButton" layoutX="145.0" layoutY="79.0" mnemonicParsing="false" prefHeight="130.0" prefWidth="130.0">
+               <Button fx:id="stopButton" layoutX="145.0" layoutY="79.0" mnemonicParsing="false" prefHeight="130.0" prefWidth="130.0" styleClass="stop-button">
                   <cursor>
                      <Cursor fx:constant="HAND" />
                   </cursor>
                   <graphic>
                      <SVGPath fx:id="icon" content="M36 6a9 9 0 0 0-9 9v21a9 9 0 1 0 18 0V15a9 9 0 0 0-9-9zM15 36a3 3 0 1 1 6 0 15 15 0 0 0 30 0 3 3 0 1 1 6 0 21.003 21.003 0 0 1-18 20.79V63a3 3 0 1 1-6 0v-6.21A21.003 21.003 0 0 1 15 36z" styleClass="icon" />
                   </graphic>
-                  <styleClass>
-                     <String fx:value="stop-button" />
-                     <String fx:value="done" />
-                  </styleClass>
                </Button>
             </children>
             <stylesheets>
