@@ -31,7 +31,17 @@ Welcome to the Time To Learn English App! This application is designed to help u
 
 ####  Show All Words
 
-- Display the entire dictionary of 100,000 words.
+- Display the entire dictionary of over 100,000 words.
+
+
+
+#### Customize Your Dictionary
+
+- Add your new word
+
+- Edit any words you want
+
+- Delete incorrect words
 
   
 
@@ -103,9 +113,9 @@ Welcome to the Time To Learn English App! This application is designed to help u
 
   
 
-###  4. MySQL
+###  4. Database
 
-- Manage and store dictionary data efficiently using the MySQL database.
+- Manage and store dictionary data efficiently using the SQLite database.
 
   
 
