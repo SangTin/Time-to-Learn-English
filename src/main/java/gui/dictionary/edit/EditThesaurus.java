@@ -60,6 +60,7 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
                         thesaurus.isDeletedProperty().addListener((o, oldValue, newValue) -> {
                             if (newValue) isModified = true;
                             contentBox.getChildren().remove(thesaurus);
+                            thesauruses.remove(thesaurus.getThesaurus());
                         });
                     }
                 }
@@ -82,8 +83,13 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
         headerWord.setText(word.getWordTarget());
 
         this.editingWord = word;
-        this.startingThesauruses = thesauruses;
-        this.thesauruses = FXCollections.observableArrayList(thesauruses);;
+        this.thesauruses = thesauruses;
+        this.startingThesauruses = FXCollections.observableArrayList(thesauruses);
+        this.thesauruses.addListener((ListChangeListener<Thesaurus>) c -> {
+            while (c.next()) {
+                startingThesauruses.addAll(c.getAddedSubList());
+            }
+        });
         for (Thesaurus thesaurus : thesauruses) {
             try {
                 SingleThesaurus singleThesaurus = new SingleThesaurus(word, thesaurus);
