@@ -7,6 +7,7 @@ import data.enums.ThesaurusType;
 import gui.GraphicalDictionary;
 import gui.style.DisplayThesaurus;
 import gui.style.WordEditor;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
 
     private final ThesaurusType type;
     private Word editingWord;
+    private ObservableList<Thesaurus> startingThesauruses;
     private ObservableList<Thesaurus> thesauruses;
     private final Dictionary dictionary;
     private boolean isModified = false;
@@ -46,7 +48,6 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
             thesaurus.setDictionary(dictionary);
             thesaurus.setType(type);
             thesauruses.add(thesaurus);
-            display(editingWord, thesauruses);
         });
         contentBox.getChildren().addListener((ListChangeListener<? super Object>) c -> {
             while (c.next()) {
@@ -55,6 +56,10 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
                         if (!(x instanceof SingleThesaurus thesaurus)) continue;
                         thesaurus.isModifiedProperty().addListener((o, oldValue, newValue) -> {
                             if (newValue) isModified = true;
+                        });
+                        thesaurus.isDeletedProperty().addListener((o, oldValue, newValue) -> {
+                            if (newValue) isModified = true;
+                            contentBox.getChildren().remove(thesaurus);
                         });
                     }
                 }
@@ -77,14 +82,15 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
         headerWord.setText(word.getWordTarget());
 
         this.editingWord = word;
-        this.thesauruses = thesauruses;
-        for (data.Thesaurus thesaurus : thesauruses) {
+        this.startingThesauruses = thesauruses;
+        this.thesauruses = FXCollections.observableArrayList(thesauruses);;
+        for (Thesaurus thesaurus : thesauruses) {
             try {
                 SingleThesaurus singleThesaurus = new SingleThesaurus(word, thesaurus);
                 contentBox.getChildren().add(singleThesaurus);
             } catch (NullPointerException ignored) {}
         }
-        thesauruses.addListener((ListChangeListener<Thesaurus>) c -> {
+        this.thesauruses.addListener((ListChangeListener<Thesaurus>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     for (Thesaurus thesaurus : c.getAddedSubList()) {
@@ -101,8 +107,10 @@ public class EditThesaurus extends DisplayThesaurus implements WordEditor {
     }
 
     public void save() {
-        for (Thesaurus thesaurus : thesauruses) {
+        for (Thesaurus thesaurus : startingThesauruses) {
             GraphicalDictionary.getDatabaseInstance().deleteThesaurus(thesaurus);
+        }
+        for (Thesaurus thesaurus : thesauruses) {
             GraphicalDictionary.getDatabaseInstance().addThesaurus(editingWord, thesaurus);
         }
     }

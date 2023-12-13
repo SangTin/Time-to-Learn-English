@@ -25,11 +25,13 @@ public class SingleThesaurus extends VBox {
     @FXML private VBox lessWordPane;
     @FXML private FlowPane mostWordFlow;
     @FXML private FlowPane lessWordFlow;
+    @FXML private Button deleteThesaurusButton;
 
     private final Word word;
     private Dictionary dictionary;
     private final Thesaurus thesaurus;
     private final SimpleBooleanProperty isModified = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty isDeleted = new SimpleBooleanProperty(false);
 
     public SingleThesaurus(Word word, Thesaurus thesaurus) {
         this.thesaurus = thesaurus;
@@ -57,6 +59,7 @@ public class SingleThesaurus extends VBox {
                 canDeletedButton(word, 0, mostWordFlow, () -> {
                     thesaurus.deleteMostUsedByWord(word);
                 });
+                mostCommonWord.clear();
                 isModified.set(true);
             } catch (NoSuchWordFoundException e) {
                 mostWordPane.getStyleClass().add("required-field");
@@ -105,6 +108,7 @@ public class SingleThesaurus extends VBox {
                 thesaurus.deleteLessUsedByWord(word);
             });
         }
+        deleteThesaurusButton.setOnAction(event -> isDeleted.set(true));
     }
 
     public void setDictionary(Dictionary dictionary) {
@@ -132,6 +136,10 @@ public class SingleThesaurus extends VBox {
             action.run();
             pane.getChildren().remove(button);
         });
+    }
+
+    public SimpleBooleanProperty isDeletedProperty() {
+        return isDeleted;
     }
 
     public static Button createWordButton(Word word, int level, Runnable action) {

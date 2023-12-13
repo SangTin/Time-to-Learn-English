@@ -62,3 +62,11 @@
 .label {
     -fx-font-size: 11px;
 }
+
+.delete-button {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-font-size: 14px;
+}
