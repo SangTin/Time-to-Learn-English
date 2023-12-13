@@ -35,7 +35,7 @@ public class GraphicalUserInterface {
       Alert alert = new Alert(AlertType.CONFIRMATION);
       alert.setTitle("Quit");
       alert.setHeaderText("Are you sure you want to quit?");
-      alert.getDialogPane().getStylesheets().add(this.getClass().getResource("/css/Alert.css").toExternalForm());
+      alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("/css/Alert.css")).toExternalForm());
       ButtonType noButton = new ButtonType("No", ButtonData.CANCEL_CLOSE);
       ButtonType yesButton = new ButtonType("Yes", ButtonData.OK_DONE);
       alert.getButtonTypes().setAll(yesButton, noButton);

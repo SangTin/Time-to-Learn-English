@@ -31,7 +31,7 @@ public class AnimatedGif extends Animation {
       for(int i = 0; i < d.getFrameCount(); ++i) {
          WritableImage wimg = null;
          BufferedImage bimg = d.getFrame(i);
-         sequence[i] = SwingFXUtils.toFXImage(bimg, wimg);
+         sequence[i] = SwingFXUtils.toFXImage(bimg, null);
       }
 
       super.init(sequence, durationMs, width, height);

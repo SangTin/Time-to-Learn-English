@@ -10,32 +10,29 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+@SuppressWarnings("UnusedAssignment")
 public class CommandLine {
-    static Scanner sc = new Scanner(System.in);
+    static final Scanner sc = new Scanner(System.in);
     private final Dictionary words = new Dictionary();
-
-    public void Init() {
-    }
 
     public void showMenu() {
         System.out.print("\033\143");
-        System.out.print("Welcome to My Application!\n"
-                + "[0] Exit\n"
-                + "[1] Add\n"
-                + "[2] Remove\n"
-                + "[3] Update\n"
-                + "[4] Display\n"
-                + "[5] Lookup\n"
-                + "[6] Search\n"
-                + "[7] Game\n"
-                + "[8] Import from file\n"
-                + "[9] Export to file\n"
-                + "Your action: ");
+        System.out.print("""
+                Welcome to My Application!
+                [0] Exit
+                [1] Add
+                [2] Remove
+                [3] Update
+                [4] Display
+                [5] Lookup
+                [6] Search
+                [7] Game
+                [8] Import from file
+                [9] Export to file
+                Your action:\s""");
 
         int type = sc.nextInt();
         switch (type) {
-            case 0:
-                break;
             case 1:
                 Add();
                 break;
@@ -144,6 +141,7 @@ public class CommandLine {
         }
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public void Update() {
         System.out.print("\033\143");
         System.out.print("Word target: ");
@@ -243,10 +241,6 @@ public class CommandLine {
             Search();
         } else if (type == 3) {
             Lookup();
-        } else if (type == 2) {
-            Search();
-        } else if (type == 3) {
-            Lookup();
         }
     }
 
@@ -291,13 +285,13 @@ public class CommandLine {
                     }
                     }
             }
-            if (wordDuplicate.size() > 0) {
+            if (!wordDuplicate.isEmpty()) {
                 System.out.println();
                 System.out.println(
                         "Some words have multiple meanings, you can only choose one meaning, please enter its meaning!");
                 for (int i = 0; i < wordDuplicate.size(); ++i) {
-                    if (i == 0 || (i > 0 && !wordDuplicate.get(i).getWordTarget()
-                            .equals(wordDuplicate.get(i - 1).getWordTarget()))) {
+                    if (i == 0 || !wordDuplicate.get(i).getWordTarget()
+                            .equals(wordDuplicate.get(i - 1).getWordTarget())) {
                         System.out.println();
                         System.out.println("* Word target: " + wordDuplicate.get(i).getWordTarget());
                         Word eWord;

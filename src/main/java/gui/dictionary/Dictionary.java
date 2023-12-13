@@ -95,16 +95,12 @@ public class Dictionary extends SplitPane {
             divider.setPosition(0.5D);
             this.sideTabButton.getTooltip().setText("Close side tab");
             ((SVGPath)this.sideTabButton.getGraphic()).setContent(CLOSE_SIDE_ICON);
-            this.sideTabButton.setOnAction((event) -> {
-               this.isSideTabOpen.set(false);
-            });
+            this.sideTabButton.setOnAction((event) -> this.isSideTabOpen.set(false));
          } else {
             divider.setPosition(0.0D);
             this.sideTabButton.getTooltip().setText("Open side tab");
             ((SVGPath)this.sideTabButton.getGraphic()).setContent(OPEN_SIDE_ICON);
-            this.sideTabButton.setOnAction((event) -> {
-               this.isSideTabOpen.set(true);
-            });
+            this.sideTabButton.setOnAction((event) -> this.isSideTabOpen.set(true));
          }
       });
       isSideTabOpen.set(true);
@@ -179,21 +175,17 @@ public class Dictionary extends SplitPane {
          }
       });
       appFunction.set(AppFunction.SEARCH);
-      deleteButton.setOnAction(e -> {
-         GraphicalDictionary.alert("Delete", "Are you sure you want to delete this word? \nThis can't be undone.", Alert.AlertType.WARNING,
-                 () -> {
-                    Word word = wordFlow.peek();
-                    if (word != null) {
-                       try {
-                          changes.remove(word);
-                       } catch (EditWordException ignored) {}
-                       GraphicalDictionary.setAppFunction(AppFunction.SEARCH, wordFlow.peek());
-                    }
-                 }, () -> {});
-      });
-      saveButton.setOnAction(e -> {
-         save();
-      });
+      deleteButton.setOnAction(e -> GraphicalDictionary.alert("Delete", "Are you sure you want to delete this word? \nThis can't be undone.", Alert.AlertType.WARNING,
+              () -> {
+                 Word word = wordFlow.peek();
+                 if (word != null) {
+                    try {
+                       changes.remove(word);
+                    } catch (EditWordException ignored) {}
+                    GraphicalDictionary.setAppFunction(AppFunction.SEARCH, wordFlow.peek());
+                 }
+              }, () -> {}));
+      saveButton.setOnAction(e -> save());
    }
 
    private boolean isModified() {
@@ -225,9 +217,7 @@ public class Dictionary extends SplitPane {
       descriptionTabs.forEach(tab -> {
          tab.setClosable(false);
          tab.setDisable(true);
-         tab.getContent().disabledProperty().addListener((observable, oldValue, newValue) -> {
-             tab.setDisable(newValue);
-         });
+         tab.getContent().disabledProperty().addListener((observable, oldValue, newValue) -> tab.setDisable(newValue));
       });
    }
 
@@ -246,9 +236,7 @@ public class Dictionary extends SplitPane {
       editorTabs.add(antTab);
       antTab.setContent(new EditThesaurus(ThesaurusType.SYNONYM, dictionary));
 
-      editorTabs.forEach(tab -> {
-         tab.setClosable(false);
-      });
+      editorTabs.forEach(tab -> tab.setClosable(false));
    }
 
    public void displaySearch(AppFunction function, Word word) {

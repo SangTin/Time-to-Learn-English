@@ -29,11 +29,11 @@ public abstract class TranslateBase extends VBox {
     @FXML protected ImageView fromLanguageImage;
     @FXML protected ImageView toLanguageImage;
 
-    protected SimpleStringProperty fromLanguage = new SimpleStringProperty();
-    protected SimpleStringProperty toLanguage = new SimpleStringProperty();
+    protected final SimpleStringProperty fromLanguage = new SimpleStringProperty();
+    protected final SimpleStringProperty toLanguage = new SimpleStringProperty();
 
-    protected SVGImage fromLanguageSVGImage = new SVGImage();
-    protected SVGImage toLanguageSVGImage = new SVGImage();
+    protected final SVGImage fromLanguageSVGImage = new SVGImage();
+    protected final SVGImage toLanguageSVGImage = new SVGImage();
 
     protected Timer timer = new Timer();
     private final MediaPlayer outputSound;
@@ -50,9 +50,7 @@ public abstract class TranslateBase extends VBox {
     }
 
     public void initialize() {
-        new Thread(() -> {
-            Platform.runLater(this::doInitialize);
-        }).start();
+        new Thread(() -> Platform.runLater(this::doInitialize)).start();
     }
 
     protected void doInitialize() {
@@ -112,7 +110,7 @@ public abstract class TranslateBase extends VBox {
 
     private static String getLanguagePath(String language) {
         String languageCode = getLanguageCode(language);
-        String countryCode = null;
+        String countryCode;
         try {
             countryCode = CONST.CONTRY_CODE.get(languageCode).getAsString();
         } catch (Exception e) {

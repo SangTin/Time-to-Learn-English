@@ -22,7 +22,7 @@ public class CONST {
         try {
             CREDENTIALS_PROVIDER = FixedCredentialsProvider
                     .create(ServiceAccountCredentials
-                            .fromStream(TextToSpeech.class.getResourceAsStream("/json/client_secret.json")));
+                            .fromStream(Objects.requireNonNull(Objects.requireNonNull(TextToSpeech.class.getResourceAsStream("/json/client_secret.json")))));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -92,7 +92,7 @@ public class CONST {
     public static final JsonObject SUPPORTED_LANGUAGES;
 
     static {
-        FileReader reader = null;
+        FileReader reader;
         try {
             reader = new FileReader(Objects.requireNonNull(CONST.class.getResource("/json/supported_languages.json")).getFile());
             SUPPORTED_LANGUAGES = gson.fromJson(reader, JsonObject.class);
@@ -104,9 +104,9 @@ public class CONST {
     public static final JsonObject CONTRY_CODE;
 
     static {
-        FileReader reader = null;
+        FileReader reader;
         try {
-            reader = new FileReader(CONST.class.getResource("/json/country_code.json").getFile());
+            reader = new FileReader(Objects.requireNonNull(Objects.requireNonNull(CONST.class.getResource("/json/country_code.json"))).getFile());
             CONTRY_CODE = gson.fromJson(reader, JsonObject.class);
         } catch (Exception e) {
             throw new RuntimeException(e);

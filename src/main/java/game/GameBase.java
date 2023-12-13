@@ -9,7 +9,7 @@ import java.io.File;
 
 public abstract class GameBase extends AnchorPane {
    protected MediaPlayer backgroundMusic;
-   protected SimpleBooleanProperty isGameFinished = new SimpleBooleanProperty(false);
+   protected final SimpleBooleanProperty isGameFinished = new SimpleBooleanProperty(false);
 
    protected final void setBackgroundMusic(String musicFilePath) {
       Media sound = new Media(new File(musicFilePath).toURI().toString());

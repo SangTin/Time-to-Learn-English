@@ -27,13 +27,9 @@ public class Start extends Application {
       Button CLIButton = (Button)root.lookup("#CLIButton");
       Button GUIButton = (Button)root.lookup("#GUIButton");
       CLIButton.setEffect(MenuStyle.getButtonShadowEffect());
-      CLIButton.setOnAction((e) -> {
-         this.commandLineInterface();
-      });
+      CLIButton.setOnAction((e) -> this.commandLineInterface());
       GUIButton.setEffect(MenuStyle.getButtonShadowEffect());
-      GUIButton.setOnAction((e) -> {
-         this.graphicalUserInterface();
-      });
+      GUIButton.setOnAction((e) -> this.graphicalUserInterface());
    }
 
    public void start(Stage stage) {
@@ -50,9 +46,7 @@ public class Start extends Application {
       this.primaryStage.setResizable(false);
       this.primaryStage.show();
 
-      Platform.runLater(() -> {
-         graphicalUserInterface = new GraphicalUserInterface();
-      });
+      Platform.runLater(() -> graphicalUserInterface = new GraphicalUserInterface());
    }
 
    public void commandLineInterface() {

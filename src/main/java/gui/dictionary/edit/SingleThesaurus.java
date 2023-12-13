@@ -49,16 +49,12 @@ public class SingleThesaurus extends VBox {
 
     public void initialize() {
         setDictionary(thesaurus.getDictionary());
-        mostCommonWord.textProperty().addListener((observable, oldValue, newValue) -> {
-            mostWordPane.getStyleClass().remove("required-field");
-        });
+        mostCommonWord.textProperty().addListener((observable, oldValue, newValue) -> mostWordPane.getStyleClass().remove("required-field"));
         mostCommonWord.onActionProperty().set(event -> {
             try {
                 String target = mostCommonWord.getText();
                 Word word = thesaurus.addMostUsedByWord(target);
-                canDeletedButton(word, 0, mostWordFlow, () -> {
-                    thesaurus.deleteMostUsedByWord(word);
-                });
+                canDeletedButton(word, 0, mostWordFlow, () -> thesaurus.deleteMostUsedByWord(word));
                 mostCommonWord.clear();
                 isModified.set(true);
             } catch (NoSuchWordFoundException e) {
@@ -66,16 +62,12 @@ public class SingleThesaurus extends VBox {
             }
         });
 
-        lessCommonWord.textProperty().addListener((observable, oldValue, newValue) -> {
-            lessWordPane.getStyleClass().remove("required-field");
-        });
+        lessCommonWord.textProperty().addListener((observable, oldValue, newValue) -> lessWordPane.getStyleClass().remove("required-field"));
         lessCommonWord.onActionProperty().set(event -> {
             try {
                 String target = lessCommonWord.getText();
                 Word word = thesaurus.addLessUsedByWord(target);
-                canDeletedButton(word, 1, lessWordFlow, () -> {
-                    thesaurus.deleteLessUsedByWord(word);
-                });
+                canDeletedButton(word, 1, lessWordFlow, () -> thesaurus.deleteLessUsedByWord(word));
                 lessCommonWord.clear();
                 isModified.set(true);
             } catch (NoSuchWordFoundException e) {
@@ -99,14 +91,10 @@ public class SingleThesaurus extends VBox {
         });
 
         for (Word word : thesaurus.getMostUsedWords()) {
-            canDeletedButton(word, 0, mostWordFlow, () -> {
-                thesaurus.deleteMostUsedByWord(word);
-            });
+            canDeletedButton(word, 0, mostWordFlow, () -> thesaurus.deleteMostUsedByWord(word));
         }
         for (Word word : thesaurus.getLessUsedWords()) {
-            canDeletedButton(word, 1, lessWordFlow, () -> {
-                thesaurus.deleteLessUsedByWord(word);
-            });
+            canDeletedButton(word, 1, lessWordFlow, () -> thesaurus.deleteLessUsedByWord(word));
         }
         deleteThesaurusButton.setOnAction(event -> isDeleted.set(true));
     }

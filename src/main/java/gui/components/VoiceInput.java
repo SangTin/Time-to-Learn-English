@@ -73,9 +73,7 @@ public class VoiceInput extends Stage {
             return new Task<>() {
                @Override
                protected Void call() throws Exception {
-                  SpeechToText.textOfSpeechProperty().addListener((observable, oldValue, newValue) -> {
-                     textResult.setText(newValue);
-                  });
+                  SpeechToText.textOfSpeechProperty().addListener((observable, oldValue, newValue) -> textResult.setText(newValue));
                   SpeechToText.startRecord(languageCode);
                   return null;
                }
@@ -88,9 +86,7 @@ public class VoiceInput extends Stage {
             return super.cancel();
          }
       };
-      stopButton.setOnAction(event -> {
-         this.hide();
-      });
+      stopButton.setOnAction(event -> this.hide());
 
       process.setOnSucceeded(event -> done());
    }
@@ -125,7 +121,7 @@ public class VoiceInput extends Stage {
       Alert alert = new Alert(AlertType.ERROR);
       alert.setTitle("Microphone Error");
       alert.setHeaderText("Microphone not found or not working");
-      alert.getDialogPane().getStylesheets().add(this.getClass().getResource("/css/Alert.css").toExternalForm());
+      alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("/css/Alert.css")).toExternalForm());
       ButtonType yesButton = new ButtonType("OK", ButtonData.OK_DONE);
       alert.getButtonTypes().setAll(yesButton);
       Node alertYes = alert.getDialogPane().lookupButton(yesButton);
@@ -138,7 +134,7 @@ public class VoiceInput extends Stage {
       alert.setTitle("Time Warning");
       alert.setHeaderText("Time limit exceeded");
       alert.setContentText("The time limit for voice input is 20 seconds. Do you want to use this result?");
-      alert.getDialogPane().getStylesheets().add(this.getClass().getResource("/css/Alert.css").toExternalForm());
+      alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("/css/Alert.css")).toExternalForm());
       ButtonType noButton = new ButtonType("Retry", ButtonData.NO);
       ButtonType yesButton = new ButtonType("Yes", ButtonData.OK_DONE);
       alert.getButtonTypes().setAll(yesButton, noButton);

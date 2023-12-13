@@ -17,7 +17,7 @@
          <children>
             <VBox fx:id="wordPane" VBox.vgrow="NEVER">
                <children>
-                  <Label focusTraversable="false" text="Word*" VBox.vgrow="NEVER" />
+                  <Label text="Word*" VBox.vgrow="NEVER" />
                   <HBox fx:id="wordTargetField" alignment="CENTER_LEFT" styleClass="input-field">
                      <children>
                         <TextField fx:id="wordTarget" focusTraversable="false" prefHeight="30.0" promptText="Word target" style="-fx-border-width: 0;" styleClass="input-field" HBox.hgrow="ALWAYS" />
@@ -33,13 +33,13 @@
                <children>
                   <VBox HBox.hgrow="ALWAYS">
                      <children>
-                        <Label focusTraversable="false" text="IPA - UK" VBox.vgrow="NEVER" />
+                        <Label text="IPA - UK" VBox.vgrow="NEVER" />
                         <TextField fx:id="ipaUK" focusTraversable="false" prefHeight="30.0" prefWidth="186.0" promptText="IPA" styleClass="input-field" VBox.vgrow="NEVER" />
                      </children>
                   </VBox>
                   <VBox HBox.hgrow="ALWAYS">
                      <children>
-                        <Label focusTraversable="false" text="IPA - US" VBox.vgrow="NEVER" />
+                        <Label text="IPA - US" VBox.vgrow="NEVER" />
                         <TextField fx:id="ipaUS" focusTraversable="false" prefHeight="30.0" prefWidth="186.0" promptText="IPA" styleClass="input-field" VBox.vgrow="NEVER" />
                      </children>
                   </VBox>

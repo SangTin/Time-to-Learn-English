@@ -54,9 +54,7 @@ public class EditWord extends DisplayWord implements WordEditor {
     }
 
     public void initialize() {
-        previewButton.setOnAction(e -> {
-            preview(editingWord);
-        });
+        previewButton.setOnAction(e -> preview(editingWord));
 
         wordTarget.textProperty().addListener((observable, oldValue, newValue) -> {
             editingWord.setWordTarget(wordTarget.getText());
@@ -76,9 +74,7 @@ public class EditWord extends DisplayWord implements WordEditor {
         });
 
         howToUseButton.setTooltip(howToUse);
-        howToUseButton.setOnAction(e -> {
-            howToUse();
-        });
+        howToUseButton.setOnAction(e -> howToUse());
 
         function.set(AppFunction.ADD);
         function.addListener((observable, oldValue, newValue) -> {
@@ -151,7 +147,7 @@ public class EditWord extends DisplayWord implements WordEditor {
         stage.centerOnScreen();
         stage.initModality(Modality.APPLICATION_MODAL);
 
-        Parent tooltip = null;
+        Parent tooltip;
         try {
             tooltip = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/dictionary/edit/EditWordToolTip.fxml")));
         } catch (IOException e) {

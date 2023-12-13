@@ -44,9 +44,7 @@ public class SearchBar extends SearchBase {
       this.searchResult.setMaxHeight(400.0D);
       this.searchResult.itemsProperty().addListener((observable, oldVal, newVal) -> {
          SearchBar.this.searchResult.setPrefHeight(40.0D * (double)SearchBar.this.searchResult.getItems().size());
-         ListChangeListener<? super Word> listener = (c) -> {
-            SearchBar.this.searchResult.setPrefHeight(40.0D * (double)SearchBar.this.searchResult.getItems().size());
-         };
+         ListChangeListener<? super Word> listener = (c) -> SearchBar.this.searchResult.setPrefHeight(40.0D * (double)SearchBar.this.searchResult.getItems().size());
          newVal.addListener(listener);
          oldVal.removeListener(listener);
       });
@@ -58,9 +56,7 @@ public class SearchBar extends SearchBase {
          }
       });
 
-      this.searchText.focusedProperty().addListener((observable, oldVal, newVal) -> {
-         isSearching.set(newVal);
-      });
+      this.searchText.focusedProperty().addListener((observable, oldVal, newVal) -> isSearching.set(newVal));
    }
 
    protected void search() {
@@ -70,10 +66,8 @@ public class SearchBar extends SearchBase {
               new SuggestionCell(SearchResultType.SUGGESTION));
       if (result.isEmpty()) {
          createWordTimer = new Timer();
-         createWordTimer.schedule(new CreateWordTask(() -> {
-            this.searchResult.setCellFactory((param) ->
-                    new SuggestionCell(SearchResultType.CREATE));
-         }), 1000);
+         createWordTimer.schedule(new CreateWordTask(() -> this.searchResult.setCellFactory((param) ->
+                 new SuggestionCell(SearchResultType.CREATE))), 1000);
       }
    }
 
@@ -103,9 +97,7 @@ public class SearchBar extends SearchBase {
          this.row.setPrefWidth(SearchBar.this.searchResult.getWidth() - 20.0D);
          switch(type) {
             case HISTORY: {
-               Button deleteHistoryButton = createButton(DELETE_ICON, "Delete", () -> {
-                  SearchBar.this.dictionary.removeHistory(this.getItem());
-               });
+               Button deleteHistoryButton = createButton(DELETE_ICON, "Delete", () -> SearchBar.this.dictionary.removeHistory(this.getItem()));
                icon.setContent(HISTORY_ICON);
                this.row.getChildren().addAll(icon, this.word, deleteHistoryButton, pasteButton);
                this.selectedProperty().addListener((observable, oldVal, newVal) -> {
@@ -120,9 +112,7 @@ public class SearchBar extends SearchBase {
                this.selectedProperty().addListener((observable, oldVal, newVal) -> {
                   appFunction = AppFunction.SEARCH;
                   selectedWord.set(this.getItem());
-                  Platform.runLater(() -> {
-                     SearchBar.this.dictionary.addHistory(this.getItem());
-                  });
+                  Platform.runLater(() -> SearchBar.this.dictionary.addHistory(this.getItem()));
                });
                break;
             }
@@ -132,9 +122,7 @@ public class SearchBar extends SearchBase {
                this.selectedProperty().addListener((observable, oldVal, newVal) -> {
                   appFunction = AppFunction.ADD;
                   selectedWord.set(this.getItem());
-                  Platform.runLater(() -> {
-                     searchText.clear();
-                  });
+                  Platform.runLater(() -> searchText.clear());
                });
                break;
             }

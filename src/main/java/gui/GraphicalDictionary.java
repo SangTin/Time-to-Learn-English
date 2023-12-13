@@ -157,9 +157,7 @@ public class GraphicalDictionary extends AnchorPane {
       dictionaryInstance = new Dictionary(databaseInstance);
       changesInstance = new Changes(dictionaryInstance, databaseInstance);
       appFunctionWithWord = new SimpleObjectProperty<>();
-      new Thread(() -> {
-         databaseInstance.importToDictionary(dictionaryInstance);
-      }).start();
+      new Thread(() -> databaseInstance.importToDictionary(dictionaryInstance)).start();
    }
 
 
@@ -168,7 +166,7 @@ public class GraphicalDictionary extends AnchorPane {
       Alert alert = new Alert(type);
       alert.setTitle(title);
       alert.setHeaderText(message);
-      alert.getDialogPane().getStylesheets().add(GraphicalDictionary.class.getResource("/css/Alert.css").toExternalForm());
+      alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(GraphicalDictionary.class.getResource("/css/Alert.css")).toExternalForm());
       ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
       ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
       alert.getButtonTypes().setAll(yesButton, noButton);

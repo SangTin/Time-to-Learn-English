@@ -15,12 +15,11 @@ public enum ThesaurusType {
       ThesaurusType[] var1 = values();
       int var2 = var1.length;
 
-      for(int var3 = 0; var3 < var2; ++var3) {
-         ThesaurusType type = var1[var3];
-         if (text.contains(type.text)) {
-            return type;
-         }
-      }
+       for (ThesaurusType type : var1) {
+           if (text.contains(type.text)) {
+               return type;
+           }
+       }
 
       return null;
    }

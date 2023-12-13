@@ -8,7 +8,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.regex.Pattern;
 
 public class CreateWord {
@@ -76,16 +75,14 @@ public class CreateWord {
                      description.append(String.format("= US: %s\n", usPhon));
                   }
                }
-            } catch (Exception var12) {
+            } catch (Exception ignored) {
             }
 
             Element definition = doc.getElementsByTag("ol").getFirst();
-            Iterator var15 = definition.getElementsByClass("sense").iterator();
 
-            while(var15.hasNext()) {
-               Element meaning = (Element)var15.next();
-               getDefinition(meaning, word, description);
-            }
+             for (Element meaning : definition.getElementsByClass("sense")) {
+                 getDefinition(meaning, word, description);
+             }
          } catch (Exception var13) {
             break;
          }
@@ -96,7 +93,7 @@ public class CreateWord {
    }
    public static boolean checkAvailable(String word) {
       if (word != null && !(word = word.trim()).isEmpty()) {
-         Pattern pattern = Pattern.compile(".*[\\W&&[^-]&&\\S].*", 2);
+         Pattern pattern = Pattern.compile(".*[\\W&&[^-]&&\\S].*", Pattern.CASE_INSENSITIVE);
          if (pattern.matcher(word).find()) {
             return false;
          } else {

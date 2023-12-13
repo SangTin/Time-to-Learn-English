@@ -47,9 +47,7 @@ public abstract class SearchBase extends AnchorPane {
     }
 
     public void initialize() {
-        new Thread(() -> {
-            Platform.runLater(this::doInitialize);
-        }).start();
+        new Thread(() -> Platform.runLater(this::doInitialize)).start();
     }
 
     protected void doInitialize() {
@@ -77,12 +75,10 @@ public abstract class SearchBase extends AnchorPane {
     protected void setResultList(ListView<Word> listView) {
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listView.setFixedCellSize(SUGGESTION_CELL_HEIGHT);
-        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-            Platform.runLater(() -> {
-                listView.getSelectionModel().clearSelection();
-                selectedWord.set(null);
-            });
-        });
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> Platform.runLater(() -> {
+            listView.getSelectionModel().clearSelection();
+            selectedWord.set(null);
+        }));
     }
 
     public void setDictionary(Dictionary dictionary) {
@@ -123,9 +119,7 @@ public abstract class SearchBase extends AnchorPane {
             button.getStyleClass().add("cell-button");
             button.setGraphic(svgIcon);
             button.setTooltip(new Tooltip(tooltip));
-            button.setOnAction((e) -> {
-                action.run();
-            });
+            button.setOnAction((e) -> action.run());
             return button;
         }
 
@@ -141,7 +135,7 @@ public abstract class SearchBase extends AnchorPane {
     }
 
     protected class CreateWordTask extends TimerTask {
-        Runnable action;
+        final Runnable action;
 
         public CreateWordTask(Runnable action) {
             this.action = action;

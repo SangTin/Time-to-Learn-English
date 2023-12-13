@@ -15,7 +15,7 @@ public class TranslateText {
      *
      * @param sourceLanguage - language that the source text is.
      * @param targetLanguage - language that the source text is translated into.
-     *                       further information about supported languages: https://cloud.google.com/translate/docs/languages
+     *                       further information about supported languages: <a href="https://cloud.google.com/translate/docs/languages">...</a>
      * @param text           - source text needed to be translated.
      * @return The text after translate to target language.
      */
@@ -26,13 +26,6 @@ public class TranslateText {
         LocationName parent = LocationName.of(CONST.PROJECT_ID, "global");
 
         //Initialize a request.
-//        TranslateTextRequest request =
-//                TranslateTextRequest.newBuilder()
-//                        .setParent(parent.toString())
-//                        .setMimeType("text/plain")
-//                        .setTargetLanguageCode(targetLanguage)
-//                        .addContents(text)
-//                        .build();
 
         TranslateTextRequest request =
                 TranslateTextRequest.newBuilder()
