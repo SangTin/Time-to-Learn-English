@@ -31,7 +31,7 @@ public class Dictionary extends SplitPane {
    private static final String OPEN_SIDE_ICON = "M4.8 4.8m0 2.4a2.4 2.4 0 0 1 2.4-2.4h14.4a2.4 2.4 0 0 1 2.4 2.4v14.4a2.4 2.4 0 0 1-2.4 2.4h-14.4a2.4 2.4 0 0 1-2.4-2.4zM10.8 4.8v19.2M16.8 12l2.4 2.4-2.4 2.4";
    private static final String CLOSE_SIDE_ICON = "M4.8 4.8m0 2.4a2.4 2.4 0 0 1 2.4-2.4h14.4a2.4 2.4 0 0 1 2.4 2.4v14.4a2.4 2.4 0 0 1-2.4 2.4h-14.4a2.4 2.4 0 0 1-2.4-2.4zM10.8 4.8v19.2M18 12l-2.4 2.4 2.4 2.4";
    private static final String EDIT_ICON = "M21.67 7.986 7.668 22.045C7.262 22.451 6.711 22.68 6.137 22.68H4.325C3.725 22.68 3.24 22.19 3.24 21.592V19.762C3.24 19.192 3.467 18.644 3.87 18.239L17.876 4.176C21.128 1.455 24.381 5.265 21.67 7.986ZM14.04 22.68H22.68M16.535 5.735 20.226 9.426";
-   private static final String DISPLAY_ICON = "M4 4m0 1a1 1 0 0 1 1 -1h14a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-14a1 1 0 0 1 -1 -1z M4 12m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z M14 12l6 0 M14 16l6 0 M14 20l6 0";
+   private static final String DISPLAY_ICON = "M4.8 4.8m0 1.2a1.2 1.2 0 0 1 1.2-1.2h16.8a1.2 1.2 0 0 1 1.2 1.2v2.4a1.2 1.2 0 0 1-1.2 1.2h-16.8a1.2 1.2 0 0 1-1.2-1.2zM4.8 14.4m0 1.2a1.2 1.2 0 0 1 1.2-1.2h4.8a1.2 1.2 0 0 1 1.2 1.2v7.2a1.2 1.2 0 0 1-1.2 1.2h-4.8a1.2 1.2 0 0 1-1.2-1.2zM16.8 14.4l7.2 0M16.8 19.2l7.2 0M16.8 24l7.2 0";
 
    @FXML private Button previousWord;
    @FXML private Button nextWord;
@@ -48,7 +48,7 @@ public class Dictionary extends SplitPane {
    private DisplayThesaurus synonymTabContent;
    private DisplayThesaurus antonymTabContent;
 
-   private final UniqueWordStack wordFlow = new UniqueWordStack();
+   private final WordStackFlow wordFlow = new WordStackFlow();
    private final SimpleBooleanProperty isSideTabOpen = new SimpleBooleanProperty(false);
    private final SimpleObjectProperty<AppFunction> appFunction = new SimpleObjectProperty<>();
    private static final data.SQLiteDatabase database = GraphicalDictionary.getDatabaseInstance();
@@ -95,16 +95,12 @@ public class Dictionary extends SplitPane {
             divider.setPosition(0.5D);
             this.sideTabButton.getTooltip().setText("Close side tab");
             ((SVGPath)this.sideTabButton.getGraphic()).setContent(CLOSE_SIDE_ICON);
-            this.sideTabButton.setOnAction((event) -> {
-               this.isSideTabOpen.set(false);
-            });
+            this.sideTabButton.setOnAction((event) -> this.isSideTabOpen.set(false));
          } else {
             divider.setPosition(0.0D);
             this.sideTabButton.getTooltip().setText("Open side tab");
             ((SVGPath)this.sideTabButton.getGraphic()).setContent(OPEN_SIDE_ICON);
-            this.sideTabButton.setOnAction((event) -> {
-               this.isSideTabOpen.set(true);
-            });
+            this.sideTabButton.setOnAction((event) -> this.isSideTabOpen.set(true));
          }
       });
       isSideTabOpen.set(true);
@@ -179,21 +175,17 @@ public class Dictionary extends SplitPane {
          }
       });
       appFunction.set(AppFunction.SEARCH);
-      deleteButton.setOnAction(e -> {
-         GraphicalDictionary.alert("Delete", "Are you sure you want to delete this word? \nThis can't be undone.", Alert.AlertType.WARNING,
-                 () -> {
-                    Word word = wordFlow.peek();
-                    if (word != null) {
-                       try {
-                          changes.remove(word);
-                       } catch (EditWordException ignored) {}
-                       GraphicalDictionary.setAppFunction(AppFunction.SEARCH, wordFlow.peek());
-                    }
-                 }, () -> {});
-      });
-      saveButton.setOnAction(e -> {
-         save();
-      });
+      deleteButton.setOnAction(e -> GraphicalDictionary.alert("Delete", "Are you sure you want to delete this word? \nThis can't be undone.", Alert.AlertType.WARNING,
+              () -> {
+                 Word word = wordFlow.peek();
+                 if (word != null) {
+                    try {
+                       changes.remove(word);
+                    } catch (EditWordException ignored) {}
+                    GraphicalDictionary.setAppFunction(AppFunction.SEARCH, wordFlow.peek());
+                 }
+              }, () -> {}));
+      saveButton.setOnAction(e -> save());
    }
 
    private boolean isModified() {
@@ -225,9 +217,7 @@ public class Dictionary extends SplitPane {
       descriptionTabs.forEach(tab -> {
          tab.setClosable(false);
          tab.setDisable(true);
-         tab.getContent().disabledProperty().addListener((observable, oldValue, newValue) -> {
-             tab.setDisable(newValue);
-         });
+         tab.getContent().disabledProperty().addListener((observable, oldValue, newValue) -> tab.setDisable(newValue));
       });
    }
 
@@ -246,9 +236,7 @@ public class Dictionary extends SplitPane {
       editorTabs.add(antTab);
       antTab.setContent(new EditThesaurus(ThesaurusType.SYNONYM, dictionary));
 
-      editorTabs.forEach(tab -> {
-         tab.setClosable(false);
-      });
+      editorTabs.forEach(tab -> tab.setClosable(false));
    }
 
    public void displaySearch(AppFunction function, Word word) {
@@ -317,7 +305,7 @@ public class Dictionary extends SplitPane {
       });
    }
 
-   private static class UniqueWordStack extends AutoDeleteWordList {
+   private static class WordStackFlow extends AutoDeleteWordList {
       private final SimpleIntegerProperty current = new SimpleIntegerProperty(-1);
 
       public Word peek() {

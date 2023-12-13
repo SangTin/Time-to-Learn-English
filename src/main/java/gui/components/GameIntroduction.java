@@ -12,6 +12,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.util.Objects;
+
 public class GameIntroduction extends VBox {
     private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
         @Override protected void invalidated() {
@@ -64,7 +66,7 @@ public class GameIntroduction extends VBox {
     }
 
     public void setLogo(String logo) {
-        this.logo.setImage(new Image(getClass().getResource(logo).toString()));
+        this.logo.setImage(new Image(Objects.requireNonNull(getClass().getResource(logo)).toString()));
     }
 
     public void setLogo(Image logo) {

@@ -17,10 +17,12 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 
+@SuppressWarnings("ALL")
 public class CrossWord extends GameBase {
     @FXML
     private GridPane table;
@@ -57,6 +59,7 @@ public class CrossWord extends GameBase {
 
     private static final String CONTENT_FXML = "/crossword/fxml/crossword.fxml";
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public CrossWord() {
         super();
         setBackgroundMusic("src/main/resources/crossword/sound/sound.wav");
@@ -156,7 +159,7 @@ public class CrossWord extends GameBase {
     }
 
     public String ReadFileToString(String path) {
-        String answer = "";
+        StringBuilder answer = new StringBuilder();
         try{
             File file = new File(path);
             Scanner scanner = new Scanner(file);
@@ -170,14 +173,14 @@ public class CrossWord extends GameBase {
                         }
                     }
                 }
-                answer += x + "\n\n";
+                answer.append(x).append("\n\n");
             }
             scanner.close();
         } catch (FileNotFoundException e) {
             System.out.println("Không tìm thấy file." + path);
             e.printStackTrace();
         }
-        return answer;
+        return answer.toString();
     }
 
     public void SetUpGridPane() {
@@ -196,9 +199,7 @@ public class CrossWord extends GameBase {
                     text.setId("textField_" + row + "_" + col);
                     text.setFont(Font.font(customFont.getFamily(), 15));
                     text.setAlignment(Pos.CENTER);
-                    text.setOnKeyPressed(event -> {
-                        handleArrowKeys(text, event.getCode());
-                    });
+                    text.setOnKeyPressed(event -> handleArrowKeys(text, event.getCode()));
                     table.add(text, col, row);
                     if(!dataId[row][col].equals("0")) {
                         Label id = new Label(dataId[row][col]);
@@ -221,7 +222,7 @@ public class CrossWord extends GameBase {
         alert.getButtonTypes().setAll(yes, cancel);
 
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("/css/alert.css").toExternalForm());
+        dialogPane.getStylesheets().add(Objects.requireNonNull(Objects.requireNonNull(getClass().getResource("/css/alert.css"))).toExternalForm());
 
         Optional<ButtonType> choice = alert.showAndWait();
         if(choice.get() == yes) {

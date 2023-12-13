@@ -67,9 +67,7 @@ public class Description extends DisplayWord {
 
    public void initialize() {
       // Set up description view
-      posBar.heightProperty().addListener((observable, oldVal, newVal) -> {
-         AnchorPane.setTopAnchor(desView, newVal.doubleValue());
-      });
+      posBar.heightProperty().addListener((observable, oldVal, newVal) -> AnchorPane.setTopAnchor(desView, newVal.doubleValue()));
       posBar.getButtons().addListener((ListChangeListener.Change<? extends Node> c) -> {
          if (posBar.getButtons().isEmpty()) {
             posBar.setPrefHeight(0);

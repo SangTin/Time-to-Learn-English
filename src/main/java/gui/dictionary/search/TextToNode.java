@@ -32,7 +32,7 @@ public class TextToNode {
     public static Node textToLink(String text, Dictionary dictionary) {
         if (text == null) return null;
 
-        Node engWord = null;
+        Node engWord;
         String wordTarget = extractWord(text, dictionary);
         if (wordTarget != null) {
             Hyperlink wordLink = new Hyperlink(text);

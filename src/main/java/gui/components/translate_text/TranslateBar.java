@@ -23,16 +23,12 @@ public class TranslateBar extends TranslateBase {
 
     public void initialize() {
         super.initialize();
+
+        fromLanguage.addListener((observable, oldValue, newValue) -> fromLanguageLabel.setText(newValue));
+        toLanguage.addListener((observable, oldValue, newValue) -> toLanguageLabel.setText(newValue));
     }
 
     protected void doInitialize() {
         super.doInitialize();
-    }
-
-    protected void switchLanguage() {
-       super.switchLanguage();
-
-       this.fromLanguageLabel.setText(fromLanguage.get());
-       this.toLanguageLabel.setText(toLanguage.get());
     }
 }

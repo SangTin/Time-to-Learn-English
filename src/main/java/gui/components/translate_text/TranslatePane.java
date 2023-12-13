@@ -34,19 +34,11 @@ public class TranslatePane extends TranslateBase{
         fromLanguageComboBox.getItems().addAll(CONST.SUPPORTED_LANGUAGES.keySet());
         toLanguageComboBox.getItems().addAll(CONST.SUPPORTED_LANGUAGES.keySet());
 
-        fromLanguage.addListener((observable, oldValue, newValue) -> {
-            fromLanguageComboBox.getSelectionModel().select(newValue);
-        });
-        toLanguage.addListener((observable, oldValue, newValue) -> {
-            toLanguageComboBox.getSelectionModel().select(newValue);
-        });
+        fromLanguage.addListener((observable, oldValue, newValue) -> fromLanguageComboBox.getSelectionModel().select(newValue));
+        toLanguage.addListener((observable, oldValue, newValue) -> toLanguageComboBox.getSelectionModel().select(newValue));
 
-        fromLanguageComboBox.setOnAction((event) -> {
-            fromLanguage.set(fromLanguageComboBox.getSelectionModel().getSelectedItem());
-        });
-        toLanguageComboBox.setOnAction((event) -> {
-            toLanguage.set(toLanguageComboBox.getSelectionModel().getSelectedItem());
-        });
+        fromLanguageComboBox.setOnAction((event) -> fromLanguage.set(fromLanguageComboBox.getSelectionModel().getSelectedItem()));
+        toLanguageComboBox.setOnAction((event) -> toLanguage.set(toLanguageComboBox.getSelectionModel().getSelectedItem()));
 
         copyButton.setOnAction((event) -> {
             Clipboard clipboard = Clipboard.getSystemClipboard();

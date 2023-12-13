@@ -62,32 +62,28 @@ public class Home extends ScrollPane {
 
       this.crossWordIntro.setLogo("/img/crossword-logo.png");
       this.crossWordIntro.setTitle("Crossword Puzzle Game");
-      this.crossWordIntro.setOnAction((event) -> {
-         GraphicalDictionary.setAppFunction(AppFunction.GAMING, 1);
-      });
+      this.crossWordIntro.setOnAction((event) -> GraphicalDictionary.setAppFunction(AppFunction.GAMING, 1));
 
       this.guessWordIntro.setLogo("/img/guessword-logo.png");
       this.guessWordIntro.setTitle("Guessword Puzzle Game");
-      this.guessWordIntro.setOnAction((event) -> {
-         GraphicalDictionary.setAppFunction(AppFunction.GAMING, 2);
-      });
+      this.guessWordIntro.setOnAction((event) -> GraphicalDictionary.setAppFunction(AppFunction.GAMING, 2));
    }
 
    private static void customRecentSearch(ListView<Word> listView) {
-      listView.setCellFactory((param) -> new ListCell<Word>() {
-        {
-           prefWidthProperty().bind(listView.widthProperty().subtract(2));
-           setMaxWidth(Control.USE_PREF_SIZE);
-        }
+      listView.setCellFactory((param) -> new ListCell<>() {
+          {
+              prefWidthProperty().bind(listView.widthProperty().subtract(2));
+              setMaxWidth(Control.USE_PREF_SIZE);
+          }
 
-        @Override
-        protected void updateItem(Word item, boolean empty) {
-           super.updateItem(item, empty);
-           this.setText(null);
-           if (item != null && !empty) {
-              this.setText(item.getWordTarget());
-           }
-        }
+          @Override
+          protected void updateItem(Word item, boolean empty) {
+              super.updateItem(item, empty);
+              this.setText(null);
+              if (item != null && !empty) {
+                  this.setText(item.getWordTarget());
+              }
+          }
       });
       listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
       listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

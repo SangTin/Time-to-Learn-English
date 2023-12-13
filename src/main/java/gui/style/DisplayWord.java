@@ -7,7 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.AnchorPane;
 
 public abstract class DisplayWord extends AnchorPane {
-    protected SimpleObjectProperty<AppFunction> function = new SimpleObjectProperty<>(AppFunction.SEARCH);
+    protected final SimpleObjectProperty<AppFunction> function = new SimpleObjectProperty<>(AppFunction.SEARCH);
     protected Dictionary dictionary;
 
     public final void display(Word word, AppFunction function) {

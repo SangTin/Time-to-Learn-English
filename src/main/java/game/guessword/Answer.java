@@ -1,7 +1,7 @@
 package game.guessword;
 
 public class Answer {
-    static String[] level = {
+    static final String[] level = {
             "",
             "sunflower",
             "second hand",

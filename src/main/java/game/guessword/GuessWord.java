@@ -105,7 +105,6 @@ public class GuessWord extends GameBase {
                 currentTextField.setText(String.valueOf(hint.charAt(col-start))); 
                 break;
             default:
-                return;
         }
     }
 
@@ -124,19 +123,19 @@ public class GuessWord extends GameBase {
     }
 
     public void Compare(ActionEvent event) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for(int i = start; i <= start + size -1; ++i) {
             if(hint.charAt(i - start) != ' ') {
                 String newId = "textField_" + i;
                 TextField text= (TextField) answer.lookup("#" + newId);
                 String c = text.getText();
                 c = c.toLowerCase();
-                s += c;
+                s.append(c);
             } else {
-                s += " ";
+                s.append(" ");
             }
         }
-        if(!s.equals(hint)) {
+        if(!s.toString().equals(hint)) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Wrong answer");
             alert.show();
@@ -164,9 +163,7 @@ public class GuessWord extends GameBase {
                 text.setStyle("-fx-background-color: transparent; -fx-border-radius: 10; -fx-border-color: #E3B448; -fx-border-width: 3; -fx-border-height: 3;");
                 text.setId("textField_" + i);
                 text.setAlignment(Pos.CENTER);
-                text.setOnKeyPressed(event -> {
-                    handleArrowKeys(text, event.getCode());
-                });
+                text.setOnKeyPressed(event -> handleArrowKeys(text, event.getCode()));
                 answer.add(text, i, 0);
             }
         }

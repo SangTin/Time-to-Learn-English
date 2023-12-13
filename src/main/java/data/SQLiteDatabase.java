@@ -22,7 +22,6 @@ public class SQLiteDatabase {
 
    private static void normalizeDbName(String dbName) {
       if (!dbName.endsWith(".db")) {
-         dbName = dbName + ".db";
       }
 
    }

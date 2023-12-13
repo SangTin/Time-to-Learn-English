@@ -47,7 +47,7 @@ public class GifDecoder {
    protected Rectangle lastRect;
    protected BufferedImage image;
    protected BufferedImage lastImage;
-   protected byte[] block = new byte[256];
+   protected final byte[] block = new byte[256];
    protected int blockSize = 0;
    protected int dispose = 0;
    protected int lastDispose = 0;
@@ -101,7 +101,7 @@ public class GifDecoder {
             System.arraycopy(prev, 0, dest, 0, this.width * this.height);
             if (this.lastDispose == 2) {
                Graphics2D g = this.image.createGraphics();
-               Color c = null;
+               Color c;
                if (this.transparency) {
                   c = new Color(0, 0, 0, 0);
                } else {
@@ -182,7 +182,7 @@ public class GifDecoder {
       if (is != null) {
          this.in = is;
          this.readHeader();
-         if (!this.err()) {
+         if (this.err()) {
             this.readContents();
             if (this.frameCount < 0) {
                this.status = 1;
@@ -193,8 +193,10 @@ public class GifDecoder {
       }
 
       try {
-         is.close();
-      } catch (IOException var3) {
+         if (is != null) {
+            is.close();
+         }
+      } catch (IOException ignored) {
       }
 
       return this.status;
@@ -209,7 +211,7 @@ public class GifDecoder {
 
          this.in = (BufferedInputStream)is;
          this.readHeader();
-         if (!this.err()) {
+         if (this.err()) {
             this.readContents();
             if (this.frameCount < 0) {
                this.status = 1;
@@ -220,8 +222,10 @@ public class GifDecoder {
       }
 
       try {
-         is.close();
-      } catch (IOException var3) {
+         if (is != null) {
+            is.close();
+         }
+      } catch (IOException ignored) {
       }
 
       return this.status;
@@ -232,7 +236,7 @@ public class GifDecoder {
 
       try {
          name = name.trim().toLowerCase();
-         if (name.indexOf("file:") < 0 && name.indexOf(":/") <= 0) {
+         if (!name.contains("file:") && name.indexOf(":/") <= 0) {
             this.in = new BufferedInputStream(new FileInputStream(name));
          } else {
             URL url = new URL(name);
@@ -370,7 +374,7 @@ public class GifDecoder {
    }
 
    protected boolean err() {
-      return this.status != 0;
+      return this.status == 0;
    }
 
    protected void init() {
@@ -405,7 +409,7 @@ public class GifDecoder {
                   break;
                }
             }
-         } catch (IOException var3) {
+         } catch (IOException ignored) {
          }
 
          if (n < this.blockSize) {
@@ -424,7 +428,7 @@ public class GifDecoder {
 
       try {
          n = this.in.read(c);
-      } catch (IOException var11) {
+      } catch (IOException ignored) {
       }
 
       if (n < nbytes) {
@@ -449,7 +453,7 @@ public class GifDecoder {
    protected void readContents() {
       boolean done = false;
 
-      while(!done && !this.err()) {
+      while(!done && this.err()) {
          int code = this.read();
          switch(code) {
          case 0:
@@ -462,13 +466,13 @@ public class GifDecoder {
                continue;
             case 255:
                this.readBlock();
-               String app = "";
+               StringBuilder app = new StringBuilder();
 
                for(int i = 0; i < 11; ++i) {
-                  app = app + (char)this.block[i];
+                  app.append((char) this.block[i]);
                }
 
-               if (app.equals("NETSCAPE2.0")) {
+               if (app.toString().equals("NETSCAPE2.0")) {
                   this.readNetscapeExt();
                } else {
                   this.skip();
@@ -506,17 +510,17 @@ public class GifDecoder {
    }
 
    protected void readHeader() {
-      String id = "";
+      StringBuilder id = new StringBuilder();
 
       for(int i = 0; i < 6; ++i) {
-         id = id + (char)this.read();
+         id.append((char) this.read());
       }
 
-      if (!id.startsWith("GIF")) {
+      if (!id.toString().startsWith("GIF")) {
          this.status = 1;
       } else {
          this.readLSD();
-         if (this.gctFlag && !this.err()) {
+         if (this.gctFlag && this.err()) {
             this.gct = this.readColorTable(this.gctSize);
             this.bgColor = this.gct[this.bgIndex];
          }
@@ -553,10 +557,10 @@ public class GifDecoder {
          this.status = 1;
       }
 
-      if (!this.err()) {
+      if (this.err()) {
          this.decodeImageData();
          this.skip();
-         if (!this.err()) {
+         if (this.err()) {
             ++this.frameCount;
             this.image = new BufferedImage(this.width, this.height, 3);
             this.setPixels();
@@ -588,7 +592,7 @@ public class GifDecoder {
             int b2 = this.block[2] & 255;
             this.loopCount = b2 << 8 | b1;
          }
-      } while(this.blockSize > 0 && !this.err());
+      } while(this.blockSize > 0 && this.err());
 
    }
 
@@ -610,13 +614,13 @@ public class GifDecoder {
    protected void skip() {
       do {
          this.readBlock();
-      } while(this.blockSize > 0 && !this.err());
+      } while(this.blockSize > 0 && this.err());
 
    }
 
    static class GifFrame {
-      public BufferedImage image;
-      public int delay;
+      public final BufferedImage image;
+      public final int delay;
 
       public GifFrame(BufferedImage im, int del) {
          this.image = im;

@@ -63,9 +63,7 @@ public class SearchPane extends SearchBase {
       this.searchResult.setCellFactory((param) -> new SuggestionCell(SearchResultType.SUGGESTION));
       if (result.isEmpty()) {
          createWordTimer = new Timer();
-         createWordTimer.schedule(new SearchBar.CreateWordTask(() -> {
-            this.searchResult.setCellFactory((param) -> new SuggestionCell(SearchResultType.CREATE));
-         }), 1000);
+         createWordTimer.schedule(new SearchBar.CreateWordTask(() -> this.searchResult.setCellFactory((param) -> new SuggestionCell(SearchResultType.CREATE))), 1000);
       }
    }
 
@@ -86,27 +84,15 @@ public class SearchPane extends SearchBase {
          this.row.setPrefWidth(SearchPane.this.searchResult.getWidth() - 20.0D);
 
          Button button = switch (type) {
-            case FAVOURITE -> createButton(DELETE_ICON, "Delete from favourite", () -> {
-               dictionary.removeFavourite(getItem());
-            });
-            case HISTORY -> createButton(DELETE_ICON, "Delete from history", () -> {
-               dictionary.removeHistory(getItem());
-            });
-            case SUGGESTION -> createButton(PASTE_ICON, "Paste to search bar", () -> {
-               SearchPane.this.searchText.setText(getItem().getWordTarget());
-            });
-            case CREATE -> createButton(CREATE_ICON, "Create new word", () -> {
-               SearchPane.this.searchText.setText(getItem().getWordTarget());
-            });
+            case FAVOURITE -> createButton(DELETE_ICON, "Delete from favourite", () -> dictionary.removeFavourite(getItem()));
+            case HISTORY -> createButton(DELETE_ICON, "Delete from history", () -> dictionary.removeHistory(getItem()));
+            case SUGGESTION -> createButton(PASTE_ICON, "Paste to search bar", () -> SearchPane.this.searchText.setText(getItem().getWordTarget()));
+            case CREATE -> createButton(CREATE_ICON, "Create new word", () -> SearchPane.this.searchText.setText(getItem().getWordTarget()));
          };
          this.row.getChildren().addAll(this.word, button);
          switch (type) {
             case SUGGESTION: {
-               this.selectedProperty().addListener((observable, oldVal, newVal) -> {
-                  Platform.runLater(() -> {
-                     SearchPane.this.dictionary.addHistory(getItem());
-                  });
-               });
+               this.selectedProperty().addListener((observable, oldVal, newVal) -> Platform.runLater(() -> SearchPane.this.dictionary.addHistory(getItem())));
             }
             case HISTORY:
             case FAVOURITE: {
@@ -120,9 +106,7 @@ public class SearchPane extends SearchBase {
                this.selectedProperty().addListener((observable, oldVal, newVal) -> {
                   appFunction = AppFunction.ADD;
                   selectedWord.set(this.getItem());
-                  Platform.runLater(() -> {
-                     searchText.clear();
-                  });
+                  Platform.runLater(() -> searchText.clear());
                });
                break;
             }

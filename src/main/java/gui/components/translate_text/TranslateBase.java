@@ -29,11 +29,11 @@ public abstract class TranslateBase extends VBox {
     @FXML protected ImageView fromLanguageImage;
     @FXML protected ImageView toLanguageImage;
 
-    protected SimpleStringProperty fromLanguage = new SimpleStringProperty();
-    protected SimpleStringProperty toLanguage = new SimpleStringProperty();
+    protected final SimpleStringProperty fromLanguage = new SimpleStringProperty();
+    protected final SimpleStringProperty toLanguage = new SimpleStringProperty();
 
-    protected SVGImage fromLanguageSVGImage = new SVGImage();
-    protected SVGImage toLanguageSVGImage = new SVGImage();
+    protected final SVGImage fromLanguageSVGImage = new SVGImage();
+    protected final SVGImage toLanguageSVGImage = new SVGImage();
 
     protected Timer timer = new Timer();
     private final MediaPlayer outputSound;
@@ -50,9 +50,7 @@ public abstract class TranslateBase extends VBox {
     }
 
     public void initialize() {
-        new Thread(() -> {
-            Platform.runLater(this::doInitialize);
-        }).start();
+        new Thread(() -> Platform.runLater(this::doInitialize)).start();
     }
 
     protected void doInitialize() {
@@ -68,9 +66,7 @@ public abstract class TranslateBase extends VBox {
             toText.setPromptText("Result in " + toLanguage.get());
         });
 
-        switchButton.setOnAction((event) -> {
-            this.switchLanguage();
-        });
+        switchButton.setOnAction((event) -> this.switchLanguage());
 
         this.fromLanguageImage.imageProperty().bind(this.fromLanguageSVGImage.imageProperty());
         this.toLanguageImage.imageProperty().bind(this.toLanguageSVGImage.imageProperty());
@@ -79,7 +75,8 @@ public abstract class TranslateBase extends VBox {
         toLanguage.set("Vietnamese");
 
         voiceInputButton.setOnAction((e) -> {
-            VoiceInput voiceInput = new VoiceInput();
+            System.out.println(getLanguageCode(fromLanguage.get()));
+            VoiceInput voiceInput = new VoiceInput(getLanguageCode(fromLanguage.get()));
             voiceInput.setOnHidden((event) -> {
                 fromText.setText(voiceInput.getTextResult().trim());
                 fromText.requestFocus();
@@ -88,6 +85,7 @@ public abstract class TranslateBase extends VBox {
         });
 
         voiceOutputButton.setOnAction((e) -> {
+            System.out.println(getLanguageCode(toLanguage.get()));
             String text = toText.getText();
             TextToSpeech.textToSpeech(getLanguageCode(toLanguage.get()), text, "translate");
             outputSound.stop();
@@ -112,7 +110,7 @@ public abstract class TranslateBase extends VBox {
 
     private static String getLanguagePath(String language) {
         String languageCode = getLanguageCode(language);
-        String countryCode = null;
+        String countryCode;
         try {
             countryCode = CONST.CONTRY_CODE.get(languageCode).getAsString();
         } catch (Exception e) {
@@ -131,7 +129,7 @@ public abstract class TranslateBase extends VBox {
         outputSound.stop();
     }
 
-    protected void switchLanguage() {
+    protected final void switchLanguage() {
         clear();
 
         String text = this.fromLanguage.get();
