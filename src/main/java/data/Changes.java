@@ -27,7 +27,7 @@ public class Changes {
       this.database.deleteWord(newWord.getId());
    }
 
-   public void update(Word newWord) throws EditWordException {
+   public void fix(Word newWord) throws EditWordException {
       this.dictionary.fix(newWord);
       this.database.updateWord(newWord.getId(), newWord);
    }

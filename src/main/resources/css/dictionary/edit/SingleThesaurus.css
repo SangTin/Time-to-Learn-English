@@ -1,0 +1,72 @@
+@import "../../ConstantValues.css";
+
+.root{
+    -fx-background-color: #f0f5f9;
+}
+
+.root * {
+    -border-color: #cad7e0;
+}
+
+.word-flow .button {
+    -fx-font-size: 13px;
+    -fx-background-radius: 10;
+}
+
+.word-flow .level-0 {
+    -fx-background-color: #eea1cd;
+}
+
+.word-flow .button:hover {
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.word-flow .level-1 {
+    -fx-background-color: #f9cee7;
+}
+
+.input-field {
+    -fx-prompt-text-fill: -border-color;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0px;
+    -fx-border-color: -border-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0px;
+    -fx-wrap-text: true;
+}
+
+.input-field .content {
+    -fx-background-color: white;
+    -fx-prompt-text-fill: -border-color;
+}
+
+.required-field .label {
+    -fx-text-fill: red;
+}
+
+.required-field .input-field {
+    -fx-border-color: red;
+}
+
+.required-field .warning-label {
+    -fx-pref-width: -1;
+    -fx-pref-height: -1;
+}
+
+.warning-label {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+.label {
+    -fx-font-size: 11px;
+}
+
+.delete-button {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-font-size: 14px;
+}

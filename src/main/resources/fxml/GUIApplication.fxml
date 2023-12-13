@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import gui.components.translate_text.TranslatePane?>
-<?import gui.dictionary.Dictionary?>
+<?import gui.components.GameIntroduction?>
 <?import gui.home.Home?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
+
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="830.0" stylesheets="@../css/GUIApplication.css" type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TabPane fx:id="menuPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="830.0" side="BOTTOM" styleClass="menu-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -42,13 +47,10 @@
                      </center>
                   </BorderPane>
                </graphic>
-               <content>
-                  <Dictionary fx:id="dictionaryPane" />
-               </content>
             </Tab>
-            <Tab fx:id="dictionaryTab1">
+            <Tab fx:id="translateTab">
                <tooltip>
-                  <Tooltip text="Dictionary" />
+                  <Tooltip text="Translate Text" />
                </tooltip>
                <graphic>
                   <BorderPane prefHeight="45.0" styleClass="menu-content">
@@ -60,14 +62,8 @@
                      </bottom>
                   </BorderPane>
                </graphic>
-               <content>
-                  <TranslatePane fx:id="translatePane" />
-               </content>
             </Tab>
             <Tab fx:id="gamingTab">
-               <tooltip>
-                  <Tooltip text="Playing Games" />
-               </tooltip>
                <graphic>
                   <BorderPane prefHeight="45.0" styleClass="menu-content">
                      <center>
@@ -79,12 +75,12 @@
                   </BorderPane>
                </graphic>
                <content>
-                  <AnchorPane fx:id="gamingPane">
+                  <VBox fx:id="gamingPane" alignment="CENTER" spacing="10.0" styleClass="game-menu">
                      <children>
-                        <Button fx:id="crossWordButton" layoutX="246.0" layoutY="271.0" mnemonicParsing="false" text="CrossWord" />
-                        <Button fx:id="guessWordButton" layoutX="524.0" layoutY="271.0" mnemonicParsing="false" text="GuessWord" />
+                        <GameIntroduction fx:id="crossWordButton" styleClass="game-button" />
+                        <GameIntroduction fx:id="guessWordButton" styleClass="game-button" />
                      </children>
-                  </AnchorPane>
+                  </VBox>
                </content>
             </Tab>
          </tabs>

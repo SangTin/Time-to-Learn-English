@@ -6,10 +6,12 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class Thesaurus extends DisplayThesaurus {
     @FXML private VBox contentBox;
+    @FXML private Label headerWord;
 
     public Thesaurus() {
         super();
@@ -19,7 +21,6 @@ public class Thesaurus extends DisplayThesaurus {
             loader.setController(this);
             loader.load();
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("Error loading Thesaurus.fxml");
         }
     }
@@ -41,27 +42,26 @@ public class Thesaurus extends DisplayThesaurus {
             return;
         }
 
+        headerWord.setText(word.getWordTarget());
+        contentBox.getChildren().add(headerWord);
         for (data.Thesaurus thesaurus : thesauruses) {
             try {
                 SingleThesaurus singleThesaurus = new SingleThesaurus(thesaurus);
                 contentBox.getChildren().add(singleThesaurus);
             } catch (NullPointerException ignored) {}
         }
-        thesauruses.addListener(new ListChangeListener<data.Thesaurus>() {
-            @Override
-            public void onChanged(Change<? extends data.Thesaurus> c) {
-                while (c.next()) {
-                    if (c.wasAdded()) {
-                        for (data.Thesaurus thesaurus : c.getAddedSubList()) {
-                            try {
-                                SingleThesaurus singleThesaurus = new SingleThesaurus(thesaurus);
-                                contentBox.getChildren().add(singleThesaurus);
-                            } catch (NullPointerException ignored) {}
-                        }
+        thesauruses.addListener((ListChangeListener<data.Thesaurus>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (data.Thesaurus thesaurus : c.getAddedSubList()) {
+                        try {
+                            SingleThesaurus singleThesaurus = new SingleThesaurus(thesaurus);
+                            contentBox.getChildren().add(singleThesaurus);
+                        } catch (NullPointerException ignored) {}
                     }
                 }
-                setDisable(contentBox.getChildren().isEmpty());
             }
+            setDisable(contentBox.getChildren().size() <= 1);
         });
     }
 }

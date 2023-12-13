@@ -1,7 +1,6 @@
 package gui.dictionary.search;
 
 import api.TextToSpeech;
-import data.Dictionary;
 import data.dictionary.Word;
 import data.enums.PartOfSpeech;
 import gui.style.DisplayWord;
@@ -42,7 +41,6 @@ public class Description extends DisplayWord {
    @FXML private Button ukSoundButton;
    @FXML private Button usSoundButton;
 
-   private Dictionary dictionary;
    private final SimpleBooleanProperty isFavourite = new SimpleBooleanProperty(false);
    private final MediaPlayer outputSound;
 
@@ -213,10 +211,6 @@ public class Description extends DisplayWord {
             }
          }
       }
-   }
-
-   public void setDictionary(Dictionary dictionary) {
-      this.dictionary = dictionary;
    }
 
    private static void ensureVisible(ScrollPane scrollPane, Node node) {

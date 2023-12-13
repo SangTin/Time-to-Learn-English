@@ -53,3 +53,12 @@
 .menu-pane > *.tab-header-area .tab:selected .label {
     -fx-text-fill: -default-stroke-color;
 }
+
+.game-button {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+}
+
+.game-menu {
+    -fx-background-image: url("../img/game-menu-background.gif");
+}

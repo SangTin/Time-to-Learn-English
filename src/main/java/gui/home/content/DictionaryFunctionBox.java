@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.util.Pair;
 
 public class DictionaryFunctionBox extends GridPane {
     @FXML private ImageView searchIcon;
@@ -43,7 +42,7 @@ public class DictionaryFunctionBox extends GridPane {
 
         // Set action for buttons
         searchButton.setOnAction(e ->
-            GraphicalDictionary.appFunctionProperty().set(new Pair<>(AppFunction.SEARCH, null))
+            GraphicalDictionary.setAppFunction(AppFunction.SEARCH, null)
         );
     }
 

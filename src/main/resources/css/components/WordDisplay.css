@@ -39,6 +39,15 @@
     -fx-background-color: #f29c00;
 }
 
+.save-button {
+    -fx-background-color: #00BE00;
+}
+
+.right-button:disabled {
+    -fx-max-width: 0;
+    -fx-scale-x: 0;
+}
+
 .content-tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: -dictionary-toolbar-color;
 }

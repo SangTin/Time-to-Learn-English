@@ -132,6 +132,9 @@ public class SearchBar extends SearchBase {
                this.selectedProperty().addListener((observable, oldVal, newVal) -> {
                   appFunction = AppFunction.ADD;
                   selectedWord.set(this.getItem());
+                  Platform.runLater(() -> {
+                     searchText.clear();
+                  });
                });
                break;
             }

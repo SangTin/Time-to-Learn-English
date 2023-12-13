@@ -1,0 +1,19 @@
+@import "../../ConstantValues.css";
+
+.head-word {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-underline: true;
+}
+
+.thesaurus-button {
+    -fx-background-color: transparent;
+}
+
+.thesaurus-button .icon {
+    -fx-fill: -default-stroke-color;
+}
+
+.thesaurus-button:hover .icon {
+    -fx-fill: derive(-default-stroke-color, 50%);
+}

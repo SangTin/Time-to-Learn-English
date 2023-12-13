@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<fx:root fx:id="desView" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="579.0" type="ScrollPane" vbarPolicy="NEVER" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <BorderPane maxWidth="-Infinity" minWidth="-Infinity" prefWidth="579.0">
+         <bottom>
+            <Button fx:id="addThesaurusButton" mnemonicParsing="false" styleClass="thesaurus-button" BorderPane.alignment="CENTER">
+               <graphic>
+                  <SVGPath content="M14.4 2.4l.389.001 .382.005 .739.02 .359.016 .695.041 .664.055c5.742.557 8.078 2.893 8.635 8.635l.055.664 .041.695c.006.118 .012.238 .016.359l.02.739 .006.77-.006.77-.02.739-.016.359-.041.695-.055.664c-.557 5.742-2.893 8.078-8.635 8.635l-.664.055-.695.041c-.118.006-.238.012-.359.016l-.739.02-.77.006-.77-.006-.739-.02-.359-.016-.695-.041-.664-.055c-5.742-.557-8.078-2.893-8.635-8.635l-.055-.664-.041-.695a33.67 33.67 0 0 1-.016-.359l-.02-.739c-.004-.252-.006-.509-.006-.77l.001-.389.005-.382.02-.739.016-.359.041-.695.055-.664c.557-5.742 2.893-8.078 8.635-8.635l.664-.055.695-.041c.118-.006.238-.012.359-.016l.739-.02c.252-.004.509-.006.77-.006zm0 7.2a1.2 1.2 0 0 0-1.2 1.2v2.4h-2.4l-.14.008a1.2 1.2 0 0 0 .14 2.392h2.4v2.4l.008.14a1.2 1.2 0 0 0 2.392-.14v-2.4h2.4l.14-.008a1.2 1.2 0 0 0-.14-2.392h-2.4v-2.4l-.008-.14a1.2 1.2 0 0 0-1.192-1.06z" styleClass="icon" />
+               </graphic>
+            </Button>
+         </bottom>
+         <center>
+            <VBox fx:id="contentBox" alignment="TOP_CENTER" prefWidth="579.0" spacing="10.0" BorderPane.alignment="CENTER" />
+         </center>
+         <top>
+            <Label fx:id="headerWord" maxWidth="1.7976931348623157E308" styleClass="head-word" text="Word" wrapText="true" BorderPane.alignment="CENTER" />
+         </top>
+         <padding>
+            <Insets left="25.0" right="25.0" top="10.0" />
+         </padding>
+      </BorderPane>
+   </content>
+   <stylesheets>
+      <URL value="@../../../css/dictionary/search/Thesaurus.css" />
+      <URL value="@../../../css/dictionary/edit/Thesaurus.css" />
+   </stylesheets>
+</fx:root>

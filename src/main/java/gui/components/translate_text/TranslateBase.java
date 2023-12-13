@@ -39,7 +39,7 @@ public abstract class TranslateBase extends VBox {
     private final MediaPlayer outputSound;
 
     public TranslateBase() {
-        File soundFile = new File("src/main/resources/audio/pronounce.mp3");
+        File soundFile = new File("src/main/resources/audio/translate.mp3");
         if (!soundFile.exists()) {
             try {
                 soundFile.createNewFile();

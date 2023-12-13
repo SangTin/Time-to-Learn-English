@@ -7,7 +7,6 @@ import exception.editWord.NoSuchWordFoundException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -385,36 +384,20 @@ public class SQLiteDatabase {
 
    public void addThesaurus(Word word, Thesaurus thesaurus) {
         String sql = String.format("""
-            INSERT INTO %1$s_meanings (word_id, part_of_speech, meaning)
-            VALUES(?,?,?)
+            INSERT INTO %1$s_meanings (meaning_id, word_id, part_of_speech, meaning)
+            VALUES(?,?,?,?)
         """, thesaurus.getType());
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, word.getId());
-            pstmt.setString(2, thesaurus.getPartOfSpeech().toEnglish());
-            pstmt.setString(3, thesaurus.getMeaning());
+            pstmt.setInt(1, thesaurus.getMeaningId());
+            pstmt.setInt(2, word.getId());
+            pstmt.setString(3, thesaurus.getPartOfSpeech().toEnglish());
+            pstmt.setString(4, thesaurus.getMeaning());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
-        sql = String.format("""
-            SELECT meaning_id FROM %1$s_meanings
-            WHERE word_id = ? AND part_of_speech = ? AND meaning = ?
-        """, thesaurus.getType());
-        int meaningId = -1;
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, word.getId());
-            pstmt.setString(2, thesaurus.getPartOfSpeech().toEnglish());
-            pstmt.setString(3, thesaurus.getMeaning());
-            ResultSet rs = pstmt.executeQuery();
-            meaningId = rs.getInt("meaning_id");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        if (meaningId == -1) {
-            return;
-        }
-
+        int meaningId = thesaurus.getMeaningId();
         sql = String.format("""
             INSERT INTO %1$ss (priority, relation_id, word_id)
             VALUES(?,?,?)
@@ -444,15 +427,29 @@ public class SQLiteDatabase {
       return thesauruses;
    }
 
+   public ArrayList<Word> importFromDatabase() {
+      if (this.conn == null) {
+         return new ArrayList<>();
+      } else {
+         ArrayList<Word> words = new ArrayList<>();
+         ImportWordThread importWordThread = new ImportWordThread(this.conn, words);
+         importWordThread.start();
+         return words;
+      }
+   }
+
    public void importToDictionary(Dictionary dictionary) {
       ArrayList<Word> words = new ArrayList<>();
-      ImportWordTask importWordTask = new ImportWordTask(this.conn, words);
-      importWordTask.run();
-      importWordTask.setOnSucceeded(event -> {
-         System.out.println("Imported " + words.size() + " words");
-         dictionary.setWords(words);
-         dictionary.getHistorySearch().load();
-      });
+      ImportWordThread importWordThread = new ImportWordThread(this.conn, words);
+      importWordThread.start();
+      try {
+          importWordThread.join();
+      } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+      }
+      System.out.println("Imported " + words.size() + " words");
+      dictionary.setWords(words);
+      dictionary.getHistorySearch().load();
    }
 
    public static SQLiteDatabase exportToDatabase(String dbName, ArrayList<Word> words) {
@@ -464,6 +461,18 @@ public class SQLiteDatabase {
       }
 
       return database;
+   }
+
+   public void deleteThesaurus(Thesaurus thesaurus) {
+      String sql = String.format("""
+         DELETE FROM %1$s_meanings WHERE meaning_id = %2$d;
+      """, thesaurus.getType(), thesaurus.getMeaningId());
+
+      try (Statement stmt = this.conn.createStatement()) {
+         stmt.execute(String.format(sql, thesaurus.getType(), thesaurus.getMeaningId()));
+      } catch (SQLException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public static SQLiteDatabase backupDatabase(String oldDbName) {
@@ -510,7 +519,7 @@ public class SQLiteDatabase {
                int meaningId = rs.getInt("meaning_id");
                String meaning = rs.getString("meaning");
                PartOfSpeech partOfSpeech = PartOfSpeech.fromString(rs.getString("part_of_speech"));
-               Thesaurus thesaurus = new Thesaurus(meaning, dictionary, partOfSpeech, type);
+               Thesaurus thesaurus = new Thesaurus(meaningId, meaning, dictionary, partOfSpeech, type);
 
                Statement most = conn.createStatement();
                String mostSql = String.format("""
@@ -550,17 +559,17 @@ public class SQLiteDatabase {
       }
    }
 
-   private static class ImportWordTask extends Task<Void> {
+   private static class ImportWordThread extends Thread {
       private final Connection conn;
       private final ArrayList<Word> words;
 
-      public ImportWordTask(Connection conn, ArrayList<Word> words) {
+      public ImportWordThread(Connection conn, ArrayList<Word> words) {
          this.conn = conn;
          this.words = words;
       }
 
       @Override
-      protected Void call() throws Exception {
+      public void run() {
          String sql = """
             SELECT w.id, w.word_target, m.word_explain, m.ipa_uk, m.ipa_us, m.is_favourite
             FROM words w
@@ -593,7 +602,6 @@ public class SQLiteDatabase {
          } catch (SQLException var7) {
             System.out.println(var7.getMessage());
          }
-         return null;
       }
    }
 }

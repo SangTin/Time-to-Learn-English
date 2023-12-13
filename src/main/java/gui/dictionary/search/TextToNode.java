@@ -8,7 +8,6 @@ import gui.GraphicalDictionary;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
-import javafx.util.Pair;
 
 public class TextToNode {
     private static final String[] splitWordRegex = {"(?=\\W)[^'-]", "(?=\\W)[^'-]|'(.*)", "(?=\\W)[^-]", "(?=\\W)[^-](.*)"};
@@ -40,7 +39,7 @@ public class TextToNode {
             wordLink.setOnAction(e -> {
                 try {
                     Word newWord = dictionary.searchExactly(wordTarget);
-                    GraphicalDictionary.appFunctionProperty().set(new Pair<>(AppFunction.SEARCH, newWord));
+                    GraphicalDictionary.setAppFunction(AppFunction.SEARCH, newWord);
                 } catch (NoSuchWordFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
