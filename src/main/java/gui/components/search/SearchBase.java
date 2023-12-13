@@ -36,7 +36,7 @@ public abstract class SearchBase extends AnchorPane {
             if (!searchText.getText().isEmpty()) {
                 searchText.clear();
             } else {
-                VoiceInput voiceInput = new VoiceInput();
+                VoiceInput voiceInput = new VoiceInput("en-US");
                 voiceInput.setOnHidden((event) -> {
                     searchText.setText(voiceInput.getTextResult().trim());
                     searchText.requestFocus();

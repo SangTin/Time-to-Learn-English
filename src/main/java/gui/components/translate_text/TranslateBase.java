@@ -68,9 +68,7 @@ public abstract class TranslateBase extends VBox {
             toText.setPromptText("Result in " + toLanguage.get());
         });
 
-        switchButton.setOnAction((event) -> {
-            this.switchLanguage();
-        });
+        switchButton.setOnAction((event) -> this.switchLanguage());
 
         this.fromLanguageImage.imageProperty().bind(this.fromLanguageSVGImage.imageProperty());
         this.toLanguageImage.imageProperty().bind(this.toLanguageSVGImage.imageProperty());
@@ -79,7 +77,8 @@ public abstract class TranslateBase extends VBox {
         toLanguage.set("Vietnamese");
 
         voiceInputButton.setOnAction((e) -> {
-            VoiceInput voiceInput = new VoiceInput();
+            System.out.println(getLanguageCode(fromLanguage.get()));
+            VoiceInput voiceInput = new VoiceInput(getLanguageCode(fromLanguage.get()));
             voiceInput.setOnHidden((event) -> {
                 fromText.setText(voiceInput.getTextResult().trim());
                 fromText.requestFocus();
@@ -88,6 +87,7 @@ public abstract class TranslateBase extends VBox {
         });
 
         voiceOutputButton.setOnAction((e) -> {
+            System.out.println(getLanguageCode(toLanguage.get()));
             String text = toText.getText();
             TextToSpeech.textToSpeech(getLanguageCode(toLanguage.get()), text, "translate");
             outputSound.stop();
@@ -131,7 +131,7 @@ public abstract class TranslateBase extends VBox {
         outputSound.stop();
     }
 
-    protected void switchLanguage() {
+    protected final void switchLanguage() {
         clear();
 
         String text = this.fromLanguage.get();

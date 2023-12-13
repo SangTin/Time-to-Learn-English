@@ -1,7 +1,6 @@
 package gui.components;
 
 import api.SpeechToText;
-import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -14,6 +13,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,13 +27,16 @@ public class VoiceInput extends Stage {
    @FXML private TextArea textResult;
    @FXML private Button stopButton;
    @FXML private SVGPath icon;
-   Service<Void> process;
 
-   public VoiceInput() {
+   private Service<Void> process;
+   private final String languageCode;
+
+   public VoiceInput(String languageCode) {
       this.setTitle("Voice Input");
       this.setResizable(false);
       this.centerOnScreen();
       this.initModality(Modality.APPLICATION_MODAL);
+      this.languageCode = languageCode;
 
       try {
          FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/components/VoiceInput.fxml"));
@@ -46,23 +49,34 @@ public class VoiceInput extends Stage {
 
    }
 
-   public void initialize() {
+   static {
       SpeechToText.isStartProperty().addListener((observable, oldValue, newValue) -> {
          if (newValue) {
-            Media sound = new Media(Objects.requireNonNull(this.getClass().getResource("/audio/voice-start.mp3")).toExternalForm());
-            (new javafx.scene.media.MediaPlayer(sound)).play();
+            Media sound = new Media(Objects.requireNonNull(VoiceInput.class.getResource("/audio/voice-start.mp3")).toExternalForm());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
          }
       });
+      SpeechToText.isDoneProperty().addListener((observable, oldValue, newValue) -> {
+         if (newValue) {
+            Media sound = new Media(Objects.requireNonNull(VoiceInput.class.getResource("/audio/voice-end.mp3")).toExternalForm());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
+         }
+      });
+   }
+
+   public void initialize() {
       this.process = new Service<>() {
          @Override
          protected Task<Void> createTask() {
             return new Task<>() {
                @Override
                protected Void call() throws Exception {
-                  SpeechToText.startRecord();
                   SpeechToText.textOfSpeechProperty().addListener((observable, oldValue, newValue) -> {
                      textResult.setText(newValue);
                   });
+                  SpeechToText.startRecord(languageCode);
                   return null;
                }
             };
@@ -78,22 +92,19 @@ public class VoiceInput extends Stage {
          this.hide();
       });
 
-      SpeechToText.isDoneProperty().addListener((observable, oldValue, newValue) -> {
-         if (!newValue) {
-            return;
-         }
-         Media sound = new Media(Objects.requireNonNull(this.getClass().getResource("/audio/voice-end.mp3")).toExternalForm());
-         (new javafx.scene.media.MediaPlayer(sound)).play();
-         stopButton.getStyleClass().add("done");
-         icon.setContent(DONE_ICON);
+      process.setOnSucceeded(event -> done());
+   }
 
-         try {
-            Thread.sleep(500);
-         } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-         }
-         Platform.runLater(this::hide);
-      });
+   private void done() {
+      stopButton.getStyleClass().add("done");
+      icon.setContent(DONE_ICON);
+
+      try {
+         Thread.sleep(500);
+      } catch (InterruptedException ex) {
+         throw new RuntimeException(ex);
+      }
+      hide();
    }
 
    public String getTextResult() {
