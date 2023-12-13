@@ -4,11 +4,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root fx:id="desView" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../../css/dictionary/search/Thesaurus.css" type="ScrollPane" vbarPolicy="NEVER" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+<fx:root fx:id="desView" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="579.0" stylesheets="@../../../css/dictionary/search/Thesaurus.css" type="ScrollPane" vbarPolicy="NEVER" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <VBox fx:id="contentBox" prefHeight="577.0" prefWidth="579.0" spacing="10.0">
          <children>
-            <Label styleClass="head-word" text="Word" />
+            <Label fx:id="headerWord" styleClass="head-word" text="Word" />
          </children>
          <padding>
             <Insets left="25.0" right="25.0" top="10.0" />

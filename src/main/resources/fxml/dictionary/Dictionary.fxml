@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import gui.components.search.SearchPane?>
-<?import gui.dictionary.search.Thesaurus?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -22,15 +21,8 @@
             <TabPane fx:id="contentTabPane" styleClass="content-tab-pane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
               <tabs>
                 <Tab fx:id="descriptionTab" closable="false" disable="true" text="Description" />
-                <Tab fx:id="synonymTab" disable="true" text="Synonyms">
-                     <content>
-                        <Thesaurus fx:id="synonymPane" />
-                     </content></Tab>
-                  <Tab fx:id="antonymTab" disable="true" text="Antonyms">
-                     <content>
-                        <Thesaurus fx:id="antonymPane" />
-                     </content>
-                  </Tab>
+                <Tab fx:id="synonymTab" disable="true" text="Synonyms" />
+                  <Tab fx:id="antonymTab" disable="true" text="Antonyms" />
               </tabs>
             </TabPane>
          </center>
@@ -44,6 +36,18 @@
                      <tooltip>
                         <Tooltip />
                      </tooltip>
+                  </Button>
+                  <Button fx:id="saveButton" layoutX="407.0" layoutY="10.0" mnemonicParsing="false" text="Save" textFill="WHITE">
+                     <styleClass>
+                        <String fx:value="right-button" />
+                        <String fx:value="save-button" />
+                     </styleClass>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <SVGPath content="M10 25H7.5C6.119 25 5 23.881 5 22.5V7.5C5 6.119 6.119 5 7.5 5H11.25M10 25V17.5C10 16.81 10.56 16.25 11.25 16.25H18.75C19.44 16.25 20 16.81 20 17.5V25M10 25H20M20 25H22.5C23.881 25 25 23.881 25 22.5V11.036C25 10.372 24.737 9.737 24.268 9.268L20.732 5.732C20.263 5.263 19.628 5 18.965 5H18.75M18.75 5V8.75C18.75 9.44 18.19 10 17.5 10H12.5C11.81 10 11.25 9.44 11.25 8.75V5M18.75 5H11.25" fill="TRANSPARENT" stroke="BLACK" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="2.0" styleClass="icon" />
+                     </graphic>
                   </Button>
                   <Button fx:id="changeModeButton" mnemonicParsing="false" text="Edit" textFill="WHITE">
                      <styleClass>

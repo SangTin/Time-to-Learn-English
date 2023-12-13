@@ -14,8 +14,8 @@
 
 .introduction {
     -fx-background-color: -default-background-color;
-    -fx-border-radius: 20 20 0 0;
-    -fx-background-radius: 20 20 0 0;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
 }
 
 /* The CSS class of the word table */
@@ -37,4 +37,11 @@
     -fx-scale-y: 0;
     -fx-pref-width: 0;
     -fx-pref-height: 0;
+}
+
+.game-list {
+    -fx-background-color: -dictionary-pane-color;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 10px;
 }

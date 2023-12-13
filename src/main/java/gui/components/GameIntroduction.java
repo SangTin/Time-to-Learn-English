@@ -1,19 +1,37 @@
 package gui.components;
 
-import javafx.concurrent.Service;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class GameIntroduction extends VBox {
+    private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
+        @Override protected void invalidated() {
+            setEventHandler(ActionEvent.ACTION, get());
+        }
+
+        @Override
+        public Object getBean() {
+            return GameIntroduction.this;
+        }
+
+        @Override
+        public String getName() {
+            return "onAction";
+        }
+    };
+
     @FXML private ImageView logo;
     @FXML private Label title;
-
     private final Text description = new Text();
-    private String descriptionText;
 
     public GameIntroduction() {
         super();
@@ -23,54 +41,45 @@ public class GameIntroduction extends VBox {
             loader.setController(this);
             loader.load();
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("Error in GameIntroduction.java");
         }
     }
 
     public void initialize() {
-        Service<Void> service = new Service<>() {
-            @Override
-            protected javafx.concurrent.Task<Void> createTask() {
-
-                return new javafx.concurrent.Task<>() {
-                    @Override
-                    protected Void call() {
-                        for (int i = 0; i < descriptionText.length() && !isCancelled(); i++) {
-                            description.setText(descriptionText.substring(0, i + 1));
-                            try {
-                                Thread.sleep(5);
-                            } catch (Exception ignored) {
-                            }
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void cancelled() {
-                        super.cancelled();
-                        System.out.println("Cancelled");
-                    }
-                };
-            }
-        };
-        this.hoverProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                getChildren().add(description);
-                description.setText(descriptionText);
-                service.restart();
-            } else {
-                getChildren().remove(description);
-                description.setText("");
-                service.cancel();
+        this.setOnMouseClicked(event -> {
+            if (getOnAction() != null) {
+                getOnAction().handle(new ActionEvent(this, null));
             }
         });
     }
 
     public void setDescription(String description) {
-        this.descriptionText = description;
+        this.description.setText(description);
+        this.description.setWrappingWidth(300);
+        this.getChildren().add(this.description);
     }
 
     public void setTitle(String title) {
         this.title.setText(title);
+    }
+
+    public void setLogo(String logo) {
+        this.logo.setImage(new Image(getClass().getResource(logo).toString()));
+    }
+
+    public void setLogo(Image logo) {
+        this.logo.setImage(logo);
+    }
+
+    public final ObjectProperty<EventHandler<ActionEvent>> onActionProperty() {
+        return onAction;
+    }
+
+    public final void setOnAction(EventHandler<ActionEvent> value) {
+        onActionProperty().set(value);
+    }
+
+    public final EventHandler<ActionEvent> getOnAction() {
+        return onActionProperty().get();
     }
 }

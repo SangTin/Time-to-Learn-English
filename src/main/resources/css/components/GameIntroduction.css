@@ -10,7 +10,7 @@
     -fx-font-weight: bold;
 }
 
-.content-pane:hover {
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
+.description {
+    -fx-fill: #646464;
+    -fx-font-size: 14;
 }

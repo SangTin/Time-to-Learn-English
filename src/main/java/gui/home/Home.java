@@ -4,24 +4,20 @@ import data.Dictionary;
 import data.dictionary.Word;
 import data.enums.AppFunction;
 import gui.GraphicalDictionary;
+import gui.components.GameIntroduction;
 import gui.components.search.SearchBase;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.util.Pair;
 
 public class Home extends ScrollPane {
-   @FXML
-   private SearchBase searchBar;
-   @FXML
-   private ListView<Word> historyView;
-   @FXML
-   private ListView<Word> favouriteView;
-   @FXML
-   private Hyperlink clearHistory;
-   @FXML
-   private Hyperlink clearFavourite;
+   @FXML private SearchBase searchBar;
+   @FXML private ListView<Word> historyView;
+   @FXML private ListView<Word> favouriteView;
+   @FXML private Hyperlink clearHistory;
+   @FXML private Hyperlink clearFavourite;
+   @FXML private GameIntroduction crossWordIntro;
+   @FXML private GameIntroduction guessWordIntro;
 
    public Home() {
       try {
@@ -36,16 +32,13 @@ public class Home extends ScrollPane {
    }
 
    public void initialize() {
-      new Thread(() -> {
-         Platform.runLater(this::doInitialize);
-      }).start();
+      new Thread(this::doInitialize).start();
    }
 
    public void doInitialize() {
-      this.searchBar.setDictionary(GraphicalDictionary.getDictionaryInstance());
       this.searchBar.selectedWordProperty().addListener((observable, oldValue, newValue) -> {
          if (newValue != null) {
-            GraphicalDictionary.appFunctionProperty().set(new Pair<>(searchBar.getAppFunction(), newValue));
+            GraphicalDictionary.setAppFunction(searchBar.getAppFunction(), newValue);
          }
       });
       Dictionary dictionary = GraphicalDictionary.getDictionaryInstance();
@@ -64,6 +57,19 @@ public class Home extends ScrollPane {
       this.clearFavourite.setOnAction((event) -> {
          dictionary.clearFavouriteSearch();
          this.favouriteView.refresh();
+      });
+      this.searchBar.setDictionary(GraphicalDictionary.getDictionaryInstance());
+
+      this.crossWordIntro.setLogo("/img/crossword-logo.png");
+      this.crossWordIntro.setTitle("Crossword Puzzle Game");
+      this.crossWordIntro.setOnAction((event) -> {
+         GraphicalDictionary.setAppFunction(AppFunction.GAMING, 1);
+      });
+
+      this.guessWordIntro.setLogo("/img/guessword-logo.png");
+      this.guessWordIntro.setTitle("Guessword Puzzle Game");
+      this.guessWordIntro.setOnAction((event) -> {
+         GraphicalDictionary.setAppFunction(AppFunction.GAMING, 2);
       });
    }
 
@@ -86,7 +92,7 @@ public class Home extends ScrollPane {
       listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
       listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
           if (newValue != null) {
-             GraphicalDictionary.appFunctionProperty().set(new Pair<>(AppFunction.SEARCH, newValue));
+             GraphicalDictionary.setAppFunction(AppFunction.SEARCH, newValue);
           }
       });
    }

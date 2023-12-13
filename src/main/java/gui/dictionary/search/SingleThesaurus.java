@@ -6,12 +6,12 @@ import data.enums.AppFunction;
 import gui.GraphicalDictionary;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Pair;
+
+import static gui.dictionary.edit.SingleThesaurus.createWordButton;
+
 
 public class SingleThesaurus extends VBox {
     @FXML private Text meaning;
@@ -46,29 +46,12 @@ public class SingleThesaurus extends VBox {
         thesaurusType.setText(thesaurus.getType().toString() + "s:");
 
         for (Word word : thesaurus.getMostUsedWords()) {
-            wordFlow.getChildren().add(createWordButton(word, 0));
+            wordFlow.getChildren().add(createWordButton(word, 0, () ->
+                    GraphicalDictionary.setAppFunction(AppFunction.SEARCH, word)));
         }
         for (Word word : thesaurus.getLessUsedWords()) {
-            wordFlow.getChildren().add(createWordButton(word, 1));
+            wordFlow.getChildren().add(createWordButton(word, 1, () ->
+                    GraphicalDictionary.setAppFunction(AppFunction.SEARCH, word)));
         }
-    }
-
-    private static Button createWordButton(Word word, int level) {
-        Button button = new Button(word.getWordTarget());
-        button.getStyleClass().add("level-" + level);
-        button.setOnAction(event -> {
-            GraphicalDictionary.appFunctionProperty().set(new Pair<>(AppFunction.SEARCH, word));
-        });
-        Tooltip tooltip = new Tooltip();
-        button.setTooltip(tooltip);
-        switch (level) {
-            case 0:
-                tooltip.setText("Most common");
-                break;
-            case 1:
-                tooltip.setText("Less common");
-                break;
-        }
-        return button;
     }
 }

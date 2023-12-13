@@ -27,25 +27,22 @@
     -fx-prompt-text-fill: -border-color;
 }
 
-.required .label {
+.required-field .label {
     -fx-text-fill: red;
 }
 
-.required .input-field {
+.required-field .input-field {
     -fx-border-color: red;
 }
 
-.warning .label {
-    -fx-text-fill: #c1a000;
+.required-field .warning-label {
+    -fx-pref-width: -1;
+    -fx-pref-height: -1;
 }
 
-.warning .input-field {
-    -fx-border-color: #c1a000;
-}
-
-.warning .icon {
-    -fx-fill: #c1a000;
-    -fx-stroke: black;
+.warning-label {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
 }
 
 .label {

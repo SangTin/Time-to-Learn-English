@@ -8,32 +8,38 @@ import data.enums.AppFunction;
 import game.GameBase;
 import game.crossword.CrossWord;
 import game.guessword.GuessWord;
+import gui.components.GameIntroduction;
+import gui.components.translate_text.TranslatePane;
 import gui.home.Home;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Pair;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class GraphicalDictionary extends AnchorPane {
    private static final SQLiteDatabase databaseInstance;
    private static final Dictionary dictionaryInstance;
    private static final Changes changesInstance;
-   private static final SimpleObjectProperty<Pair<AppFunction, Word>> appFunctionWithWord;
+   private static final SimpleObjectProperty<Pair<AppFunction, Object>> appFunctionWithWord;
 
    @FXML private TabPane menuPane;
    @FXML private Tab homeTab;
    @FXML private Home homePane;
    @FXML private Tab dictionaryTab;
-   @FXML private gui.dictionary.Dictionary dictionaryPane;
    @FXML private Tab gamingTab;
-   @FXML private AnchorPane gamingPane;
-   @FXML private Button crossWordButton;
-   @FXML private Button guessWordButton;
+   @FXML private Tab translateTab;
+   @FXML private VBox gamingPane;
+   @FXML private GameIntroduction crossWordButton;
+   @FXML private GameIntroduction guessWordButton;
+   private gui.dictionary.Dictionary dictionaryPane;
+   private TranslatePane translatePane;
 
    public static SQLiteDatabase getDatabaseInstance() {
       return databaseInstance;
@@ -47,8 +53,12 @@ public class GraphicalDictionary extends AnchorPane {
       return changesInstance;
    }
 
-   public static SimpleObjectProperty<Pair<AppFunction, Word>> appFunctionProperty() {
-     return appFunctionWithWord;
+   public static SimpleObjectProperty<Pair<AppFunction, Object>> appFunctionProperty() {
+      return appFunctionWithWord;
+   }
+
+   public static void setAppFunction(AppFunction function, Object word) {
+      appFunctionWithWord.set(new Pair<>(function, word));
    }
 
    public GraphicalDictionary() {
@@ -59,6 +69,7 @@ public class GraphicalDictionary extends AnchorPane {
          loader.load();
       } catch (Exception e) {
             System.out.println("Error loading GUIApplication.fxml");
+            e.printStackTrace();
       }
    }
 
@@ -72,10 +83,11 @@ public class GraphicalDictionary extends AnchorPane {
             case ADD:
             case FIX:
             case DELETE:{
-               this.displaySearch(newValue.getKey(), newValue.getValue());
+               this.displaySearch(newValue.getKey(), (Word) newValue.getValue());
                break;
             }
             case GAMING: {
+               this.playGame((Integer) newValue.getValue());
                break;
             }
          }
@@ -89,8 +101,23 @@ public class GraphicalDictionary extends AnchorPane {
       };
       crossWord.isGameFinishedProperty().addListener(listener);
       guessWord.isGameFinishedProperty().addListener(listener);
+
+      crossWordButton.setLogo("/img/crossword-logo.png");
+      crossWordButton.setTitle("Crossword Puzzle Game");
+      crossWordButton.setDescription("Welcome to crossword puzzles! Solve clues to fill a grid with words, both across and down. It's a fun way to test your vocabulary and problem-solving skills. Ready to dive into the world of words? Let's get started!");
       crossWordButton.setOnAction(event -> this.playCrossWord());
+
+      guessWordButton.setLogo("/img/guessword-logo.png");
+      guessWordButton.setTitle("Guessword Puzzle Game");
+      guessWordButton.setDescription("Welcome to the Guessword puzzles! In this game, your task is to look at the images and deduce the word to be guessed. Each picture serves as a clue, helping you expand your vocabulary and test your recognition skills. Ready to challenge your cognitive abilities? Let the adventure of catching words through pictures begin now!");
       guessWordButton.setOnAction(event -> this.playGuessWord());
+
+      new Thread(() -> {
+         this.dictionaryPane = new gui.dictionary.Dictionary();
+         this.dictionaryTab.setContent(this.dictionaryPane);
+         this.translatePane = new TranslatePane();
+         this.translateTab.setContent(this.translatePane);
+      }).start();
    }
 
    private final GameBase crossWord = new CrossWord();
@@ -112,15 +139,55 @@ public class GraphicalDictionary extends AnchorPane {
       this.dictionaryPane.displaySearch(function, word);
    }
 
+   private void playGame(Integer gameType) {
+      switch (gameType) {
+         case 1: {
+            playCrossWord();
+            break;
+         }
+         case 2: {
+            playGuessWord();
+            break;
+         }
+      }
+   }
+
    static {
       databaseInstance = new SQLiteDatabase("dictionary.db");
       dictionaryInstance = new Dictionary(databaseInstance);
-      new Thread(() -> {
-         Platform.runLater(() -> {
-            databaseInstance.importToDictionary(dictionaryInstance);
-         });
-      }).start();
       changesInstance = new Changes(dictionaryInstance, databaseInstance);
       appFunctionWithWord = new SimpleObjectProperty<>();
+      new Thread(() -> {
+         databaseInstance.importToDictionary(dictionaryInstance);
+      }).start();
+   }
+
+
+
+   public static void alert(String title, String message, Alert.AlertType type, Runnable yesAction, Runnable noAction) {
+      Alert alert = new Alert(type);
+      alert.setTitle(title);
+      alert.setHeaderText(message);
+      alert.getDialogPane().getStylesheets().add(GraphicalDictionary.class.getResource("/css/Alert.css").toExternalForm());
+      ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+      ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+      alert.getButtonTypes().setAll(yesButton, noButton);
+      if (Objects.requireNonNull(type) == Alert.AlertType.CONFIRMATION) {
+         ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+         alert.getButtonTypes().add(cancelButton);
+         Node alertCancel = alert.getDialogPane().lookupButton(cancelButton);
+         alertCancel.setId("alertCancel");
+      }
+      Node alertNo = alert.getDialogPane().lookupButton(noButton);
+      alertNo.setId("alertNo");
+      Node alertYes = alert.getDialogPane().lookupButton(yesButton);
+      alertYes.setId("alertYes");
+      Optional<ButtonType> result = alert.showAndWait();
+      if (result.get() == yesButton) {
+         yesAction.run();
+      }
+      if (result.get() == noButton) {
+         noAction.run();
+      }
    }
 }

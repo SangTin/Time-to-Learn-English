@@ -17,3 +17,18 @@
 .text-area .scroll-pane .content .text {
     -fx-text-alignment: center;
 }
+
+.stop-button {
+    -fx-background-color: #89b4f8;
+    -fx-background-radius: 50%;
+}
+
+.stop-button.done {
+    -fx-border-radius: 50%;
+    -fx-border-color: green;
+    -fx-border-width: 5px;
+}
+
+.stop-button.done .icon {
+    -fx-fill: green;
+}

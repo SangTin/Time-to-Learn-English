@@ -8,12 +8,13 @@ import data.enums.ThesaurusType;
 import exception.editWord.EditWordException;
 import gui.GraphicalDictionary;
 import gui.components.search.SearchBase;
+import gui.dictionary.edit.EditThesaurus;
 import gui.dictionary.edit.EditWord;
 import gui.dictionary.search.Description;
 import gui.dictionary.search.Thesaurus;
 import gui.style.DisplayThesaurus;
 import gui.style.DisplayWord;
-import javafx.application.Platform;
+import gui.style.WordEditor;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -21,12 +22,10 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.shape.SVGPath;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class Dictionary extends SplitPane {
    private static final String OPEN_SIDE_ICON = "M4.8 4.8m0 2.4a2.4 2.4 0 0 1 2.4-2.4h14.4a2.4 2.4 0 0 1 2.4 2.4v14.4a2.4 2.4 0 0 1-2.4 2.4h-14.4a2.4 2.4 0 0 1-2.4-2.4zM10.8 4.8v19.2M16.8 12l2.4 2.4-2.4 2.4";
@@ -41,6 +40,7 @@ public class Dictionary extends SplitPane {
    @FXML private TabPane contentTabPane;
    @FXML private Button changeModeButton;
    @FXML private Button deleteButton;
+   @FXML private Button saveButton;
 
    private final ArrayList<Tab> descriptionTabs = new ArrayList<>();
    private final ArrayList<Tab> editorTabs = new ArrayList<>();
@@ -67,9 +67,7 @@ public class Dictionary extends SplitPane {
    }
 
    public void initialize() {
-      new Thread(() -> {
-         Platform.runLater(this::doInitialize);
-      }).start();
+      new Thread(this::doInitialize).start();
    }
 
    public void doInitialize() {
@@ -127,7 +125,14 @@ public class Dictionary extends SplitPane {
             case ADD:
             case FIX:
             case DELETE: {
-               appFunction.set(AppFunction.SEARCH);
+               if (isModified()) {
+                  GraphicalDictionary.alert("Save changes", "Do you want to save changes?",
+                          Alert.AlertType.CONFIRMATION,
+                          () -> { save(); appFunction.set(AppFunction.SEARCH); },
+                          () -> appFunction.set(AppFunction.SEARCH));
+               } else {
+                  appFunction.set(AppFunction.SEARCH);
+               }
                break;
             }
          }
@@ -136,21 +141,21 @@ public class Dictionary extends SplitPane {
          switch (newValue) {
             case SEARCH: {
                contentTabPane.getTabs().setAll(descriptionTabs);
-               changeModeButton.setVisible(true);
+               changeModeButton.setDisable(false);
                changeModeButton.setText("Edit");
                SVGPath svgPath = (SVGPath) changeModeButton.getGraphic();
                svgPath.setContent(EDIT_ICON);
                break;
             }
             case ADD: {
-               changeModeButton.setVisible(false);
+               changeModeButton.setDisable(true);
                contentTabPane.getTabs().setAll(editorTabs);
                break;
             }
             case FIX:
             case DELETE: {
                contentTabPane.getTabs().setAll(editorTabs);
-               changeModeButton.setVisible(true);
+               changeModeButton.setDisable(false);
                changeModeButton.setText("Display");
                SVGPath svgPath = (SVGPath) changeModeButton.getGraphic();
                svgPath.setContent(DISPLAY_ICON);
@@ -159,10 +164,47 @@ public class Dictionary extends SplitPane {
          }
          replay(wordFlow.peek());
       });
+      appFunction.addListener((observable, oldValue, newValue) -> {
+         switch (newValue) {
+            case SEARCH: {
+               saveButton.setDisable(true);
+               break;
+            }
+            case ADD:
+            case FIX:
+            case DELETE: {
+               saveButton.setDisable(false);
+               break;
+            }
+         }
+      });
       appFunction.set(AppFunction.SEARCH);
       deleteButton.setOnAction(e -> {
-         deleteAlert();
+         GraphicalDictionary.alert("Delete", "Are you sure you want to delete this word? \nThis can't be undone.", Alert.AlertType.WARNING,
+                 () -> {
+                    Word word = wordFlow.peek();
+                    if (word != null) {
+                       try {
+                          changes.remove(word);
+                       } catch (EditWordException ignored) {}
+                       GraphicalDictionary.setAppFunction(AppFunction.SEARCH, wordFlow.peek());
+                    }
+                 }, () -> {});
       });
+      saveButton.setOnAction(e -> {
+         save();
+      });
+   }
+
+   private boolean isModified() {
+      for (Tab tab : contentTabPane.getTabs()) {
+         if (tab.getContent() instanceof EditWord) {
+            if (((EditWord) tab.getContent()).isModified()) {
+               return true;
+            }
+         }
+      }
+      return false;
    }
 
    private void setUpDisplayDescription() {
@@ -189,15 +231,25 @@ public class Dictionary extends SplitPane {
       });
    }
 
-    private void setUpDisplayEditor() {
-        Tab desTab = new Tab("Description");
-        editorTabs.add(desTab);
-        desTab.setContent(new EditWord());
+   private void setUpDisplayEditor() {
+      EditWord desTabContent = new EditWord();
+      desTabContent.setDictionary(dictionary);
+      Tab desTab = new Tab("Description");
+      editorTabs.add(desTab);
+      desTab.setContent(desTabContent);
 
-        editorTabs.forEach(tab -> {
-            tab.setClosable(false);
-        });
-    }
+      Tab synTab = new Tab("Synonyms");
+      editorTabs.add(synTab);
+      synTab.setContent(new EditThesaurus(ThesaurusType.SYNONYM, dictionary));
+
+      Tab antTab = new Tab("Antonyms");
+      editorTabs.add(antTab);
+      antTab.setContent(new EditThesaurus(ThesaurusType.SYNONYM, dictionary));
+
+      editorTabs.forEach(tab -> {
+         tab.setClosable(false);
+      });
+   }
 
    public void displaySearch(AppFunction function, Word word) {
       if (word != null) {
@@ -224,11 +276,11 @@ public class Dictionary extends SplitPane {
 
       // Set thesaurus
       ObservableList<data.Thesaurus> synonyms = database.getThesaurus(word, ThesaurusType.SYNONYM, dictionary);
-      synonymTabContent = (DisplayThesaurus) descriptionTabs.get(1).getContent();
+      synonymTabContent = (DisplayThesaurus) contentTabPane.getTabs().get(1).getContent();
       synonymTabContent.display(word, synonyms);
 
       ObservableList<data.Thesaurus> antonyms = database.getThesaurus(word, ThesaurusType.ANTONYM, dictionary);
-      antonymTabContent = (DisplayThesaurus) descriptionTabs.get(2).getContent();
+      antonymTabContent = (DisplayThesaurus) contentTabPane.getTabs().get(2).getContent();
       antonymTabContent.display(word, antonyms);
    }
 
@@ -249,29 +301,20 @@ public class Dictionary extends SplitPane {
       antonymTabContent.clear();
    }
 
-   public void deleteAlert() {
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setTitle("Delete");
-      alert.setHeaderText("Are you sure you want to delete this word? \nThis can't be undone.");
-      alert.getDialogPane().getStylesheets().add(this.getClass().getResource("/css/Alert.css").toExternalForm());
-      ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-      ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-      alert.getButtonTypes().setAll(yesButton, noButton);
-      Node quitAlertNo = alert.getDialogPane().lookupButton(noButton);
-      quitAlertNo.setId("alertNo");
-      Node quitAlertYes = alert.getDialogPane().lookupButton(yesButton);
-      quitAlertYes.setId("alertYes");
-      Optional<ButtonType> result = alert.showAndWait();
-      if (result.get() == yesButton) {
-         Word word = wordFlow.peek();
-         if (word != null) {
-            try {
-               changes.remove(word);
-            } catch (EditWordException ignored) {}
-            clear();
-            replay(wordFlow.peek());
+   private void save() {
+      for (Tab tab : contentTabPane.getTabs()) {
+         if (tab.getContent() instanceof WordEditor) {
+            if (!((WordEditor) tab.getContent()).canSave()) {
+               contentTabPane.getSelectionModel().select(tab);
+               return;
+            }
          }
       }
+      contentTabPane.getTabs().forEach(tab -> {
+         if (tab.getContent() instanceof WordEditor) {
+            ((WordEditor) tab.getContent()).save();
+         }
+      });
    }
 
    private static class UniqueWordStack extends AutoDeleteWordList {
@@ -316,5 +359,6 @@ public class Dictionary extends SplitPane {
       public SimpleIntegerProperty currentProperty() {
          return current;
       }
+
    }
 }
